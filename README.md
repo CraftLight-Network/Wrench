@@ -8,3 +8,5 @@ To use this bot, do
 npm install discord.js
 npm install discord.js-commando
 npm install --save sqlite
+
+Enjoy!
