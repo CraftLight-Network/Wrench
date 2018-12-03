@@ -1,39 +1,56 @@
-var Discord = require('discord.io');
-var logger = require('winston');
-var auth = require('./auth.json');
-// Configure logger settings
-logger.remove(logger.transports.Console);
-logger.add(new logger.transports.Console, {
-    colorize: true
-});
-logger.level = 'debug';
-// Initialize Discord Bot
-var bot = new Discord.Client({
-   token: auth.token,
-   autorun: true
+const Discord = require("discord.js");
+
+// This bot uses client.x
+const client = new Discord.Client();
+
+// Require the auth key
+const config = require("./auth.json");
+const prefix = require("./prefix.json");
+
+client.on("ready", () => {
+  // Startup messages
+  console.log(`Bot has started.`);
+  console.log(`Active in ${client.guilds.size} servers.`)
+  console.log(`Enjoy your bot experience!`)
+  // User activity message
+  client.user.setActivity(`War never changes.`);
 });
 
-// Display boot message
-bot.on('ready', function (evt) {
-    logger.info('Connected');
-    logger.info('Bot startup successful');
-    logger.info(bot.username + ' - (' + bot.id + ')');
+client.on("guildCreate", guild => {
+  // Notify the console that a new server is using the bot
+  console.log(`Added in a new server: ${guild.name} (id: ${guild.id})`);
 });
-bot.on('message', function (user, userID, channelID, message, evt) {
-    // Bot prefix: "]"
-    if (message.substring(0, 1) == ']') {
-        var args = message.substring(1).split(' ');
-        var cmd = args[0];
-       
-        args = args.splice(1);
-        switch(cmd) {
-            // ]ping
-            case 'ping':
-                bot.sendMessage({
-                    to: channelID,
-                    message: 'Pong!'
-                });
-            break;
-         }
-     }
+
+client.on("guildDelete", guild => {
+  // Notify the console that a server removed the bot
+  console.log(`Removed from server: ${guild.name} (id: ${guild.id})`);
 });
+
+
+client.on("message", async message => {
+  // Ignore all other bots
+  if(message.author.bot) return;
+  
+  // Use the prefix as defined in prefix.json
+  if(message.content.indexOf(prefix.prefix) !== 0) return;
+  
+  // Split the command and request
+  const args = message.content.slice(prefix.prefix.length).trim().split(/ +/g);
+  const command = args.shift().toLowerCase();
+  
+  if(command === "ping") {
+    // Simple ping command with latency
+    const m = await message.channel.send("Ping?");
+    m.edit(`Pong! Latency: ${m.createdTimestamp - message.createdTimestamp}ms. API Latency is ${Math.round(client.ping)}ms`);
+  }
+  
+  if(command === "say") {
+    // Simple say command 
+    const sayMessage = args.join(" ");
+    message.delete().catch(O_o=>{}); 
+    message.channel.send(sayMessage);
+  }
+  
+});
+
+client.login(config.token);

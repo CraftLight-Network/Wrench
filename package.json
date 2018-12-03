@@ -1,11 +1,24 @@
 {
-  "name": "Fallout Salvator",
-  "version": "1.0",
-  "description": "FSWNC Dedicated bot",
+  "name": "Fallout-Salvator",
+  "version": "1.0.0",
+  "description": "This bot is used mainly for the Fallout Salvation: War Never Changes server.\r If you would like to see this bot in action, go to https://discord.gg/JPCsfDb\r Please do not take this bot and claim it as your own.\r You are free to use this on your own server, but there is no documentation.",
   "main": "bot.js",
-  "author": "Edude42",
   "dependencies": {
-    "discord.io": "https://github.com/woor/discord.io/tarball/gateway_v6",
-    "winston": "^3.1.0"
-  }
+    "discord.js": "^11.4.2"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Edude42/Fallout-Salvator.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Edude42/Fallout-Salvator/issues"
+  },
+  "homepage": "https://github.com/Edude42/Fallout-Salvator#readme"
 }
