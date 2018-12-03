@@ -4,7 +4,9 @@
   "description": "This bot is used mainly for the Fallout Salvation: War Never Changes server.\r If you would like to see this bot in action, go to https://discord.gg/JPCsfDb\r Please do not take this bot and claim it as your own.\r You are free to use this on your own server, but there is no documentation.",
   "main": "bot.js",
   "dependencies": {
-    "discord.js": "^11.4.2"
+    "discord.js": "^11.4.2",
+    "discord.js-commando": "^0.10.0",
+    "sqlite": "^3.0.0"
   },
   "devDependencies": {},
   "scripts": {

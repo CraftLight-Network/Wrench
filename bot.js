@@ -1,11 +1,34 @@
-const Discord = require("discord.js");
+const { CommandoClient, SQLiteProvider } = require('discord.js-commando');
+const sqlited = require('sqlite');
+const path = require('path');
 
-// This bot uses client.x
-const client = new Discord.Client();
+sqlited.open(path.join(__dirname, "settings.sqlite3")).then((db) => {
+    client.setProvider(new SQLiteProvider(db));
+});
 
 // Require the auth key
-const config = require("./auth.json");
+const auth = require("./auth.json");
 const prefix = require("./prefix.json");
+const owners = require("./owners.json");
+
+const client = new CommandoClient({
+    commandPrefix: ']',
+    owner: '272466470510788608',
+    disableEveryone: true
+});
+
+client.registry
+    .registerDefaultTypes()
+    .registerGroups([
+        ['group1', 'Our First Command Group']
+    ])
+    .registerDefaultGroups()
+    .registerDefaultCommands({
+		eval: false
+	})
+    .registerCommandsIn(path.join(__dirname, 'commands'));
+
+const sqlite = require('sqlite');
 
 client.on("ready", () => {
   // Startup messages
@@ -26,7 +49,6 @@ client.on("guildDelete", guild => {
   console.log(`Removed from server: ${guild.name} (id: ${guild.id})`);
 });
 
-
 client.on("message", async message => {
   // Ignore all other bots
   if(message.author.bot) return;
@@ -38,19 +60,6 @@ client.on("message", async message => {
   const args = message.content.slice(prefix.prefix.length).trim().split(/ +/g);
   const command = args.shift().toLowerCase();
   
-  if(command === "ping") {
-    // Simple ping command with latency
-    const m = await message.channel.send("Ping?");
-    m.edit(`Pong! Latency: ${m.createdTimestamp - message.createdTimestamp}ms. API Latency is ${Math.round(client.ping)}ms`);
-  }
-  
-  if(command === "say") {
-    // Simple say command 
-    const sayMessage = args.join(" ");
-    message.delete().catch(O_o=>{}); 
-    message.channel.send(sayMessage);
-  }
-  
 });
 
-client.login(config.token);
+client.login(auth.token);
