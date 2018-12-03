@@ -1,8 +1,11 @@
 {
-“name”: “Fallout Salvator”,
-“version”: “1.0”,
-“description”: “FS: WNC Dedicated bot”,
-“main”: “bot.js”,
-“author”: “Edude42”,
-“dependencies”: {}
+  "name": "Fallout Salvator",
+  "version": "1.0",
+  "description": "FSWNC Dedicated bot",
+  "main": "bot.js",
+  "author": "Edude42",
+  "dependencies": {
+    "discord.io": "^2.5.3",
+    "winston": "^3.1.0"
+  }
 }
