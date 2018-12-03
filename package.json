@@ -1,0 +1,8 @@
+{
+“name”: “Fallout Salvator”,
+“version”: “1.0”,
+“description”: “FS: WNC Dedicated bot”,
+“main”: “bot.js”,
+“author”: “Edude42”,
+“dependencies”: {}
+}
