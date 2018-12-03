@@ -92,3 +92,6 @@ Thumbs.db
 
 # Authentication code
 auth.json
+
+# Common ignored files
+settings.sqlite3
