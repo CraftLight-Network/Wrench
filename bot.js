@@ -1,37 +1,41 @@
 const { CommandoClient, SQLiteProvider } = require('discord.js-commando');
 const sqlited = require('sqlite');
+const sqlite = require('sqlite');
 const path = require('path');
 
+// Open SQL connection
 sqlited.open(path.join(__dirname, "settings.sqlite3")).then((db) => {
     client.setProvider(new SQLiteProvider(db));
 });
 
-// Require the auth key
+// Require authentication key file
 const auth = require("./auth.json");
-const prefix = require("./prefix.json");
-const owners = require("./owners.json");
 
+// Create the CommandoClient
 const client = new CommandoClient({
     commandPrefix: ']',
     owner: '272466470510788608',
     disableEveryone: true
 });
 
+// Register the groups
 client.registry
     .registerDefaultTypes()
     .registerGroups([
-        ['group1', 'Our First Command Group']
+        ['fun', 'Fun'],
+        ['music', 'Music'],
+        ['uncategorized', 'Uncategorized'],
+		['admin', 'Admin'],
     ])
+	// Disable eval and set up defaults
     .registerDefaultGroups()
-    .registerDefaultCommands({
+	.registerDefaultCommands({
 		eval: false
 	})
     .registerCommandsIn(path.join(__dirname, 'commands'));
 
-const sqlite = require('sqlite');
-
+// Startup messages
 client.on("ready", () => {
-  // Startup messages
   console.log(`Bot has started.`);
   console.log(`Active in ${client.guilds.size} servers.`)
   console.log(`Enjoy your bot experience!`)
@@ -39,27 +43,14 @@ client.on("ready", () => {
   client.user.setActivity(`War never changes.`);
 });
 
+// Notify the console that a new server is using the bot
 client.on("guildCreate", guild => {
-  // Notify the console that a new server is using the bot
   console.log(`Added in a new server: ${guild.name} (id: ${guild.id})`);
 });
 
+// Notify the console that a server removed the bot
 client.on("guildDelete", guild => {
-  // Notify the console that a server removed the bot
   console.log(`Removed from server: ${guild.name} (id: ${guild.id})`);
-});
-
-client.on("message", async message => {
-  // Ignore all other bots
-  if(message.author.bot) return;
-  
-  // Use the prefix as defined in prefix.json
-  if(message.content.indexOf(prefix.prefix) !== 0) return;
-  
-  // Split the command and request
-  const args = message.content.slice(prefix.prefix.length).trim().split(/ +/g);
-  const command = args.shift().toLowerCase();
-  
 });
 
 client.login(auth.token);

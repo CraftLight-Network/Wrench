@@ -3,13 +3,14 @@ module.exports = class helloCommand extends Command {
     constructor(client) {
         super(client, {
             name: 'hello',
-            group: 'group1',
+			aliases: ['helloworld', 'test', 'commandtest', 'world'],
+            group: 'fun',
             memberName: 'hello',
             description: 'Says hello.',
-            examples: [']hello']
+            examples: ['hello']
         });
     }
     run(msg) {
-        return msg.say('Hello');
+        return msg.say('Hello World!');
     }
 };
