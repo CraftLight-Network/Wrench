@@ -1,4 +1,5 @@
 const { CommandoClient, SQLiteProvider } = require('discord.js-commando');
+const { RichEmbed } = require('discord.js');
 const sqlited = require('sqlite');
 const sqlite = require('sqlite');
 const path = require('path');
