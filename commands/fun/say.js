@@ -10,7 +10,8 @@ module.exports = class sayCommand extends Command {
             description: 'Make the bot say things.',
             examples: ['say hello'],
 			guildOnly: true,
-			clientPermissions: ['MANAGE_MESSAGES'],
+			userPermissions: ['MANAGE_MESSAGES'],
+			clientPermissions: ['ADMINISTRATOR'],
 			throttling: {
 				usages: 1,
 				duration: 3

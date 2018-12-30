@@ -95,3 +95,4 @@ auth.json
 
 # Common ignored files
 settings.sqlite3
+data/

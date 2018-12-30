@@ -1,21 +1,19 @@
-const { CommandoClient, SQLiteProvider } = require('discord.js-commando');
+// Base components
+const { CommandoClient } = require('discord.js-commando');;
 const { RichEmbed } = require('discord.js');
-const sqlited = require('sqlite');
-const sqlite = require('sqlite');
+const { oneLine } = require('common-tags');
 const path = require('path');
 
-// Open SQL connection
-sqlited.open(path.join(__dirname, "settings.sqlite3")).then((db) => {
-    client.setProvider(new SQLiteProvider(db));
-});
-
-// Require authentication key file
+// Require the authentication key file
 const auth = require("./auth.json");
+
+// Require the config file
+const config = require("./config.json")
 
 // Create the CommandoClient
 const client = new CommandoClient({
-    commandPrefix: ']',
-    owner: '272466470510788608',
+    commandPrefix: config.prefix,
+    owner: config.owners,
     disableEveryone: true
 });
 
@@ -25,8 +23,8 @@ client.registry
     .registerGroups([
         ['fun', 'Fun'],
         ['music', 'Music'],
+        ['admin', 'Admin'],
         ['uncategorized', 'Uncategorized'],
-		['admin', 'Admin'],
     ])
 	// Disable eval and set up defaults
     .registerDefaultGroups()
