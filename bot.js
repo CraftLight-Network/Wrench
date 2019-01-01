@@ -22,8 +22,7 @@ client.registry
     .registerDefaultTypes()
     .registerGroups([
         ['fun', 'Fun'],
-        ['music', 'Music'],
-        ['admin', 'Admin'],
+        ['info', 'Info'],
         ['uncategorized', 'Uncategorized'],
     ])
 	// Disable eval and set up defaults
@@ -38,6 +37,8 @@ client.on("ready", () => {
   console.log(`Bot has started.`);
   console.log(`Active in ${client.guilds.size} servers.`)
   console.log(`Enjoy your bot experience!`)
+  console.log(` `)
+  console.log(`Press CTRL+C to stop the bot.`)
   // User activity message
   client.user.setActivity(`War never changes.`);
 });
