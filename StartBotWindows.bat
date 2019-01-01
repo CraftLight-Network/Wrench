@@ -61,7 +61,7 @@ echo.
 echo --------------------------------------------
 echo.
 echo.
-echo Example: https://github.com/Edude42/WrenchBot/tree/master/commands
+echo Example: https://github.com/Edude42/WrenchBot/blob/master/authEXAMPLE
 echo.
 echo.
 pause
