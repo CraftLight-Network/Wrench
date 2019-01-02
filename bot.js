@@ -22,7 +22,8 @@ client.registry
     .registerDefaultTypes()
     .registerGroups([
         ['fun', 'Fun'],
-        ['server', 'Server'],
+        ['info', 'Info'],
+        ['owner', 'Owner Only'],
         ['uncategorized', 'Uncategorized'],
     ])
 	// Disable eval and set up defaults

@@ -1,5 +1,6 @@
 #! /bin/bash
 #!/usr/bin/env node console.log('Node.js found.')
+repeat="n"
 if [ -f bot.js ]
 then
 echo Checking files... \(1/6\)
@@ -103,12 +104,31 @@ then
 echo Checking files... \(6/6\)
 echo
 echo Done! Starting bot...
+echo 
+read -p 'Would you like to automatically restart the bot if it crashes? (y/n) ' repeat
 echo
 echo If the command "node" was not found, that means
 echo you either don\'t have Node.js installed, or
 echo you don\'t have it set up in your environment.
 echo
+if [ $repeat == "y" ]
+then
+while true
+do
+echo
+echo REPEAT ON
+echo
 node bot.js
+echo
+echo Crash detected... Restarting in 15 seconds.
+sleep 15
+done
+else
+echo
+echo REPEAT OFF
+echo
+node bot.js
+fi
 else
 echo
 echo -------------------------------------------------

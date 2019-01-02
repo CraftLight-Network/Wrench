@@ -1,4 +1,5 @@
 @echo off
+SET REPEAT="n"
 IF EXIST bot.js (
 echo Checking files... ^(1/6^)
 ) ELSE (
@@ -90,6 +91,8 @@ exit
 IF EXIST package.json (
 echo Checking files... ^(6/6^)
 echo.
+set /p REPEAT=Would you like to automatically restart the bot if it crashes? ^(y^/n^) )
+echo.
 echo Done! Starting bot...
 cls
 echo.
@@ -97,7 +100,19 @@ echo If the command "node" was not found, that means
 echo you either don't have Node.js installed, or
 echo you don't have it set up in your environment.
 echo.
+IF "%REPEAT%"=="y" (
+echo REPEAT ON
+echo.
+:botstart
 node bot.js
+timeout 15
+goto botstart
+)
+IF "%REPEAT%"=="n" (
+echo REPEAT OFF
+echo.
+node bot.js
+)
 pause
 exit
 ) ELSE (

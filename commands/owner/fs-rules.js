@@ -35,7 +35,7 @@ module.exports = class fsrulesCommand extends Command {
         super(client, {
             name: 'fs-rules',
 			aliases: ['fs rules'],
-            group: 'server',
+            group: 'owner',
             memberName: 'fs-rules',
             description: 'Embed FS: WNC\'s rules',
             examples: ['fs-rules'],
