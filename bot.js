@@ -17,11 +17,27 @@ const client = new CommandoClient({
     disableEveryone: true
 });
 
+// Activity list
+const activities_list = [
+    "]help", 
+    "]invite",
+	"on CustomCraft",
+	"a game.",
+    "customcraft.online",
+	"Fallout Salvation",
+	"FS: WNC",
+	"with code.",
+	"with Edude42",
+	"with Spade",
+	"things."
+    ];
+
 // Register the groups
 client.registry
     .registerDefaultTypes()
     .registerGroups([
         ['fun', 'Fun'],
+		['guessing', 'Guessing'],
         ['info', 'Info'],
         ['owner', 'Owner Only'],
         ['uncategorized', 'Uncategorized'],
@@ -40,8 +56,15 @@ client.on("ready", () => {
   console.log(`Enjoy your bot experience!`)
   console.log(` `)
   console.log(`Press CTRL+C to stop the bot.`)
+  
+  // Default activity message
+  client.user.setActivity("a game.")
+  
   // User activity message
-  client.user.setActivity(`War never changes.`);
+  setInterval(() => {
+        const index = Math.floor(Math.random() * (activities_list.length - 1) + 1);
+        client.user.setActivity(activities_list[index]);
+    }, 10000);
 });
 
 // Notify the console that a new server is using the bot

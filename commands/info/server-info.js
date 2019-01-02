@@ -1,4 +1,4 @@
-const { Command } = require('discord.js-commando');
+﻿const { Command } = require('discord.js-commando');
 const moment = require('moment');
 const { stripIndents } = require('common-tags');
 
@@ -14,11 +14,11 @@ module.exports = class ServerInfoCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'server-info',
-			aliases: ['server', 'info'],
+			aliases: ['server', 'info', 'serverinfo'],
 			group: 'info',
 			memberName: 'server-info',
-			description: 'Info of the server',
-			examples: ['info'],
+			description: 'Info of the server.',
+			examples: ['info', 'server-info'],
 			guildOnly: true,
 			throttling: {
 				usages: 2,
@@ -29,7 +29,7 @@ module.exports = class ServerInfoCommand extends Command {
 
 	run(msg) {
 		return msg.embed({
-			color: 3447003,
+			color: 4021408,
 			description: `Info of **${msg.guild.name}** (ID: ${msg.guild.id})`,
 			fields: [
 				{
@@ -56,7 +56,7 @@ module.exports = class ServerInfoCommand extends Command {
 					value: stripIndents`
 						• Roles: ${msg.guild.roles.size}
 						• Region: ${msg.guild.region}
-						• Created at: ${moment.utc(msg.guild.createdAt).format('dddd, MMMM Do YYYY, HH:mm:ss ZZ')}
+						• Created at: ${moment.utc(msg.guild.createdAt).format('dddd, MMMM Do YYYY, HH:mm:ss')}
 						• Verification Level: ${humanLevels[msg.guild.verificationLevel]}
 					`
 				}

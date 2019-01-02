@@ -5,9 +5,11 @@ module.exports = class botinfoCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'bot-info',
+			aliases: ['bot', 'botinfo', 'bot-info'],
 			group: 'info',
 			memberName: 'bot-info',
 			description: 'Displays information about this bot.',
+			examples: ['bot-info', 'botinfo'],
 			throttling: {
 				usages: 2,
 				duration: 3

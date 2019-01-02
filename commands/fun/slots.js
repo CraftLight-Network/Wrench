@@ -29,6 +29,7 @@ module.exports = class SlotMachineCommand extends Command {
 			memberName: 'slots',
 			description: 'Play the slots.',
 			examples: ['slots'],
+			guildOnly: true,
 			throttling: {
 				usages: 1,
 				duration: 5

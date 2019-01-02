@@ -1,7 +1,7 @@
 @echo off
 SET REPEAT="n"
 IF EXIST bot.js (
-echo Checking files... ^(1/6^)
+echo Checking files... ^(1/7^)
 ) ELSE (
 echo.  
 echo ----------------------------------------------------------
@@ -18,7 +18,7 @@ pause
 exit
 )
 IF EXIST node_modules (
-echo Checking files... ^(2/6^)
+echo Checking files... ^(2/7^)
 ) ELSE (
 echo.  
 echo --------------------------------------
@@ -38,7 +38,7 @@ pause
 exit
 )
 IF EXIST commands (
-echo Checking files... ^(3/6^)
+echo Checking files... ^(3/7^)
 ) ELSE (
 echo.  
 echo -----------------------------------------
@@ -55,7 +55,7 @@ pause
 exit
 )
 IF EXIST auth.json (
-echo Checking files... ^(4/6^)
+echo Checking files... ^(4/7^)
 ) ELSE (
 echo.  
 echo --------------------------------------------
@@ -72,7 +72,7 @@ pause
 exit
 )
 IF EXIST config.json (
-echo Checking files... ^(5/6^)
+echo Checking files... ^(5/7^)
 ) ELSE (
 echo.  
 echo ------------------------------------------------
@@ -88,8 +88,30 @@ echo.
 pause
 exit
 )
+
+IF EXIST node_modules\discord.js-commando\src\commands\util\eval.js (
+echo.  
+echo --------------------------------
+echo.
+echo eval command found. Disabling...
+echo.
+echo --------------------------------
+echo.
+echo.
+copy node_modules\discord.js-commando\src\commands\util\eval.js eval.js.bak
+copy eval.js node_modules\discord.js-commando\src\commands\util
+echo.
+echo.
+echo Done! Proceding...
+echo Checking files... ^(6/7^)
+goto evaldel
+) ELSE (
+echo Checking files... ^(6/7^)
+)
+
+:evaldel
 IF EXIST package.json (
-echo Checking files... ^(6/6^)
+echo Checking files... ^(7/7^)
 echo.
 set /p REPEAT=Would you like to automatically restart the bot if it crashes? ^(y^/n^) )
 echo.

@@ -99,6 +99,27 @@ read -n 1 -s
 exit
 fi
 
+if [ -f node_modules/discord.js-commando/src/commands/util/eval.js ]
+then
+echo Checking files... \(5/6\)
+echo 
+echo --------------------------------
+echo
+echo eval command found. Disabling...
+echo
+echo --------------------------------
+echo
+echo
+cp node_modules/discord.js-commando/src/commands/util/eval.js eval.js.bak
+cp eval.js node_modules/discord.js-commando/src/commands/util
+echo
+echo
+echo Done! Proceding...
+echo Checking files... \(6/7\)
+else
+echo Checking files... \(6/7\)
+fi
+
 if [ -f package.json ]
 then
 echo Checking files... \(6/6\)
