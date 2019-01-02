@@ -103,12 +103,12 @@ then
 echo Checking files... \(6/6\)
 echo
 echo Done! Starting bot...
-node bot.js
 echo
 echo If the command "node" was not found, that means
 echo you either don\'t have Node.js installed, or
 echo you don\'t have it set up in your environment.
 echo
+node bot.js
 else
 echo
 echo -------------------------------------------------

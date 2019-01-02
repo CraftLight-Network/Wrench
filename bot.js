@@ -22,7 +22,7 @@ client.registry
     .registerDefaultTypes()
     .registerGroups([
         ['fun', 'Fun'],
-        ['info', 'Info'],
+        ['server', 'Server'],
         ['uncategorized', 'Uncategorized'],
     ])
 	// Disable eval and set up defaults
@@ -51,6 +51,12 @@ client.on("guildCreate", guild => {
 // Notify the console that a server removed the bot
 client.on("guildDelete", guild => {
   console.log(`Removed from server: ${guild.name} (id: ${guild.id})`);
+});
+
+// Rejection Handler
+
+process.on('unhandledRejection', (err, p) => {
+  console.log(`Rejected Promise: ${p} / Rejection: ${err}`);
 });
 
 client.login(auth.token);
