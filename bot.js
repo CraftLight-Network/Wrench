@@ -64,7 +64,7 @@ client.on("ready", () => {
   setInterval(() => {
         const index = Math.floor(Math.random() * (activities_list.length - 1) + 1);
         client.user.setActivity(activities_list[index]);
-    }, 10000);
+    }, 15000);
 });
 
 // Notify the console that a new server is using the bot
