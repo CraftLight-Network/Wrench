@@ -14,7 +14,8 @@ const config = require("./config.json")
 const client = new CommandoClient({
     commandPrefix: config.prefix,
     owner: config.owners,
-    disableEveryone: true
+    disableEveryone: true,
+	unknownCommandResponse: false
 });
 
 // Activity list
@@ -32,22 +33,23 @@ const activities_list = [
 	"things."
     ];
 
-// Register the groups
+// Register everything
 client.registry
-    .registerDefaultTypes()
-    .registerGroups([
+	.registerDefaultTypes()
+	.registerTypesIn(path.join(__dirname, 'types'))
+    .registerDefaultGroups()
+	.registerGroups([
         ['fun', 'Fun'],
+		['image', 'Image'],
 		['guessing', 'Guessing'],
         ['info', 'Info'],
         ['owner', 'Owner Only'],
         ['uncategorized', 'Uncategorized'],
-    ])
-	// Disable eval and set up defaults
-    .registerDefaultGroups()
+	])
 	.registerDefaultCommands({
 		eval: false
 	})
-    .registerCommandsIn(path.join(__dirname, 'commands'));
+	.registerCommandsIn(path.join(__dirname, 'commands'));
 
 // Startup messages
 client.on("ready", () => {

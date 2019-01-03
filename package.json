@@ -4,10 +4,17 @@
   "description": "This bot is used mainly for servers in the CustomCraft Network.\r If you would like to see this bot in action, go to https://discord.gg/sAxRWVb\r Please do not take this bot and claim it as your own.\r You are free to use this on your own server, but there is no documentation.",
   "main": "bot.js",
   "dependencies": {
-    "bufferutil": "^4.0.0",
+    "@discordjs/uws": "^11.149.1",
+    "bufferutil": "^4.0.1",
+    "canvas": "^2.2.0",
+    "cheerio": "^1.0.0-rc.2",
     "common-tags": "^1.8.0",
+    "custom-translate": "^2.2.8",
+    "discord": "^0.8.2",
     "discord.js": "^11.4.2",
     "discord.js-commando": "^0.10.0",
+    "erlpack": "^0.1.2",
+    "mathjs": "^5.4.0",
     "moment": "^2.23.0",
     "node-gyp": "^3.8.0",
     "node-opus": "^0.3.1",
@@ -15,9 +22,9 @@
     "opusscript": "0.0.6",
     "path": "^0.12.7",
     "random-js": "^1.0.8",
-    "sequelize": "^4.41.2",
+    "sequelize": "^4.42.0",
     "winston": "^3.1.0",
-    "ytdl-core": "^0.28.0"
+    "ytdl-core": "^0.28.3"
   },
   "devDependencies": {},
   "scripts": {
