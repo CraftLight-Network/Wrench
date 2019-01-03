@@ -37,7 +37,6 @@ const activities_list = [
 client.registry
 	.registerDefaultTypes()
 	.registerTypesIn(path.join(__dirname, 'types'))
-    .registerDefaultGroups()
 	.registerGroups([
         ['fun', 'Fun'],
 		['image', 'Image'],
@@ -46,16 +45,17 @@ client.registry
         ['owner', 'Owner Only'],
         ['uncategorized', 'Uncategorized'],
 	])
+	.registerDefaultGroups()
 	.registerDefaultCommands({
-		eval: false
+		eval: false,
 	})
 	.registerCommandsIn(path.join(__dirname, 'commands'));
 
 // Startup messages
 client.on("ready", () => {
-  console.log(`Bot has started.`);
+  console.log(`[READY] Bot has started.`)
+  console.log(`Name: ${client.user.tag} ID: ${client.user.id}`);
   console.log(`Active in ${client.guilds.size} servers.`)
-  console.log(`Enjoy your bot experience!`)
   console.log(` `)
   console.log(`Press CTRL+C to stop the bot.`)
   
@@ -79,10 +79,21 @@ client.on("guildDelete", guild => {
   console.log(`Removed from server: ${guild.name} (id: ${guild.id})`);
 });
 
-// Rejection Handler
+// Notify the console that the bot has disconnected
+client.on('disconnect', event => {
+	client.logger.error(`[DISCONNECT] ${event.code}`);
+	process.exit(0);
+});
 
+// # Error Handling #
+
+// Unhandled Rejection
 process.on('unhandledRejection', (err, p) => {
   console.log(`Rejected Promise: ${p} / Rejection: ${err}`);
 });
+// Errors
+client.on('error', err => client.logger.error(err));
+// Warnings
+client.on('warn', warn => client.logger.warn(warn));
 
 client.login(auth.token);

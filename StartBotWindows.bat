@@ -98,7 +98,7 @@ echo.
 echo --------------------------------
 echo.
 echo.
-copy node_modules\discord.js-commando\src\commands\util\eval.js eval.js.bak
+copy node_modules\discord.js-commando\src\commands\util\eval.js node_modules\discord.js-commando\src\commands\util\eval.js.bak
 copy eval.js node_modules\discord.js-commando\src\commands\util
 echo.
 echo.
