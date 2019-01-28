@@ -151,7 +151,7 @@ echo.
 :botstart
 node bot.js
 echo Crash detected... Restarting in 15 seconds.
-sleep 15
+timeout 15
 goto botstart
 )
 IF "%REPEAT%"=="n" (
