@@ -99,3 +99,4 @@ settings.sqlite3
 log/
 data/
 autorestart
+eval.js.bak
