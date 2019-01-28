@@ -122,11 +122,46 @@ fi
 
 if [ -f package.json ]
 then
-echo Checking files... \(6/6\)
+echo
+echo Checking files... \(7/7\)
+else
+echo
+echo -------------------------------------------------
+echo
+echo package.json not found. Please download the file.
+echo
+echo -------------------------------------------------
+echo
+echo
+echo Example: https://github.com/Edude42/WrenchBot
+echo
+echo
+read -n 1 -s
+exit
+fi
+
+if [ -f autorestart ]
+then
+while true
+do
+echo
+echo REPEAT ON
+echo
+node bot.js
+echo
+echo Crash detected... Restarting in 15 seconds.
+sleep 15
+done
+else
+echo
+echo If you put a file named "autorestart" (no extension),
+echo this prompt will go away and will always restart.
+echo
+read -p 'Would you like to automatically restart the bot if it crashes? (y/n) ' repeat
 echo
 echo Done! Starting bot...
 echo 
-read -p 'Would you like to automatically restart the bot if it crashes? (y/n) ' repeat
+reset
 echo
 echo If the command "node" was not found, that means
 echo you either don\'t have Node.js installed, or
@@ -149,19 +184,6 @@ echo
 echo REPEAT OFF
 echo
 node bot.js
-fi
-else
-echo
-echo -------------------------------------------------
-echo
-echo package.json not found. Please download the file.
-echo
-echo -------------------------------------------------
-echo
-echo
-echo Example: https://github.com/Edude42/WrenchBot
-echo
-echo
-read -n 1 -s
 exit
+fi
 fi

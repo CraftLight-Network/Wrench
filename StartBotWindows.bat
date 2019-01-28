@@ -112,6 +112,29 @@ echo Checking files... ^(6/7^)
 :evaldel
 IF EXIST package.json (
 echo Checking files... ^(7/7^)
+) ELSE (
+echo.  
+echo -------------------------------------------------
+echo.
+echo package.json not found. Please download the file.
+echo.
+echo -------------------------------------------------
+echo.
+echo.
+echo Example: https://github.com/Edude42/WrenchBot
+echo.
+echo.
+pause
+exit
+)
+
+IF EXIST autorestart (
+cls
+goto botstart
+) ELSE (
+echo.
+echo If you put a file named "autorestart" (no extension),
+echo this prompt will go away and will always restart.
 echo.
 set /p REPEAT=Would you like to automatically restart the bot if it crashes? ^(y^/n^) )
 echo.
@@ -136,20 +159,6 @@ echo REPEAT OFF
 echo.
 node bot.js
 )
-pause
-exit
-) ELSE (
-echo.  
-echo -------------------------------------------------
-echo.
-echo package.json not found. Please download the file.
-echo.
-echo -------------------------------------------------
-echo.
-echo.
-echo Example: https://github.com/Edude42/WrenchBot
-echo.
-echo.
-pause
-exit
 )
+pause
+exit
