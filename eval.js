@@ -1,7 +1,4 @@
-const util = require('util');
 const discord = require('discord.js');
-const tags = require('common-tags');
-const escapeRegex = require('escape-string-regexp');
 const Command = require('../base');
 
 module.exports = class EvalCommand extends Command {
