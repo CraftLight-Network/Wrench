@@ -1,5 +1,5 @@
 ﻿const config = require("../config.json")
-const { SUCCESS_EMOJI_ID } = config.success;
+const { success_id } = config.success;
 const yes = ['yes', 'y', 'ye', 'yeah', 'yup', 'yea', 'ya'];
 const no = ['no', 'n', 'nah', 'nope', 'nop'];
 
@@ -79,7 +79,7 @@ module.exports = class Util {
 			if (joined.includes(res.author.id)) return false;
 			if (res.content.toLowerCase() !== 'join game') return false;
 			joined.push(res.author.id);
-			res.react(SUCCESS_EMOJI_ID || '✅').catch(() => null);
+			res.react(success_id || '✅').catch(() => null);
 			return true;
 		};
 		const verify = await msg.channel.awaitMessages(filter, { max, time });
