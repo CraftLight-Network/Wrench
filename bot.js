@@ -33,7 +33,8 @@ const log = new (winston.Logger)({
 		'CONSOLE': 'grey',
 		'BLANK': 'black',
 		'DEBUG': 'magenta'
-	},	
+	},
+	handleExceptions: true,
 	transports: [
 		new (winston.transports.Console)({
 			name: 'log-console',
@@ -64,11 +65,11 @@ const config = require("./config.json")
 const client = new CommandoClient({
     commandPrefix: config.prefix,
     owner: config.owners,
-    disableEveryone: true,
-	unknownCommandResponse: false
+	unknownCommandResponse: config.unknowncommand,
+    disableEveryone: true
 });
 
-// Activity list
+// Set the activity list
 const activities_list = [
     "]help", 
     "]invite",
