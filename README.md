@@ -1,20 +1,31 @@
 # WrenchBot
-This bot is used mainly for the CustomNetwork.
-If you would like to see this bot in action, go to https://discord.gg/sAxRWVb
-Please do not take this bot and claim it as your own.
-You are free to use this on your own server, but there is no documentation.
+**Please do not take this bot and claim it as your own.<br/>
+You are free to use this on your own server.**<br/>
 
-To use this bot, install node.js and do npm install.
+***
+# About
+This bot is used mainly for the CustomNetwork.<br/>
+If you would like to see this bot in action, go to "`https://discord.gg/sAxRWVb`"<br/><br/>
 
+WrenchBot is just a simple bot.<br/>
+It doesnt do much, so don't expect a Dyno-like bot.<br/>
+It's just meant to serve a purpose for the CustomNetwork.<br/><br/>
 
+For a command list, go to [Commands](#) <sub>(W.I.P)</sub><br/>
+***
+# Setting up
+To use this bot, go to [Getting Started](https://github.com/Edude42/WrenchBot/wiki/Getting-Started)<br/><br/>
 
-Some assets were used from open source bots. I do not intend to steal or deface their owners.
-If you do not want your code in this project, contact owner@customcraft.online
+To get your auth key, go to [Auth File](#)<sub>(W.I.P)</sub><br/><br/>
 
-Commando (github.com/WeebDev/Commando)
+The setup is mostly automatic. Just run the `StartBot(OS)` file in the repo's folder.<br/><br/>
 
-xiao (github.com/dragonfire535/xiao)
+***
+# Credit
+Some assets used are not mine. Said assets were based off of open-source bots.<br/>
+<sub>If there is any code that is owned by you that you would not like to be in this bot, contact me at edude@edude.xyz.</sub><br/><br/>
 
+[Credits](#)<sub>(W.I.P)</sub><br/><br/>
 
-
-Enjoy!
+***
+<br/>Enjoy!
