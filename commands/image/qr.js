@@ -1,7 +1,7 @@
 const { Command } = require('discord.js-commando');
 const request = require('node-superfetch');
 
-const { shorten } = require('../Util');
+const { shorten } = require('../util');
 
 module.exports = class QRCodeCommand extends Command {
 	constructor(client) {
