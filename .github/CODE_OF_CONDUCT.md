@@ -15,7 +15,7 @@ never include ads, and never selfbot.
 Examples of behavior that contributes to creating a positive environment
 include:
 
-* Not modifying files with harmful intentions
+* Not modifying files with harmful intent
 * Not adding commands that may offend or hurt others
 * Not addingg features that give advantages to users
 * Focusing on what is best for the community
