@@ -11,7 +11,9 @@ WrenchBot is just a simple bot.<br/>
 It doesnt do much, so don't expect a Dyno-like bot.<br/>
 It's just meant to serve a purpose for the CustomNetwork.<br/><br/>
 
-For a command list, go to [Commands](#) <sub>(W.I.P)</sub><br/>
+For a command list, go to [Commands](#) <sub>(W.I.P)</sub><br/><br/>
+
+**DISCLAIMER**: _This bot logs the commands that are used for security reasons. They are not added to steal/sell information. They are added to monitor any exploits and/or bugs that comes with the bot._<br/>
 ***
 # Setting up
 To use this bot, go to [Getting Started](https://github.com/Edude42/WrenchBot/wiki/Getting-Started)<br/><br/>
