@@ -39,9 +39,10 @@ else
 	echo If you are getting permission errors, please install and set up sudo.
 	echo
 	echo If there were any errors, either contact edude@edude.xyz,
-	echo or make sure you have the latest version of Java, Python and
-	echo you installed the .NET Framework 2.0 SDK, Microsoft Visual Studio 2005,
-	echo and made sure you added these to your PATH environment.
+	echo or make sure you have the latest version of Java, Python, g++ and
+	echo you successfully installed Node.js and npm.
+	echo
+	echo How to: https://github.com/Edude42/WrenchBot/wiki/Getting-Started#OSX
 	echo
 	echo Press any key...
 	read -n 1 -s
