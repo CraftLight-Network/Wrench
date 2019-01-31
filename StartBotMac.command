@@ -1,6 +1,6 @@
 #!/bin/bash
 #!/usr/bin/env node console.log('Node.js found.')
-echo off
+[ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
 repeat="n"
 
 if [ -f bot.js ]
@@ -18,8 +18,9 @@ else
 	echo https://github.com/Edude42/WrenchBot/blob/master/bot.js
 	echo
 	echo
+	echo Press any key...
 	read -n 1 -s
-	exit
+	exit 0
 fi
 
 if [ -d node_modules ]
@@ -27,21 +28,23 @@ then
 	echo Checking files... \(2/6\)
 else
 	echo
-	echo --------------------------------------
+	echo -------------------------------------
 	echo
-	echo NPM Modules not found. Please install.
+	echo NPM Modules not found. Installing...
 	echo
-	echo --------------------------------------
+	echo -------------------------------------
 	echo
-	echo Use the command "npm install"
+	sudo npm install
+	echo
+	echo If you are getting permission errors, please install and set up sudo.
 	echo
 	echo If there were any errors, either contact edude@edude.xyz,
 	echo or make sure you have the latest version of Java, Python and
 	echo you installed the .NET Framework 2.0 SDK, Microsoft Visual Studio 2005,
 	echo and made sure you added these to your PATH environment.
 	echo
+	echo Press any key...
 	read -n 1 -s
-	exit
 fi
 
 if [ -d commands ]
@@ -59,8 +62,9 @@ else
 	echo https://github.com/Edude42/WrenchBot/tree/master/commands
 	echo
 	echo
+	echo Press any key...
 	read -n 1 -s
-	exit
+	exit 0
 fi
 
 if [ -f auth.json ]
@@ -78,8 +82,9 @@ else
 	echo How to: https://github.com/Edude42/WrenchBot/wiki/Auth-Key
 	echo
 	echo
+	echo Press any key...
 	read -n 1 -s
-	exit
+	exit 0
 fi
 
 if [ -f config.json ]
@@ -97,8 +102,9 @@ else
 	echo Download: https://github.com/Edude42/WrenchBot/blob/master/config.json
 	echo
 	echo
+	echo Press any key...
 	read -n 1 -s
-	exit
+	exit 0
 fi
 
 if [ -f node_modules/discord.js-commando/src/commands/util/eval.js ]
@@ -137,8 +143,9 @@ else
 	echo Example: https://github.com/Edude42/WrenchBot
 	echo
 	echo
+	echo Press any key...
 	read -n 1 -s
-	exit
+	exit 0
 fi
 
 if [ -f autorestart ]
@@ -185,6 +192,6 @@ else
 		echo REPEAT OFF
 		echo
 		node bot.js
-		exit
+		exit 0
 	fi
 fi
