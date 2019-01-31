@@ -1,20 +1,25 @@
 ---
 name: Feature request
-about: Suggest an idea for this project
-title: ''
-labels: ''
+about: Suggest a feature for this project
+title: "[FEATURE REQUEST]"
+labels: feature
 assignees: ''
 
 ---
 
-**Is your feature request related to a problem? Please describe.**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+**Feature name**
+What do you name your feature?
 
-**Describe the solution you'd like**
-A clear and concise description of what you want to happen.
+**Describe the feature**
+What will the feature do?
 
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
+**Reason for feature**
+Why should this feature be added?
 
-**Additional context**
+**Concepts (Optional)**
+What do you think people will do with this?
+
+What do you think the command will do in use?
+
+**Additional information**
 Add any other context or screenshots about the feature request here.
