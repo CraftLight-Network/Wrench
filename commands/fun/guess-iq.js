@@ -1,4 +1,4 @@
-const Command = require('../Command');
+const { Command } = require('discord.js-commando');
 const Random = require('random-js');
 
 module.exports = class GuessIQCommand extends Command {
@@ -6,7 +6,7 @@ module.exports = class GuessIQCommand extends Command {
 		super(client, {
 			name: 'guess-iq',
 			aliases: ['intelligence-quotient', 'smart', 'howsmart', 'iq'],
-			group: 'guessing',
+			group: 'fun',
 			memberName: 'guess-iq',
 			description: 'Guesses a user\'s IQ.',
 			examples: ['iq @user', 'iq @Edude42#2222'],
@@ -20,7 +20,6 @@ module.exports = class GuessIQCommand extends Command {
 			]
 		});
 	}
-
 	run(msg, { user }) {
 		if (user.id === this.client.user.id) return msg.reply('I have the power of code and the internet. So basically, ∞');
 		if (user.id == 272466470510788608) return msg.reply(`${user.id === msg.author.id ? 'Your' : `${user.username}'s`} IQ is over the 64 bit integer limit.`);

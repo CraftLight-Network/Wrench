@@ -1,4 +1,4 @@
-const Command = require('../command');
+const { Command } = require('discord.js-commando');
 
 module.exports = class AgeCommand extends Command {
 	constructor(client) {
@@ -19,7 +19,6 @@ module.exports = class AgeCommand extends Command {
 			]
 		});
 	}
-
 	run(msg, { year }) {
 		const currentYear = new Date().getFullYear();
 		if (year < 175) {

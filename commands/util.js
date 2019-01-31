@@ -1,5 +1,6 @@
 ﻿const config = require("../config.json")
 const { success_id } = config.success;
+
 const yes = ['yes', 'y', 'ye', 'yeah', 'yup', 'yea', 'ya'];
 const no = ['no', 'n', 'nah', 'nope', 'nop'];
 
@@ -18,20 +19,16 @@ module.exports = class Util {
 		}
 		return arr;
 	}
-
 	static list(arr, conj = 'and') {
 		const len = arr.length;
 		return `${arr.slice(0, -1).join(', ')}${len > 1 ? `${len > 2 ? ',' : ''} ${conj} ` : ''}${arr.slice(-1)}`;
 	}
-
 	static shorten(text, maxLen = 2000) {
 		return text.length > maxLen ? `${text.substr(0, maxLen - 3)}...` : text;
 	}
-
 	static randomRange(min, max) {
 		return Math.floor(Math.random() * (max - min + 1)) + min;
 	}
-
 	static trimArray(arr, maxLen = 10) {
 		if (arr.length > maxLen) {
 			const len = arr.length - maxLen;
@@ -40,21 +37,17 @@ module.exports = class Util {
 		}
 		return arr;
 	}
-
 	static firstUpperCase(text, split = ' ') {
 		return text.split(split).map(word => `${word.charAt(0).toUpperCase()}${word.slice(1)}`).join(' ');
 	}
-
 	static formatNumber(number) {
 		return Number.parseFloat(number).toLocaleString(undefined, { maximumFractionDigits: 2 });
 	}
-
 	static base64(text, mode = 'encode') {
 		if (mode === 'encode') return Buffer.from(text).toString('base64');
 		if (mode === 'decode') return Buffer.from(text, 'base64').toString('utf8') || null;
 		throw new TypeError(`${mode} is not a supported base64 mode.`);
 	}
-
 	static today(timeZone) {
 		const now = new Date();
 		if (timeZone) now.setUTCHours(timeZone);
@@ -64,13 +57,11 @@ module.exports = class Util {
 		now.setMilliseconds(0);
 		return now;
 	}
-
 	static tomorrow(timeZone) {
 		const today = Util.today(timeZone);
 		today.setDate(today.getDate() + 1);
 		return today;
 	}
-
 	static async awaitPlayers(msg, max, min, { time = 30000, dmCheck = false } = {}) {
 		const joined = [];
 		joined.push(msg.author.id);
@@ -96,7 +87,6 @@ module.exports = class Util {
 		if (verify.size < min) return false;
 		return verify.map(message => message.author);
 	}
-
 	static async verify(channel, user, time = 30000) {
 		const filter = res => {
 			const value = res.content.toLowerCase();

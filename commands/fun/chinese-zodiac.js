@@ -1,4 +1,4 @@
-const Command = require('../command');
+const { Command } = require('discord.js-commando');
 const signs = require('../commandfiles/chinese-zodiac');
 
 module.exports = class ChineseZodiacCommand extends Command {
@@ -20,7 +20,6 @@ module.exports = class ChineseZodiacCommand extends Command {
 			]
 		});
 	}
-
 	run(msg, { year }) {
 		return msg.say(`The Chinese Zodiac Sign for ${year} is ${signs[year % signs.length]}.`);
 	}

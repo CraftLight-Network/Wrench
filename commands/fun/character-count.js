@@ -1,4 +1,4 @@
-const Command = require('../command');
+const { Command } = require('discord.js-commando');
 const { formatNumber } = require('../util');
 
 module.exports = class CharacterCountCommand extends Command {
@@ -19,7 +19,6 @@ module.exports = class CharacterCountCommand extends Command {
 			]
 		});
 	}
-
 	run(msg, { text }) {
 		return msg.reply(formatNumber(text.length));
 	}

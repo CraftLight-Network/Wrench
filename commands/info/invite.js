@@ -14,7 +14,6 @@ module.exports = class inviteCommand extends Command {
 			}
 		});
 	}
-
 	run(msg) {
 		return msg.embed({
 			color: 4021408,

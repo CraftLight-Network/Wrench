@@ -26,7 +26,6 @@ module.exports = class ServerInfoCommand extends Command {
 			}
 		});
 	}
-
 	run(msg) {
 		return msg.embed({
 			color: 4021408,

@@ -1,4 +1,4 @@
-const Command = require('../Command');
+const { Command } = require('discord.js-commando');
 const { oneLine } = require('common-tags');
 const Random = require('random-js');
 
@@ -7,7 +7,7 @@ module.exports = class GuessAgeCommand extends Command {
 		super(client, {
 			name: 'guess-age',
 			aliases: ['guess-my-age', 'age-guess'],
-			group: 'guessing',
+			group: 'fun',
 			memberName: 'guess-age',
 			description: 'Guess a users age.',
 			examples: ['guess-age', 'guess-age @user'],
@@ -21,7 +21,6 @@ module.exports = class GuessAgeCommand extends Command {
 			]
 		});
 	}
-
 	run(msg, { user }) {
 		if (user.id === this.client.user.id) return msg.reply('Me? Why do you want to know?');
 		const authorUser = user.id === msg.author.id;

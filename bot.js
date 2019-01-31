@@ -91,7 +91,6 @@ client.registry
 	.registerGroups([
         ['fun', 'Fun'],
 		['image', 'Image'],
-		['guessing', 'Guessing'],
         ['info', 'Info'],
         ['owner', 'Owner Only'],
         ['uncategorized', 'Uncategorized'],

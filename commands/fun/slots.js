@@ -20,11 +20,11 @@ const values = {
 	'🍒': 250
 };
 
-module.exports = class SlotMachineCommand extends Command {
+module.exports = class slotsCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'slots',
-			aliases: ['slot', 'slot-machine'],
+			aliases: ['slot', 'slot-machine', 'slotmachine'],
 			group: 'fun',
 			memberName: 'slots',
 			description: 'Play the slots.',
@@ -36,7 +36,6 @@ module.exports = class SlotMachineCommand extends Command {
 			},
 		});
 	}
-
 	async run(msg, { coins }) {
 
 		const roll = this.generateRoll();
@@ -61,9 +60,7 @@ module.exports = class SlotMachineCommand extends Command {
 				`
 			});
 		}
-
 		Currency.addBalance(msg.author.id, coins * winnings);
-
 		return msg.embed({
 			color: 0x5C913B,
 			description: stripIndents`
@@ -76,7 +73,6 @@ module.exports = class SlotMachineCommand extends Command {
 			`
 		});
 	}
-
 	showRoll(roll) {
 		return stripIndents`
 			${roll[0]}ー${roll[1]}ー${roll[2]}
@@ -84,7 +80,6 @@ module.exports = class SlotMachineCommand extends Command {
 			${roll[6]}ー${roll[7]}ー${roll[8]}
 		`;
 	}
-
 	generateRoll() {
 		const roll = [];
 		reels.forEach((reel, index) => {
@@ -93,7 +88,6 @@ module.exports = class SlotMachineCommand extends Command {
 			roll[index + 3] = reel[rand];
 			roll[index + 6] = rand === reel.length - 1 ? reel[0] : reel[rand + 1];
 		});
-
 		return roll;
 	}
 };
