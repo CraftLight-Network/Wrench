@@ -22,8 +22,8 @@ Steps to reproduce the behavior:
 2. Type ...
 3. ...
 
-**Affects**
-What does this bug/error affect?
+**Effects**
+What does this bug/error effect?
 
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
