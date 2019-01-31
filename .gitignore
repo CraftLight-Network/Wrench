@@ -73,10 +73,10 @@ jspm_packages/
 # Yarn Integrity file
 .yarn-integrity
 
-# dotenv environment variables file
+# Dotenv environment variables file
 .env
 
-# next.js build output
+# Next.js build output
 .next
 
 # Lerna
@@ -95,3 +95,6 @@ settings.sqlite3
 data/
 autorestart
 eval.js.bak
+
+# Commands
+commands/owner/
