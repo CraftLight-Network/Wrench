@@ -1,7 +1,48 @@
 #!/bin/bash
 #!/usr/bin/env node console.log('Node.js found.')
-[ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
 repeat="n"
+su="n"
+if hash sudo 2>/dev/null; then
+	[ "$UID" -eq 0 ] || exec sudo bash "$0" "$@"
+else
+	if [ -f nosu ]
+	then
+		echo
+	else
+		if [ -f yessu ]
+		then
+			su
+		else
+			echo
+			echo If you put a file named "nosu" \(no extension\),
+			echo this prompt will go away.
+			echo
+			read -p 'Would you like to run this script as SuperUser? ([y]es/[a]lways/[n]o/[ne]ver) ' su
+		fi
+	fi
+fi
+
+if [ $su == "y" ]
+then
+	su
+else
+	echo
+fi
+
+if [ $su == "ne" ]
+then
+	> nosu
+else
+	echo
+fi
+
+if [ $su == "a" ]
+then
+	> yessu
+	su
+else
+	echo
+fi
 
 if [ -f bot.js ]
 then
@@ -34,7 +75,13 @@ else
 	echo
 	echo -------------------------------------
 	echo
-	sudo npm install
+	if hash sudo 2>/dev/null; then
+		sudo npm install npm@latest -g
+		sudo npm install
+	else
+		npm install npm@latest -g
+		npm install
+	fi
 	echo
 	echo If you are getting permission errors, please install and set up sudo.
 	echo
@@ -149,50 +196,79 @@ else
 	exit 0
 fi
 
-if [ -f autorestart ]
+if [ -f noautorestart ]
 then
-	while true
-	do
-	echo
-	echo REPEAT ON
-	echo
 	node bot.js
-	echo
-	echo Crash detected... Restarting in 15 seconds.
-	sleep 15
-	done
+	exit 0
 else
-	echo
-	echo If you put a file named "autorestart" \(no extension\),
-	echo this prompt will go away and will always restart.
-	echo
-	read -p 'Would you like to automatically restart the bot if it crashes? (y/n) ' repeat
-	echo
-	echo Done! Starting bot...
-	echo 
-	reset
-	echo
-	echo If the command "node" was not found, that means
-	echo you either don\'t have Node.js installed, or
-	echo you don\'t have it set up in your environment.
-	echo
-	if [ $repeat == "y" ]
-	then
+	if [ -f autorestart ]
+	then 
 		while true
 		do
-		echo
-		echo REPEAT ON
-		echo
-		node bot.js
-		echo
-		echo Crash detected... Restarting in 15 seconds.
-		sleep 15
-	done
+			echo
+			echo REPEAT ON
+			echo
+			node bot.js
+			echo
+			echo Crash detected... Restarting in 15 seconds.
+			sleep 15
+		done
 	else
 		echo
-		echo REPEAT OFF
+		read -p 'Would you like to automatically restart the bot if it crashes? ([y]es/[a]lways/[no]/[ne]ver) ' repeat
 		echo
-		node bot.js
-		exit 0
+		echo Done! Starting bot...
+		echo 
+		reset
+		echo
+		echo If the command "node" was not found, that means
+		echo you either don\'t have Node.js installed, or
+		echo you don\'t have it set up in your environment.
+		echo
+		if [ $repeat == "y" ]
+		then
+			while true
+			do
+			echo
+			echo REPEAT ON
+			echo
+			node bot.js
+			echo
+			echo Crash detected... Restarting in 15 seconds.
+			sleep 15
+			done
+		else
+			echo
+		fi
+		if [ $repeat == "ne" ]
+		then
+			> noautorestart
+			while true
+			do
+			echo
+			echo REPEAT OFF
+			echo
+			node bot.js
+			exit 0
+		done
+		else
+			echo
+		fi
+		if [ $repeat == "a" ]
+		then
+			> autorestart
+			while true
+			do
+			echo
+			echo REPEAT ON
+			echo
+			node bot.js
+			echo
+			echo Crash detected... Restarting in 15 seconds.
+			sleep 15
+			done
+		else
+			echo
+		fi
 	fi
 fi

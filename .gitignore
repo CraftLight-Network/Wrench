@@ -94,6 +94,9 @@ auth.json
 settings.sqlite3
 data/
 autorestart
+noautorestart
+nosu
+yessu
 eval.js.bak
 
 # Commands
