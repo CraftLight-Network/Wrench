@@ -7,7 +7,7 @@ module.exports = class disclaimerCommand extends Command {
 			name: 'disclaimer',
 			group: 'info',
 			memberName: 'disclaimer',
-			description: 'Disclaimer about the bot's data usage.',
+			description: 'Disclaimer about the bot\'s data usage.',
 			throttling: {
 				usages: 2,
 				duration: 3
