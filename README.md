@@ -2,7 +2,6 @@
 **Please do not take this bot and claim it as your own.<br/>
 You are free to use this on your own server.**<br/>
 
-***
 # About
 This bot is used mainly for the CustomNetwork.<br/>
 If you would like to see this bot in action, go to "`https://discord.gg/sAxRWVb`"<br/><br/>
@@ -17,8 +16,5 @@ It's just meant to serve a purpose for the CustomNetwork.<br/><br/>
 Some assets used are not mine. Said assets were based off of open-source bots.<br/>
 <sub>If there is any code that is owned by you that you would not like to be in this bot, contact me at edude@edude.xyz.</sub><br/><br/>
 
-Xiao
+Xiao<br/>
 Discord.js-commando
-
-***
-<br/>Enjoy!
