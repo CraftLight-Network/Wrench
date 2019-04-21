@@ -4,7 +4,7 @@
 echo -en "\033]0;WrenchBot (Node.JS)\a"
 repeat='n'
 error=`tput setaf 1`
-cd $0
+cd "$(dirname "$0")"
 
 if [ ! -f node_modules/ ]; then
     clear
