@@ -8,16 +8,24 @@ if not exist node_modules (
 	echo.
 	echo Installing NPM modules. Please wait...
 	echo.
+	move package.json package.json.tmp
+	move package-lock.json package-lock.json.tmp
+	npm install node-gyp
+	move package.json.tmp package.json
+	move package-lock.json.tmp package-lock.json
 	npm install
 	echo.
 	IF ERRORLEVEL 1 (
 		color 04
+		echo --------------------------------------------------------------
+		echo.
 		echo ERROR: NPM FAILED TO RUN
 		echo You must not have Node.js installed.
 		echo.
 		echo To install N.JS and NPM, go to https://nodejs.org/en/download/
 		echo and download the "Windows Installer"
 		echo.
+		echo !! You also need to allow this script admin priviledges. !!
 		pause
 		exit
 	)
