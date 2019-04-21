@@ -138,10 +138,10 @@ IF EXIST autorestart (
 	goto botstart
 ) ELSE (
 	echo.
-	echo If you put a file named "autorestart" (no extension),
+	echo If you put a file named ^"autorestart^" ^(no extension^)^,
 	echo this prompt will go away and will always restart.
 	echo.
-	set /p REPEAT=Would you like to automatically restart the bot if it crashes? ^(y^/n^) )
+	set /p REPEAT=Would you like to automatically restart the bot if it crashes? ^(y^/n^) 
 	echo.
 	echo Done! Starting bot...
 	cls

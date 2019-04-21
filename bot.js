@@ -61,21 +61,36 @@ const auth = require("./auth.json");
 // Require the config file
 const config = require("./config.json")
 
+// Setup enmap
+const Enmap = require("enmap");
+// Command counter
+const commandsRead = new Enmap({
+	name: "commands-read",
+	autoFetch: true,
+	fetchAll: false
+});
+// Message counter
+const messagesRead = new Enmap({
+	name: "messages-read",
+	autoFetch: true,
+	fetchAll: false
+});
+
 // Create the CommandoClient
 const client = new CommandoClient({
-    commandPrefix: config.prefix,
-    owner: config.owners,
+	commandPrefix: config.prefix,
+	owner: config.owners,
 	unknownCommandResponse: config.unknowncommand,
-    disableEveryone: true
+	disableEveryone: true
 });
 
 // Set the activity list
 const activities_list = [
-    "]help", 
-    "]invite",
+	"]help", 
+	"]invite",
 	"on CustomCraft",
 	"a game.",
-    "customcraft.online",
+	"customcraft.online",
 	"Fallout Salvation",
 	"FS: WNC",
 	"with code.",
@@ -89,11 +104,11 @@ client.registry
 	.registerDefaultTypes()
 	.registerTypesIn(path.join(__dirname, 'types'))
 	.registerGroups([
-        ['fun', 'Fun'],
+		['fun', 'Fun'],
 		['image', 'Image'],
-        ['info', 'Info'],
-        ['owner', 'Owner Only'],
-        ['uncategorized', 'Uncategorized'],
+		['info', 'Info'],
+		['owner', 'Owner Only'],
+		['uncategorized', 'Uncategorized'],
 	])
 	.registerDefaultGroups()
 	.registerDefaultCommands({
@@ -101,8 +116,9 @@ client.registry
 	})
 	.registerCommandsIn(path.join(__dirname, 'commands'));
 
-// Startup messages
+// When the bot starts
 client.on("ready", () => {
+	// Startup messages
 	log.OK(`---------------------------------------------`);
 	log.OK(`BOT START ON: ${utcDate}`);
 	log.OK(`---------------------------------------------`);
@@ -119,7 +135,7 @@ client.on("ready", () => {
 	setInterval(() => {
 		const index = Math.floor(Math.random() * (activities_list.length - 1) + 1);
 		client.user.setActivity(activities_list[index]);
-	}, 15000);
+	}, 30000);
 });
 
 // Notify the console that a new server is using the bot
@@ -138,19 +154,29 @@ client.on('disconnect', event => {
 	process.exit(0);
 });
 
-// Log all commands used
+// Message handler
 client.on("message", async message => {
 	// Make sure the user isn't a bot
 	if(message.author.bot) return;
 	
-	// Check if it starts with the prefix
-	if(message.content.indexOf(config.prefix) !== 0) return;
+	//if(message.content.indexOf(config.prefix) !== 0) return;
 	
-	// Split the command like commando
+	// Check if it starts with the prefix
+	if(message.content.indexOf(config.prefix) !== 0) {
+		// Add to the message counter
+		messagesRead.inc("number");
+		return;
+	}
+	
+	// Split the command
 	const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
 	const command = args.shift().toLowerCase();
-
+	
+	// Log the command
 	log.CMD(`${message.author}: ${command}`);
+
+	// Add to the Enmap stats
+	commandsRead.inc("number");
 });
 	
 // # Error Handling #

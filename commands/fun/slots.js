@@ -60,7 +60,6 @@ module.exports = class slotsCommand extends Command {
 				`
 			});
 		}
-		Currency.addBalance(msg.author.id, coins * winnings);
 		return msg.embed({
 			color: 0x5C913B,
 			description: stripIndents`
@@ -69,7 +68,7 @@ module.exports = class slotsCommand extends Command {
 				${this.showRoll(roll)}
 
 				**Congratulations!**
-				You won ${Currency.convert(coins * winnings)}!
+				You won!
 			`
 		});
 	}
