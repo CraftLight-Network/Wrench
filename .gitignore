@@ -11,7 +11,5 @@ Thumbs.db
 desktop.ini
 auth.json
 settings.sqlite3
-norep
-yesrep
 data/
 commands/owner/

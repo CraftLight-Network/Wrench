@@ -1,6 +1,6 @@
 test/fixtures/* -text
 vcbuild.bat text eol=crlf
 * text=auto
-StartBotMac.command linguist-vendored
-StartBotUnix.sh linguist-vendored
-StartBotWindows.bat linguist-vendored
+startMac.command linguist-vendored
+startUnix.sh linguist-vendored
+startWindows.bat linguist-vendored

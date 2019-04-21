@@ -26,14 +26,14 @@ if not exist node_modules (
 
 copy eval.js node_modules\discord.js-commando\src\commands\util\ && cls
 
-if exist norep (
+if exist data\norep (
 	cls
 	echo.
 	echo REPEAT OFF
 	echo.
 	goto xrep
 )
-if exist yesrep (
+if exist data\yesrep (
 	cls
 	echo.
 	echo REPEAT ON
@@ -71,29 +71,22 @@ if "%repeat%"=="n" (
 	exit
 )
 if "%repeat%"=="ne" (
-	echo. 2>norep
+	echo. 2>data\norep
 	
 	cls
 	echo.
 	echo REPEAT OFF
 	echo.
 	
-	node bot.js
-	echo Crash detected.
-	pause
-	exit
+	goto xrep
 )
 if "%repeat%"=="al" (
-	echo. 2>yesrep
+	echo. 2>data\yesrep
 	
 	cls
 	echo.
 	echo REPEAT ON
 	echo.
 	
-	:rep
-	node bot.js
-	echo Crash detected... Restarting in 15 seconds
-	ping -n 15 127.0.0.1 >nul
-	goto botstart
+	goto rep
 )
