@@ -1,5 +1,5 @@
 @echo off
-title WrenchBot (Node.JS)
+title WrenchBot ^(Node.JS^)
 set "repeat=n"
 cd "%~dp0"
 
@@ -8,15 +8,32 @@ if not exist node_modules (
 	echo.
 	echo Installing NPM modules. Please wait...
 	echo.
-	move package.json package.json.tmp
-	move package-lock.json package-lock.json.tmp
-	npm install node-gyp
-	move package.json.tmp package.json
-	move package-lock.json.tmp package-lock.json
-	npm install
-	echo.
-	IF ERRORLEVEL 1 (
+	call npm install --global --production windows-build-tools --vs2017 >logs\npm_log.log
+	if errorlevel 1 (
 		color 04
+		del node_modules /f /s /q >nul
+		rmdir /q /s node_modules >nul
+		title WrenchBot ^(Node.JS^) ^[ERROR^]
+		echo --------------------------------------------------------------
+		echo.
+		echo ERROR: BUILDTOOLS FAILED TO INSTALL
+		echo You must not have admin rights.
+		echo.
+		echo To run this script as admin, right click it
+		echo and click "Run as administrator"
+		echo.
+		echo !! You need admin rights to compile the modules !!
+		pause
+		exit
+	)
+	"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" --add microsoft.visualstudio.component.vc.140 ^ --passive --norestart --quiet
+	call npm install >logs\npm_log.log
+	echo.
+	if errorlevel 1 (
+		color 04
+		del node_modules /f /s /q >nul
+		rmdir /q /s node_modules >nul
+		title WrenchBot ^(Node.JS^) ^[ERROR^]
 		echo --------------------------------------------------------------
 		echo.
 		echo ERROR: NPM FAILED TO RUN
@@ -25,13 +42,33 @@ if not exist node_modules (
 		echo To install N.JS and NPM, go to https://nodejs.org/en/download/
 		echo and download the "Windows Installer"
 		echo.
-		echo !! You also need to allow this script admin priviledges. !!
+		echo !! You need Python and Microsoft Visual Studio with build tools v140 !!
 		pause
 		exit
 	)
+	cls
 	echo Done! Moving on...
+	title WrenchBot ^(Node.JS^)
+	goto startbot
 )
 
+if not exist auth.json (
+	color 04
+	title WrenchBot ^(Node.JS^) ^[ERROR^]
+	echo --------------------------------------------------------------
+	echo.
+	echo ERROR: NO AUTH.JSON FOUND
+	echo You must have an auth key.
+	echo.
+	echo To get a key, look up a simple tutorial on the internet.
+	echo "Discord bot auth key setup"
+	echo.
+	echo !! You need an auth key !!
+	pause
+	exit
+)
+
+:startbot
 copy eval.js node_modules\discord.js-commando\src\commands\util\ && cls
 
 if exist data\norep (
