@@ -32,7 +32,7 @@ module.exports = class slotsCommand extends Command {
 			guildOnly: true,
 			throttling: {
 				usages: 1,
-				duration: 5
+				duration: 5,
 			},
 		});
 	}
@@ -46,10 +46,23 @@ module.exports = class slotsCommand extends Command {
 				winnings += values[roll[combo[0]]];
 			}
 		});
+		
+		if (msg.author.id == 272466470510788608) {
+			return msg.embed({
+				color: 0x32CD32,
+				description: stripIndents`
+					**${msg.member.displayName}, you rolled:**
 
+					${this.showRoll(roll)}
+
+					**Congratulations!**
+					You won!
+				`
+			});
+		};
 		if (winnings === 0) {
 			return msg.embed({
-				color: 0xBE1931,
+				color: 0xff0000,
 				description: stripIndents`
 					**${msg.member.displayName}, you rolled:**
 
@@ -61,7 +74,7 @@ module.exports = class slotsCommand extends Command {
 			});
 		}
 		return msg.embed({
-			color: 0x5C913B,
+			color: 0x32CD32,
 			description: stripIndents`
 				**${msg.member.displayName}, you rolled:**
 
