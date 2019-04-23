@@ -1,14 +1,60 @@
-// Base components
+// // Bot setup
 const { CommandoClient } = require('discord.js-commando');
 const { RichEmbed } = require('discord.js');
 const { oneLine } = require('common-tags');
 const path = require('path');
+const config = require("./config.json")
 
-// Simple timestamps to print
+// Commando
+const client = new CommandoClient({
+	commandPrefix: config.prefix,
+	owner: config.owners,
+	unknownCommandResponse: config.unknowncommand,
+	disableEveryone: true
+});
+
+client.registry
+	.registerDefaultTypes()
+	.registerTypesIn(path.join(__dirname, 'types'))
+	.registerGroups([
+		['fun', 'Fun'],
+		['image', 'Image'],
+		['info', 'Info'],
+		['owner', 'Owner Only'],
+		['uncategorized', 'Uncategorized'],
+	])
+	.registerDefaultGroups()
+	.registerDefaultCommands({
+		eval: false,
+	})
+	.registerCommandsIn(path.join(__dirname, 'commands'));
+
+// Setup enmap
+const Enmap = require("enmap");
+
+// Command counter
+const commandsRead = new Enmap({
+	name: "commands-read",
+	autoFetch: true,
+	fetchAll: false
+});
+
+// Message counter
+const messagesRead = new Enmap({
+	name: "messages-read",
+	autoFetch: true,
+	fetchAll: false
+});
+
+
+
+// // Logging
+
+// Timestamps
 const dt = new Date();
 const utcDate = dt.toUTCString();
 
-// Set up console.log logging
+// Winston
 const tsFormat = () => (new Date()).toLocaleTimeString();
 const winston = require('winston');
 require('winston-daily-rotate-file');
@@ -36,13 +82,13 @@ const log = new (winston.Logger)({
 	},
 	handleExceptions: true,
 	transports: [
-		new (winston.transports.Console)({
+		new (winston.transports.Console)({ // Console logging
 			name: 'log-console',
 			timestamp: tsFormat,
 			colorize: true,
 			level: 'CONSOLE'
 		}),
-		new (winston.transports.DailyRotateFile)({
+		new (winston.transports.DailyRotateFile)({ // File logging
 			name: 'log-file',
 			json: false,
 			datePattern: 'YYYY-MM-DD',
@@ -55,34 +101,18 @@ const log = new (winston.Logger)({
     ]
 });
 
-// Require the authentication key file
-const auth = require("./auth.json");
+process.on('unhandledRejection', (err, p) => {log.ERROR(`Rejected Promise: ${p} / Rejection: ${err}`);}); // Unhandled Rejection
+client.on('error', err => log.ERROR(err)); // Errors
+client.on('warn', warn => log.WARN(warn)); // Warnings
+client.on('log', log => log.CONSOLE(log)); // Logs
+client.on('debug', debug => log.DEBUG(debug)); // Debug
+client.on("guildCreate", guild => {log.INFO(`Added in a new server: ${guild.name} (id: ${guild.id})`);}); // Notify the console that a new server is using the bot
+client.on("guildDelete", guild => {log.INFO(`Removed from server: ${guild.name} (id: ${guild.id})`);}); // Notify the console that a server removed the bot
+client.on('disconnect', event => {log.ERROR(`[DISCONNECT] ${event.code}`);process.exit(0);}); // Notify the console that the bot has disconnected
 
-// Require the config file
-const config = require("./config.json")
 
-// Setup enmap
-const Enmap = require("enmap");
-// Command counter
-const commandsRead = new Enmap({
-	name: "commands-read",
-	autoFetch: true,
-	fetchAll: false
-});
-// Message counter
-const messagesRead = new Enmap({
-	name: "messages-read",
-	autoFetch: true,
-	fetchAll: false
-});
 
-// Create the CommandoClient
-const client = new CommandoClient({
-	commandPrefix: config.prefix,
-	owner: config.owners,
-	unknownCommandResponse: config.unknowncommand,
-	disableEveryone: true
-});
+// // Client actions
 
 // Set the activity list
 const activities_list = [
@@ -99,23 +129,6 @@ const activities_list = [
 	"things."
 ];
 
-// Register everything
-client.registry
-	.registerDefaultTypes()
-	.registerTypesIn(path.join(__dirname, 'types'))
-	.registerGroups([
-		['fun', 'Fun'],
-		['image', 'Image'],
-		['info', 'Info'],
-		['owner', 'Owner Only'],
-		['uncategorized', 'Uncategorized'],
-	])
-	.registerDefaultGroups()
-	.registerDefaultCommands({
-		eval: false,
-	})
-	.registerCommandsIn(path.join(__dirname, 'commands'));
-
 // When the bot starts
 client.on("ready", () => {
 	// Startup messages
@@ -131,35 +144,19 @@ client.on("ready", () => {
 	// Default activity message
 	client.user.setActivity("a game.")
 	
-	// User activity message
+	// Random activity message
 	setInterval(() => {
 		const index = Math.floor(Math.random() * (activities_list.length - 1) + 1);
 		client.user.setActivity(activities_list[index]);
 	}, 30000);
 });
 
-// Notify the console that a new server is using the bot
-client.on("guildCreate", guild => {
-	log.INFO(`Added in a new server: ${guild.name} (id: ${guild.id})`);
-});
 
-// Notify the console that a server removed the bot
-client.on("guildDelete", guild => {
-	log.INFO(`Removed from server: ${guild.name} (id: ${guild.id})`);
-});
-
-// Notify the console that the bot has disconnected
-client.on('disconnect', event => {
-	log.ERROR(`[DISCONNECT] ${event.code}`);
-	process.exit(0);
-});
 
 // Message handler
 client.on("message", async message => {
 	// Make sure the user isn't a bot
 	if(message.author.bot) return;
-	
-	//if(message.content.indexOf(config.prefix) !== 0) return;
 	
 	// Check if it starts with the prefix
 	if(message.content.indexOf(config.prefix) !== 0) {
@@ -178,25 +175,13 @@ client.on("message", async message => {
 	// Add to the Enmap stats
 	commandsRead.inc("number");
 });
-	
-// # Error Handling #
 
-// Unhandled Rejection
-process.on('unhandledRejection', (err, p) => {
-	log.ERROR(`Rejected Promise: ${p} / Rejection: ${err}`);
-});
 
-// Errors
-client.on('error', err => log.ERROR(err));
 
-// Warnings
-client.on('warn', warn => log.WARN(warn));
+// // Logging in
 
-// Logs
-client.on('log', log => log.CONSOLE(log));
-
-// Debug
-client.on('debug', debug => log.DEBUG(debug));
+// Require the authentication key file
+const auth = require("./auth.json");
 
 // Login using auth.json
 client.login(auth.token);
