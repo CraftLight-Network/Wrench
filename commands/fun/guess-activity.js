@@ -28,9 +28,9 @@ module.exports = class GuessActivityCommand extends Command {
 		const authorUser = user.id === msg.author.id;
 		const random = new Random();
 		const activity = activities[random.integer(0, activities.length - 1)];
-		if (user.id == 272466470510788608) return msg.reply(`I think ${authorUser ? 'you are' : `${user.username} is`} helping me ~~take over the government,~~ uh, I mean, code.`);
+		// if (user.id == 272466470510788608) return msg.reply(`I think ${authorUser ? 'you are' : `${user.username} is`} helping me ~~take over the government,~~ uh, I mean, code.`);
 		return msg.reply(oneLine`
-			I think ${authorUser ? 'you are' : `${user.username} is`} ${activity}
+			I think ${authorUser ? 'you are' : `${user.username} is`} ${activity}.
 		`);
 	}
 };
