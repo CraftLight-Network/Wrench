@@ -162,7 +162,7 @@ client.on("message", async message => {
 		const command = args.shift().toLowerCase();
 		
 		// Log the command
-		log.CMD(`${message.author}: ${command}`);
+		log.CMD(`[DM] ${message.author}: ${command}`);
 
 		// Add to the Enmap stats
 		commandsRead.inc("number");
