@@ -8,7 +8,7 @@ module.exports = class QRCodeCommand extends Command {
 		super(client, {
 			name: 'qr',
 			aliases: ['scan-qr-code', 'scan-qr', 'read-qr', 'read-qr-code'],
-			group: 'image',
+			group: 'editing',
 			memberName: 'qr',
 			description: 'Read a QR code from an image.',
 			examples: ['qr <image>'],

@@ -8,7 +8,7 @@ if not exist node_modules (
 	echo.
 	echo Installing NPM modules. Please wait...
 	echo.
-	call npm install --global --production windows-build-tools --vs2017 >logs\npm_log.log
+	call npm install --global --production windows-build-tools --vs2017 >data\logs\npm_log.log
 	if errorlevel 1 (
 		color 04
 		del node_modules /f /s /q >nul
@@ -27,7 +27,7 @@ if not exist node_modules (
 		exit
 	)
 	"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" --add microsoft.visualstudio.component.vc.140 ^ --passive --norestart --quiet
-	call npm install >logs\npm_log.log
+	call npm install >data\logs\npm_log.log
 	echo.
 	if errorlevel 1 (
 		color 04
@@ -69,7 +69,7 @@ if not exist auth.json (
 )
 
 :startbot
-copy eval.js node_modules\discord.js-commando\src\commands\util\ && cls
+copy files\eval.js node_modules\discord.js-commando\src\commands\util\ && cls
 
 if exist data\norep (
 	cls

@@ -3,4 +3,4 @@ vcbuild.bat text eol=crlf
 * text=auto
 startMac.command linguist-vendored
 startUnix.sh linguist-vendored
-startWindows.bat linguist-vendored
+startWindows.cmd linguist-vendored

@@ -17,10 +17,11 @@ client.registry
 	.registerTypesIn(path.join(__dirname, 'types'))
 	.registerGroups([
 		['fun', 'Fun'],
-		['image', 'Image'],
+		['editing', 'Editing'],
+		['helpful', 'Helpful'],
+		['moderation', 'Moderation'],
 		['info', 'Info'],
-		['owner', 'Owner Only'],
-		['uncategorized', 'Uncategorized'],
+		// ['owner', 'Owner'],
 	])
 	.registerDefaultGroups()
 	.registerDefaultCommands({
@@ -88,7 +89,7 @@ const log = new (winston.Logger)({
 			name: 'log-file',
 			json: false,
 			datePattern: 'YYYY-MM-DD',
-			filename: 'logs/log-%DATE%.log',
+			filename: 'data/logs/log-%DATE%.log',
 			zippedArchive: true,
 			maxSize: '128m',
 			maxFiles: '14d',

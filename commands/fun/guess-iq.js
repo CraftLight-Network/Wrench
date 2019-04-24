@@ -1,4 +1,4 @@
-const { Command } = require('discord.js-commando');
+﻿const { Command } = require('discord.js-commando');
 const Random = require('random-js');
 
 module.exports = class GuessIQCommand extends Command {

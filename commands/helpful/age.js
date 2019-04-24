@@ -4,7 +4,7 @@ module.exports = class AgeCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'age',
-			group: 'fun',
+			group: 'helpful',
 			aliases: ['calc-age', 'calcage', 'whatage', 'what-age'],
 			memberName: 'age',
 			description: 'Calculates how old a person is, or when they were born.',

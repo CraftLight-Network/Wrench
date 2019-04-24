@@ -4,21 +4,21 @@
 echo -en "\033]0;WrenchBot (Node.JS)\a"
 repeat='n'
 error=`tput setaf 1`
-cd $0
+cd "$(dirname "$0")"
 
 if [ ! -f node_modules/ ]; then
     clear
 	echo
 	echo Installing NPM modules. Please wait...
 	echo
-	npm install --global --production build-tools > logs/npm_log.log
+	npm install --global --production build-tools > data/logs/npm_log.log
 	if [ $? -eq 1 ]; then
 		rm -rf node_modules
 		echo -e '${error}--------------------------------------------------------------\n\nERROR: BUILDTOOLS FAILED TO INSTALL\nYou must not have sudo/su rights.\n\nTo run this script as su, run sudo startUnix.sh\nOr run su, and then the script.\n\n!! You need superuser rights to compile the modules !!'
 		read  -n 1 -p "Press any key to contunue . . ."
 		exit
 	fi
-	npm install > logs/npm_log
+	npm install > data/logs/npm_log
 	echo
 	if [ $? -eq 0 ]; then
 		echo Done! Moving on...
@@ -37,7 +37,7 @@ if [ ! -f auth.json ]; then
 	exit
 fi
 
-cp eval.js node_modules/discord.js-commando/src/commands/util/ && clear
+cp files/eval.js node_modules/discord.js-commando/src/commands/util/ && clear
 
 repeat() {
 	while true

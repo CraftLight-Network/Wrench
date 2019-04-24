@@ -6,7 +6,7 @@ module.exports = class CharacterCountCommand extends Command {
 		super(client, {
 			name: 'character-count',
 			aliases: ['characters', 'chars', 'length', 'char'],
-			group: 'fun',
+			group: 'helpful',
 			memberName: 'character-count',
 			description: 'How many characters are in your argument.',
 			examples: ['char Hello', 'char This has 17 chars'],

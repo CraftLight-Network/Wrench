@@ -3,7 +3,7 @@ const { oneLine } = require('common-tags');
 const Random = require('random-js');
 
 const genders = ['male', 'female'];
-const { eyeColors, hairColors, hairStyles, extras } = require('../commandfiles/guess-looks');
+const { eyeColors, hairColors, hairStyles, extras } = require('../../files/guess-looks');
 
 module.exports = class GuessLooksCommand extends Command {
 	constructor(client) {
@@ -37,7 +37,7 @@ module.exports = class GuessLooksCommand extends Command {
 		const inches = random.integer(0, 11);
 		const weight = random.integer(50, 300);
 		const extra = extras[random.integer(0, extras.length - 1)];
-		if (user.id == 272466470510788608) return msg.reply(`I think ${authorUser ? 'you are' : `${user.username} is`} at least a year old male with blue eyes and short dirty blonde hair. ${authorUser ? 'You are' : `${gender === 'male' ? 'He' : 'He'} is`} 5' 6" and weigh${authorUser ? '' : 's'} 124 pounds. Don't forget the emmense knowledge of tech!`);
+		if (user.id == 272466470510788608) return msg.reply(`I think ${authorUser ? 'you are' : `${user.username} is`} at least a year old male with blue eyes and short dirty blonde hair. ${authorUser ? 'You are' : `${gender === 'male' ? 'He' : 'He'} is`} 5' 6" and weigh${authorUser ? '' : 's'} 124 pounds. Don't forget the immense knowledge of tech!`);
 		return msg.reply(oneLine`
 			I think ${authorUser ? 'you are' : `${user.username} is`} a ${age} year old ${gender} with ${eyeColor} eyes
 			and ${hairStyle} ${hairColor} hair. ${authorUser ? 'You are' : `${gender === 'male' ? 'He' : 'She'} is`}

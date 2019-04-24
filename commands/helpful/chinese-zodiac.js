@@ -1,12 +1,12 @@
 const { Command } = require('discord.js-commando');
-const signs = require('../commandfiles/chinese-zodiac');
+const signs = require('../../files/chinese-zodiac');
 
 module.exports = class ChineseZodiacCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'chinese-zodiac',
 			aliases: ['chinese-zodiac-sign', 'zodiac-chinese', 'chinesezodiac', 'cz'],
-			group: 'fun',
+			group: 'helpful',
 			memberName: 'chinese-zodiac',
 			description: 'Calculates your Chinese Zodiac sign.',
 			examples: ['cz 2012', 'cz 1994'],
