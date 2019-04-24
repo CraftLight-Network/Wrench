@@ -12,7 +12,6 @@ const client = new CommandoClient({
 	unknownCommandResponse: config.unknowncommand,
 	disableEveryone: true
 });
-
 client.registry
 	.registerDefaultTypes()
 	.registerTypesIn(path.join(__dirname, 'types'))
@@ -31,14 +30,12 @@ client.registry
 
 // Setup enmap
 const Enmap = require("enmap");
-
 // Command counter
 const commandsRead = new Enmap({
 	name: "commands-read",
 	autoFetch: true,
 	fetchAll: false
 });
-
 // Message counter
 const messagesRead = new Enmap({
 	name: "messages-read",
@@ -58,7 +55,6 @@ const utcDate = dt.toUTCString();
 const tsFormat = () => (new Date()).toLocaleTimeString();
 const winston = require('winston');
 require('winston-daily-rotate-file');
-
 const log = new (winston.Logger)({
 	levels: {
 		'OK': 0,
