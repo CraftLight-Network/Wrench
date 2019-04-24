@@ -153,10 +153,24 @@ client.on("ready", () => {
 // Message handler
 client.on("message", async message => {
 	// Make sure the user isn't a bot
-	if(message.author.bot) return;
+	if (message.author.bot) return;
+	
+	// Check if it is a DM
+	if (message.guild === null) {
+		// Split the command
+		const args = message.content.slice(config.prefix.length -1).trim().split(/ +/g);
+		const command = args.shift().toLowerCase();
+		
+		// Log the command
+		log.CMD(`${message.author}: ${command}`);
+
+		// Add to the Enmap stats
+		commandsRead.inc("number");
+		return;
+	}
 	
 	// Check if it starts with the prefix
-	if(message.content.indexOf(config.prefix) !== 0) {
+	if (message.content.indexOf(config.prefix) !== 0) {
 		// Add to the message counter
 		messagesRead.inc("number");
 		return;
