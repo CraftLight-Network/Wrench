@@ -19,7 +19,7 @@ client.registry
 		['fun', 'Fun'],
 		['editing', 'Editing'],
 		['helpful', 'Helpful'],
-		['moderation', 'Moderation'],
+		// ['moderation', 'Moderation'],
 		['info', 'Info'],
 		// ['owner', 'Owner'],
 	])
