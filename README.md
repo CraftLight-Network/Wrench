@@ -14,6 +14,5 @@ It's just meant to serve a purpose for the CustomNetwork.<br/><br/>
 ## Credit
 Some assets used are not mine. Said assets were based off on open-source bots.<br/>
 <sub>If there is any code that is owned by you that you would not like to be in this bot, contact me at edude@edude.xyz.</sub><br/><br/>
-
 [Xiao](https://github.com/dragonfire535/xiao)<br/>
 [Discord.js-commando Bot](https://github.com/WeebDev/Commando)
