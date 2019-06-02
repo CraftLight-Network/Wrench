@@ -27,7 +27,7 @@
     "opusscript": "0.0.6",
     "path": "^0.12.7",
     "random-js": "^1.0.8",
-    "sequelize": ">=5.3.0",
+    "sequelize": ">=5.8.7",
     "snekfetch": "^4.0.4",
     "winston": "^2.4.4",
     "winston-daily-rotate-file": "^3.6.0",
