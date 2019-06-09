@@ -10,7 +10,6 @@ node_modules/
 Thumbs.db
 desktop.ini
 auth.json
-settings.sqlite3
 data/storage/
 data/enmap.*
 commands/owner/
