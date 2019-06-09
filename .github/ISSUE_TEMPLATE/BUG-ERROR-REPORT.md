@@ -1,5 +1,5 @@
 **Title:**
-Set your title to "[BUG/ERROR] <Insert issue>"
+Set your title to "[BUG/ERROR] (Insert issue)"
 
 **Describe the bug/error**
 What does the bug/error do?
