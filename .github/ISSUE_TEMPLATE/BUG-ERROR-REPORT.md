@@ -1,4 +1,4 @@
-**Title:**
+**Title**
 Set your title to "[BUG/ERROR] (Insert issue)"
 
 **Describe the bug/error**
