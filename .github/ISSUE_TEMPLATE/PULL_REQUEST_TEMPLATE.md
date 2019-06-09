@@ -1,7 +1,7 @@
 ### Note:<br/>
 A similar pull request may have been made already!<br/>
 Please check the [pull requests](../) to make sure.<br/>
-For more information, see the `CONTRIBUTING` guide.<br/><br/>
+For more information, see the `CONTRIBUTING` guide.
 ***
 **Title**<br/>
 Set your title to
