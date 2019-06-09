@@ -6,14 +6,13 @@ For more information, see the `CONTRIBUTING` guide.
 **Title**<br/>
 Set your title to
 
-**Summary**
+**Summary**<br/>
 This pull request fixes/adds (Insert bugs/features)
 
-**Reasons**
+**Reasons**<br/>
 Why this pull request should be merged.
 
-**Closing issues**
-
+**Closing issues**<br/>
 <!-- Put `closes #XXXX` in your comment to auto-close the issue that your PR fixes (if such). -->
 Fixes #
 
