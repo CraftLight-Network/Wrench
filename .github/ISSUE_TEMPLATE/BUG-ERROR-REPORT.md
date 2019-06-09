@@ -1,20 +1,11 @@
----
-name: Bug/Error report
-about: Report any bugs/errors
-title: "[BUG/ERROR]"
-labels: bug, error
-assignees: ''
-
----
+**Title:**
+Set your title to "[BUG/ERROR] <Insert issue>"
 
 **Describe the bug/error**
 What does the bug/error do?
 
 **Bug/Error message**
 What is the message the bug/error is sending?
-
-**Location**
-Did you use the command in DM's or a server?
 
 **To Reproduce**
 Steps to reproduce the behavior:
