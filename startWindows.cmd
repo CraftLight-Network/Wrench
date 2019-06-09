@@ -6,9 +6,14 @@ cd "%~dp0"
 if not exist node_modules (
 	cls
 	echo.
+	echo Before we install all of the NPM modules, we need to make sure you have some things.
+	echo Node.JS (+NPM), FFmpeg.
+	echo.
+	pause
+	echo.
 	echo Installing NPM modules. Please wait...
 	echo.
-	call npm install --global --production windows-build-tools --vs2017 >data\logs\npm_log.log
+	call npm install --global --production windows-build-tools --vs2017 >data\storage\logs\npm_log.log
 	if errorlevel 1 (
 		color 04
 		del node_modules /f /s /q >nul
@@ -27,7 +32,7 @@ if not exist node_modules (
 		exit
 	)
 	"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vs_installer.exe" --add microsoft.visualstudio.component.vc.140 ^ --passive --norestart --quiet
-	call npm install >data\logs\npm_log.log
+	call npm install >data\storage\logs\npm_log.log
 	echo.
 	if errorlevel 1 (
 		color 04
@@ -69,16 +74,17 @@ if not exist auth.json (
 )
 
 :startbot
-copy files\eval.js node_modules\discord.js-commando\src\commands\util\ && cls
+copy data\help.js node_modules\discord.js-commando\src\commands\util\ && cls
+copy data\eval.js node_modules\discord.js-commando\src\commands\util\ && cls
 
-if exist data\norep (
+if exist data\storage\norep (
 	cls
 	echo.
 	echo REPEAT OFF
 	echo.
 	goto xrep
 )
-if exist data\yesrep (
+if exist data\storage\yesrep (
 	cls
 	echo.
 	echo REPEAT ON
@@ -116,7 +122,7 @@ if "%repeat%"=="n" (
 	exit
 )
 if "%repeat%"=="ne" (
-	echo. 2>data\norep
+	echo. 2>data\storage\norep
 	
 	cls
 	echo.
@@ -126,7 +132,7 @@ if "%repeat%"=="ne" (
 	goto xrep
 )
 if "%repeat%"=="al" (
-	echo. 2>data\yesrep
+	echo. 2>data\storage\yesrep
 	
 	cls
 	echo.

@@ -2,7 +2,7 @@ const { Command } = require('discord.js-commando');
 const { oneLine } = require('common-tags');
 const Random = require('random-js');
 
-const { activities } = require('../../files/guess-activity');
+const { activities } = require('../../data/guess-activity');
 
 module.exports = class GuessActivityCommand extends Command {
 	constructor(client) {
@@ -13,6 +13,7 @@ module.exports = class GuessActivityCommand extends Command {
 			memberName: 'guess-activity',
 			description: 'Guess what a user is doing.',
 			examples: ['guess-activity', 'guess-activity @user'],
+			guildOnly: true,
 			args: [
 				{
 					key: 'user',

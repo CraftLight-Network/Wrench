@@ -9,7 +9,8 @@ module.exports = class GuessIQCommand extends Command {
 			group: 'fun',
 			memberName: 'guess-iq',
 			description: 'Guesses a user\'s IQ.',
-			examples: ['iq @user', 'iq @Edude42#2222'],
+			examples: ['iq @user', 'iq @user'],
+			guildOnly: true,
 			args: [
 				{
 					key: 'user',

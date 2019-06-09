@@ -11,6 +11,7 @@ module.exports = class daysCommand extends Command {
 			memberName: 'days',
 			description: 'Calculates how many days are left until a month and day.',
 			examples: ['days 8 24', 'days'],
+			guildOnly: true,
 			args: [
 				{
 					key: 'month',

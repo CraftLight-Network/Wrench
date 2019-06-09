@@ -21,6 +21,7 @@ module.exports = class botinfoCommand extends Command {
 			memberName: 'bot-info',
 			description: 'Displays information about this bot.',
 			examples: ['bot-info', 'botinfo'],
+			guildOnly: true,
 			throttling: {
 				usages: 2,
 				duration: 3

@@ -3,18 +3,18 @@ const { CommandoClient } = require('discord.js-commando');
 const { RichEmbed } = require('discord.js');
 const { oneLine } = require('common-tags');
 const path = require('path');
-const config = require("./config.json")
+const config = require("./config.json");
 
 // Commando
 const client = new CommandoClient({
 	commandPrefix: config.prefix,
 	owner: config.owners,
-	unknownCommandResponse: config.unknowncommand,
-	disableEveryone: true
+	disableEveryone: true,
+	unknownCommandResponse: false,
 });
 client.registry
 	.registerDefaultTypes()
-	.registerTypesIn(path.join(__dirname, 'types'))
+	.registerTypesIn(path.join(__dirname, 'data/types'))
 	.registerGroups([
 		['fun', 'Fun'],
 		['editing', 'Editing'],
@@ -114,11 +114,12 @@ client.on('disconnect', event => {log.ERROR(`[DISCONNECT] ${event.code}`);proces
 // Set the activity list
 const activities_list = [
 	"]help", 
-	"]invite",
 	"on CustomCraft",
 	"a game.",
 	"customcraft.online",
-	"Fallout Salvation",
+	"http://cust.pw/",
+	"http://cust.pw/wb",
+	"on Fallout Salvation",
 	"FS: WNC",
 	"with code.",
 	"with Edude42",
@@ -148,27 +149,27 @@ client.on("ready", () => {
 	}, 30000);
 });
 
-
+/*
+// Music
+client.on('voiceStateUpdate', (oldMember, newMember) => {
+	const channel = client.channels.get("525499487049875456");
+	console.log(channel.members)
+	if (channel.members.size >= 1) {
+		channel.join()
+	}
+	if (channel.members.size == 1) {
+		if (newMember.user.id == '518961713098260490') {
+			channel.leave()
+		}
+	}
+})
+*/
 
 // Message handler
 client.on("message", async message => {
 	// Make sure the user isn't a bot
 	if (message.author.bot) return;
-	
-	// Check if it is a DM
-	if (message.guild === null) {
-		// Split the command
-		const args = message.content.slice(config.prefix.length -1).trim().split(/ +/g);
-		const command = args.shift().toLowerCase();
 		
-		// Log the command
-		log.CMD(`[DM] ${message.author}: ${command}`);
-
-		// Add to the Enmap stats
-		commandsRead.inc("number");
-		return;
-	}
-	
 	// Check if it starts with the prefix
 	if (message.content.indexOf(config.prefix) !== 0) {
 		// Add to the message counter

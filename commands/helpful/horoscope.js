@@ -3,7 +3,7 @@ const Discord = require("discord.js");
 const request = require('node-superfetch');
 const cheerio = require('cheerio');
 const { list, firstUpperCase } = require('../util');
-const signs = require('../../files/horoscope');
+const signs = require('../../data/horoscope');
 
 module.exports = class horoscopeCommand extends Command {
 	constructor(client) {
@@ -14,6 +14,7 @@ module.exports = class horoscopeCommand extends Command {
 			description: 'Calculates today\'s horoscope.',
 			details: `**Signs:** ${signs.join(', ')}`,
 			clientPermissions: ['EMBED_LINKS'],
+			guildOnly: true,
 			args: [
 				{
 					key: 'sign',

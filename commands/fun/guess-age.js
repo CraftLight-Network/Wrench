@@ -11,6 +11,7 @@ module.exports = class GuessAgeCommand extends Command {
 			memberName: 'guess-age',
 			description: 'Guess a users age.',
 			examples: ['guess-age', 'guess-age @user'],
+			guildOnly: true,
 			args: [
 				{
 					key: 'user',

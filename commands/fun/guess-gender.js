@@ -9,6 +9,7 @@ module.exports = class genderCommand extends Command {
 			group: 'fun',
 			memberName: 'guess-gender',
 			description: 'Guess a name or user\'s gender.',
+			guildOnly: true,
 			args: [
 				{
 					key: 'name',

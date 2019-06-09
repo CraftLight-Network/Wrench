@@ -9,6 +9,7 @@ module.exports = class AgeCommand extends Command {
 			memberName: 'age',
 			description: 'Calculates how old a person is, or when they were born.',
 			examples: ['age 2012', 'age 23'],
+			guildOnly: true,
 			args: [
 				{
 					key: 'year',

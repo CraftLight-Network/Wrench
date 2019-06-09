@@ -14,6 +14,7 @@ module.exports = class quizCommand extends Command {
 			group: 'fun',
 			memberName: 'quiz',
 			description: 'Random questions.',
+			guildOnly: true,
 			details: stripIndents`
 				**Types:** ${types.join(', ')}
 				**Difficulties:** ${difficulties.join(', ')}

@@ -10,6 +10,7 @@ module.exports = class shipCommand extends Command {
 			group: 'fun',
 			memberName: 'ship',
 			description: 'Determines the love between two users.',
+			guildOnly: true,
 			args: [
 				{
 					key: 'first',

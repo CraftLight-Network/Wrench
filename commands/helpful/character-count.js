@@ -10,6 +10,7 @@ module.exports = class CharacterCountCommand extends Command {
 			memberName: 'character-count',
 			description: 'How many characters are in your argument.',
 			examples: ['char Hello', 'char This has 17 chars'],
+			guildOnly: true,
 			args: [
 				{
 					key: 'text',

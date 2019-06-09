@@ -12,6 +12,7 @@ module.exports = class timeCommand extends Command {
 			memberName: 'time',
 			description: 'Calculates what time it is in different time zones.',
 			details: '**Zones:** <http://cust.pw/wtz>',
+			guildOnly: true,
 			args: [
 				{
 					key: 'timeZone',

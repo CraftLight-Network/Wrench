@@ -3,7 +3,7 @@ const { oneLine } = require('common-tags');
 const Random = require('random-js');
 
 const genders = ['male', 'female'];
-const { eyeColors, hairColors, hairStyles, extras } = require('../../files/guess-looks');
+const { eyeColors, hairColors, hairStyles, extras } = require('../../data/guess-looks');
 
 module.exports = class GuessLooksCommand extends Command {
 	constructor(client) {
@@ -14,6 +14,7 @@ module.exports = class GuessLooksCommand extends Command {
 			memberName: 'guess-looks',
 			description: 'Guess what a user looks like.',
 			examples: ['guess-looks', 'guess-looks @user'],
+			guildOnly: true,
 			args: [
 				{
 					key: 'user',

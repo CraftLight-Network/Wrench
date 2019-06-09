@@ -11,5 +11,6 @@ Thumbs.db
 desktop.ini
 auth.json
 settings.sqlite3
-data/
+data/storage/
+data/enmap.*
 commands/owner/

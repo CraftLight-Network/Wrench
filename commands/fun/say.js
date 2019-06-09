@@ -1,14 +1,14 @@
 const { Command } = require('discord.js-commando');
 
 module.exports = class sayCommand extends Command {
-    constructor(client) {
-        super(client, {
-            name: 'say',
+	constructor(client) {
+		super(client, {
+			name: 'say',
 			aliases: ['copycat', 'repeat', 'echo', 'parrot'],
-            group: 'fun',
-            memberName: 'say',
-            description: 'Make the bot say things.',
-            examples: ['say Hello', 'say The bot is talking!'],
+			group: 'fun',
+			memberName: 'say',
+			description: 'Make the bot say things.',
+			examples: ['say Hello', 'say The bot is talking!'],
 			guildOnly: true,
 			clientPermissions: ['MANAGE_MESSAGES'],
 			throttling: {
@@ -26,8 +26,8 @@ module.exports = class sayCommand extends Command {
 					}
 				}
 			]
-        });
-    }
+		});
+	}
 	run(msg, { text }) {
 		msg.delete();
 		return msg.say(text);

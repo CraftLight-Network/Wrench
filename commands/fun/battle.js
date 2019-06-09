@@ -1,5 +1,5 @@
 const { Command } = require('discord.js-commando');
-const Battle = require('../../files/battle');
+const Battle = require('../../data/battle');
 const { list, firstUpperCase } = require('../util');
 const { verify } = require('../util');
 
@@ -11,6 +11,7 @@ module.exports = class battleCommand extends Command {
 			group: 'fun',
 			memberName: 'battle',
 			description: 'Engage in a turn-based battle against another user or the AI.',
+			guildOnly: true,
 			args: [
 				{
 					key: 'opponent',

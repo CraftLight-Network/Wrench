@@ -12,6 +12,7 @@ module.exports = class QRCodeCommand extends Command {
 			memberName: 'qr',
 			description: 'Read a QR code from an image.',
 			examples: ['qr <image>'],
+			guildOnly: true,
 			args: [
 				{
 					key: 'image',

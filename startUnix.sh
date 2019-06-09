@@ -7,27 +7,35 @@ error=`tput setaf 1`
 cd "$(dirname "$0")"
 
 if [ ! -d ./node_modules/ ]; then
-    clear
+	clear
+	echo
+	echo Before we install all of the NPM modules, we need to make sure you have some things.
+	echo Node.JS \(+NPM\), FFmpeg.
 	echo
 	echo Installing NPM modules. Please wait...
 	echo
-	mkdir ~/npm
+	{
+		mkdir ~/npm > /dev/null 2>&1
+		mkdir data/storage > /dev/null 2>&1 && mkdir data/storage/logs > /dev/null 2>&1
+	} || {
+		echo NPM directory already exists.
+	}
 	npm config set prefix ~/npm
-	npm install --global --production build-tools --unsafe-perm=true --allow-root > data/logs/npm_log.log
+	npm install --global --production build-tools --unsafe-perm=true --allow-root > data/storage/logs/npm_log.log
 	if [ $? -eq 1 ]; then
 		rm -rf node_modules
 		echo -e '${error}--------------------------------------------------------------\n\nERROR: BUILDTOOLS FAILED TO INSTALL\nYou must not have sudo/su rights.\n\nTo run this script as su, run sudo startUnix.sh\nOr run su, and then the script.\n\n!! You need superuser rights to compile the modules !!'
-		read  -n 1 -p "Press any key to contunue . . ."
+		read -n 1 -s -r -p "Press any key to contunue . . ."
 		exit
 	fi
-	npm install --unsafe-perm=true --allow-root > data/logs/npm_log
+	npm install --unsafe-perm=true --allow-root > data/storage/logs/npm_log.log
 	echo
 	if [ $? -eq 0 ]; then
 		echo Done! Moving on...
 	else
 		rm -rf node_modules
 		echo -e '${error}--------------------------------------------------------------\n\nERROR: NPM FAILED TO RUN\nYou must not have Node.js installed.\n\nTo install N.JS and NPM, go to https://nodejs.org/en/download/package-manager/\nand follow the instructions.\n\n!! You need Python and BuildTools !!'
-		read  -n 1 -p "Press any key to contunue . . ."
+		read -n 1 -s -r -p "Press any key to contunue . . ."
 		exit
 	fi
 fi
@@ -35,11 +43,12 @@ fi
 if [ ! -f auth.json ]; then
 	echo -e '${error}--------------------------------------------------------------\n\nERROR: NO AUTH.JSON FOUND\nYou must have an auth key.\n\nTo get a key, look up a simple tutorial on the internet.\n"Discord bot auth key setup"\n\n!! You need an auth key !!'
 	echo !! You need an auth key !!
-	read  -n 1 -p "Press any key to contunue . . ."
+	read -n 1 -s -r -p "Press any key to contunue . . ."
 	exit
 fi
 
-cp files/eval.js node_modules/discord.js-commando/src/commands/util/ && clear
+cp data/help.js node_modules/discord.js-commando/src/commands/util/ && clear
+cp data/eval.js node_modules/discord.js-commando/src/commands/util/ && clear
 
 repeat() {
 	while true
@@ -64,14 +73,14 @@ norepeat() {
 	
 	node bot.js
 	echo Crash detected.
-	read  -n 1 -p "Press any key to contunue . . ."
+	read -n 1 -s -r -p "Press any key to contunue . . ."
 	exit
 }
 
-if [ -f data/norep ]; then
+if [ -f data/storage/norep ]; then
 	norepeat
 fi
-if [ -f data/yesrep ]; then
+if [ -f data/storage/yesrep ]; then
 	repeat
 fi
 
@@ -87,10 +96,10 @@ if [ "$repeat" = "n" ]; then
 	norepeat
 fi
 if [ "$repeat" = "ne" ]; then
-	echo > data/norep
+	echo > data/storage/norep
 	norepeat
 fi
 if [ "$repeat" = "al" ]; then
-	echo > data/yesrep
+	echo > data/storage/yesrep
 	repeat
 fi

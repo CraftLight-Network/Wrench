@@ -14,6 +14,7 @@ module.exports = class strawpollCommand extends Command {
 				**Options:** Amount of questions (2-30)
 				**Note:** Each option/title with spaces must have quotes around them!
 			`,
+			guildOnly: true,
 			examples: ['poll "Is this cool?" Yes No "It\'s alright."'],
 			args: [
 				{

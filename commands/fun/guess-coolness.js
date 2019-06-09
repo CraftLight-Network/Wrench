@@ -11,6 +11,7 @@ module.exports = class guessCoolnessCommand extends Command {
 			memberName: 'guess-coolness',
 			description: 'Guess a user\'s coolness amount.',
 			examples: ['guess-coolness', 'guess-coolness @user'],
+			guildOnly: true,
 			args: [
 				{
 					key: 'user',

@@ -1,7 +1,7 @@
 const { Command } = require('discord.js-commando');
 const { stripIndents } = require('common-tags');
 const { list } = require('../util');
-const sentences = require('../../files/typing-test');
+const sentences = require('../../data/typing-test');
 const difficulties = ['easy', 'medium', 'hard', 'extreme', 'impossible'];
 const times = {
 	easy: 25000,
@@ -21,6 +21,7 @@ module.exports = class typingTestCommand extends Command {
 			description: 'See how fast you can type a sentence in a given time limit.',
 			examples: ['typing-test easy', 'typing-test hard'],
 			details: `**Difficulties:** ${difficulties.join(', ')}`,
+			guildOnly: true,
 			args: [
 				{
 					key: 'difficulty',
