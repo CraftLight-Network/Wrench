@@ -3,6 +3,7 @@ const Battle = require('../../data/battle');
 const { list, firstUpperCase } = require('../util');
 const { verify } = require('../util');
 
+
 module.exports = class battleCommand extends Command {
 	constructor(client) {
 		super(client, {
@@ -10,12 +11,12 @@ module.exports = class battleCommand extends Command {
 			aliases: ['fight', 'death-battle'],
 			group: 'fun',
 			memberName: 'battle',
-			description: 'Engage in a turn-based battle against another user or the AI.',
+			description: 'A turn-based battle with another user or AI',
 			guildOnly: true,
 			args: [
 				{
 					key: 'opponent',
-					prompt: 'What user would you like to battle?',
+					prompt: 'Who would you like to battle?',
 					type: 'user',
 					default: () => this.client.user
 				}
@@ -26,8 +27,8 @@ module.exports = class battleCommand extends Command {
 	}
 
 	async run(msg, { opponent }) {
-		if (opponent.id === msg.author.id) return msg.reply('You may not battle yourself.');
-		if (this.battles.has(msg.channel.id)) return msg.reply('Only one battle may be occurring per channel.');
+		if (opponent.id === msg.author.id) return msg.reply('You cannot battle yourself.');
+		if (this.battles.has(msg.channel.id)) return msg.reply('Only one battle per channel!');
 		this.battles.set(msg.channel.id, new Battle(msg.author, opponent));
 		const battle = this.battles.get(msg.channel.id);
 		function randomRange(min, max) {
@@ -73,9 +74,10 @@ module.exports = class battleCommand extends Command {
 					battle.attacker.useMP(battle.attacker.mp);
 					battle.reset();
 				} else if (choice === 'final') {
-					await msg.say(`${battle.attacker} uses their final move, dealing **150** damage!`);
+					const final = randomRange(battle.defender.guard ? 40 : 100, battle.defender.guard ? 50 : 150);
+					await msg.say(`${battle.attacker} uses their final move, dealing **${final}** damage!`);
 					battle.defender.dealDamage(150);
-					battle.attacker.useMP(100);
+					battle.attacker.useMP(battle.attacker.mp);
 					battle.attacker.usedFinal = true;
 					battle.reset();
 				} else if (choice === 'run') {
@@ -86,7 +88,7 @@ module.exports = class battleCommand extends Command {
 					battle.attacker.useMP(-25);
 					battle.reset();
 				} else {
-					await msg.say('I do not understand what you want to do.');
+					await msg.say('I do not know what you want to do.');
 				}
 			}
 			const { winner } = battle;

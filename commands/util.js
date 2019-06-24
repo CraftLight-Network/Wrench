@@ -1,8 +1,8 @@
 ﻿const config = require("../config.json")
 const { success_id } = config.success;
 
-const yes = ['yes', 'y', 'ye', 'yeah', 'yup', 'yea', 'ya', 'accept'];
-const no = ['no', 'n', 'nah', 'nope', 'nop', 'decline'];
+const yes = ['yes', 'y', 'ye', 'yeah', 'yup', 'yea', 'ya', 'accept', 'sure', 'ok', 'okay'];
+const no = ['no', 'n', 'nah', 'nope', 'nop', 'decline', 'nop', 'nay', 'never', 'refuse', 'reject'];
 
 module.exports = class Util {
 	static delay(ms) {
