@@ -27,7 +27,7 @@ module.exports = class Battler {
 			**${this.battle.opponent.user.tag}:** ${this.battle.opponent.hp} HP
 		`;
 		if (this.battle.turn === 1 || this.battle.turn === 2) {
-			content += '\n\n_Special uses 50 MP whether or not it hits. Cure takes remaining MP and heals half that amount._';
+			content += '\n\n_Your special uses 50 MP and deals more damage. Cure takes all your MP and heals half that amount._';
 		}
 		await msg.say(content);
 		const filter = res => {
