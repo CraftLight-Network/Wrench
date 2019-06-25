@@ -7,12 +7,12 @@ if not exist node_modules (
 	cls
 	echo.
 	echo Before we install all of the NPM modules, we need to make sure you have some things.
-	echo Node.JS (+NPM), FFmpeg.
-	echo.
-	pause
+	echo "Node.JS (+NPM), FFmpeg."
 	echo.
 	echo Installing NPM modules. Please wait...
 	echo.
+	mkdir .\data\storage
+	mkdir .\data\storage\logs
 	call npm install --global --production windows-build-tools --vs2017 >data\storage\logs\npm_log.log
 	if errorlevel 1 (
 		color 04
