@@ -1,11 +1,12 @@
 // // Bot setup
 const { CommandoClient } = require('discord.js-commando');
+const antispam = require('discord-anti-spam');
 const { RichEmbed } = require('discord.js');
 const { oneLine } = require('common-tags');
-const path = require('path');
 const config = require("./config.json");
+const path = require('path');
 
-// Setup commando
+// Commando
 const client = new CommandoClient({
 	commandPrefix: config.prefix,
 	owner: config.owners,
@@ -147,6 +148,24 @@ client.on("ready", () => {
 		const index = Math.floor(Math.random() * (activities_list.length - 1) + 1);
 		client.user.setActivity(activities_list[index]);
 	}, 30000);
+	
+	// Anti-spam setup
+	antispam(client, {
+		warnBuffer: 5, // Max messages before warn
+		maxBuffer: 15, // Max messages before ban
+        	interval: 3000, // How many seconds in ms for buffers
+		warningMessage: "stop spamming! Change your message or slow down.", // Warn message
+		banMessage: "spammed and got banned!", // Ban message
+		maxDuplicatesWarning: 3, // Max duplicates before warn
+		maxDuplicatesBan: 10, // Max duplicates before ban
+		deleteMessagesAfterBanForPastDays: 1, // Delete messages x days ago
+		exemptRoles: ["Admin", "Manager"], // Ignored roles
+		exemptUsers: ["Edude42#2812"] // Ignored users
+	});
+});
+
+client.on('guildMemberAdd', member => {
+	member.addRole('525501371269513236');
 });
 
 /*
@@ -167,6 +186,11 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 
 // Message handler
 client.on("message", async message => {
+	// Run spam filter
+	if (client.guilds.get(message.guild.id).id == '525487377817534484') {
+		client.emit('checkMessage', message);
+	};
+	
 	// Make sure the user isn't a bot
 	if (message.author.bot) return;
 		
