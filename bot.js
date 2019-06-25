@@ -155,7 +155,7 @@ client.on("ready", () => {
 	antispam(client, {
 		warnBuffer: 5, // Max messages before warn
 		maxBuffer: 15, // Max messages before ban
-        interval: 3000, // How many seconds in ms for buffers
+		interval: 3000, // How many seconds in ms for buffers
 		warningMessage: "stop spamming! Change your message or slow down.", // Warn message
 		banMessage: "spammed and got banned!", // Ban message
 		maxDuplicatesWarning: 3, // Max duplicates before warn
