@@ -4,7 +4,7 @@ This bot is used mainly for the CustomCraft Network.<br/>
 If you would like to see this bot in action, go to [the Discord server](https://discord.gg/sAxRWVb).<br/><br/>
 
 WrenchBot is just a simple bot.<br/>
-It doesn't do that much, so don't expect an all-in-one bot.<br/>
+It doesn't do everything. It has a lot, but nothing close to neural networks or anything.<br/>
 It's just meant to be used in the CustomCraft Network.<br/><br/>
 
 **NOTE**: _You will receive no support. None at all._<br/>
