@@ -199,25 +199,27 @@ client.on("message", async message => {
 	if (message.author.bot) return;
 	
 	// Auto translate message
-	const msg = `${message}`
-	if (!(msg.startsWith("http") || msg.startsWith("]"))) {
-		if (!(msg.startsWith(":") && msg.indexOf(' ') == -1 && msg.endsWith(":"))) {
-			translate.translate(`${message}`, { to: 'en' }, (err, res) => {
-				if (`${message}` !== `${res.text}`) {
-					if (`${res.text}` !== 'undefined') {
-						log.TRAN(`${message.author}: ${message} -> ${res.text}`);
-						const embed = new RichEmbed()
-						.setDescription(`**${res.text}**`)
-						.setAuthor(`${message.author.username} (${res.lang})`, message.author.displayAvatarURL)
-						.setColor(0x2F5EA3)
-						.setFooter('Translations from Yandex.Translate (http://cust.pw/y)')
-						return message.channel.send(embed);
-					}
-					else if (`${err}` !== 'undefined') {
-						log.ERROR(err);
+	if (config.translator === 'enabled') {
+		const msg = `${message}`
+		if (!(msg.startsWith("http") || msg.startsWith("]"))) {
+			if (!(msg.startsWith(":") && msg.indexOf(' ') == -1 && msg.endsWith(":"))) {
+				translate.translate(`${message}`, { to: 'en' }, (err, res) => {
+					if (`${message}` !== `${res.text}`) {
+						if (`${res.text}` !== 'undefined') {
+							log.TRAN(`${message.author}: ${message} -> ${res.text}`);
+							const embed = new RichEmbed()
+							.setDescription(`**${res.text}**`)
+							.setAuthor(`${message.author.username} (${res.lang})`, message.author.displayAvatarURL)
+							.setColor(0x2F5EA3)
+							.setFooter('Translations from Yandex.Translate (http://cust.pw/y)')
+							return message.channel.send(embed);
+						}
+						else if (`${err}` !== 'undefined') {
+							log.ERROR(err);
+						};
 					};
-				};
-			});
+				});
+			};
 		};
 	}
 		

@@ -1,7 +1,6 @@
 {
 	"owners": [ "272466470510788608", "194041725730160640" ],
 	"prefix": "]",
-	"success": "<:white_check_mark:539268532920254466>",
-	"fail": "<:negative_squared_cross_mark:539268821073133588>",
-	"question": "<:grey_question:539283973780799498>"
+	"logchannel": "",
+	"translator": "enabled"
 }
