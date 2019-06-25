@@ -61,16 +61,18 @@ const log = new (winston.Logger)({
 	levels: {
 		'OK': 0,
 		'CMD': 1,
-		'INFO': 2,
-		'WARN': 3,
-		'ERROR': 4,
-		'CONSOLE': 5,
-		'BLANK': 6,
-		'DEBUG': 7,
+		'TRAN': 2,
+		'INFO': 3,
+		'WARN': 4,
+		'ERROR': 5,
+		'CONSOLE': 6,
+		'BLANK': 7,
+		'DEBUG': 8,
 	},
 	colors: {
 		'OK': 'green',
 		'CMD': 'cyan',
+		'TRAN': 'cyan',
 		'INFO': 'blue',
 		'WARN': 'yellow',
 		'ERROR': 'red',
@@ -195,6 +197,26 @@ client.on("message", async message => {
 	
 	// Make sure the user isn't a bot
 	if (message.author.bot) return;
+	
+	// Auto translate message
+	var msg = `${message}`
+	if (!(msg.startsWith("http") || msg.startsWith("]"))) {
+		if (!(msg.startsWith(":") && msg.indexOf(' ') == -1 && msg.endsWith(":"))) {
+			translate.translate(`${message}`, { to: 'en' }, function(err, res) {
+				if (`${message}` !== `${res.text}`) {
+					if (`${res.text}` !== 'undefined') {
+						log.TRAN(`${message.author}: ${message} -> ${res.text}`);
+						const embed = new RichEmbed()
+						.setDescription(`**${res.text}**`)
+						.setAuthor(`${message.author.username} (${res.lang})`, message.author.displayAvatarURL)
+						.setColor(0x2F5EA3)
+						.setFooter('Translations from Yandex.Translate (http://cust.pw/y)')
+						return message.channel.send(embed);
+					}
+				}
+			});
+		}
+	}
 		
 	// Check if it starts with the prefix
 	if (message.content.indexOf(config.prefix) !== 0) {
@@ -220,6 +242,9 @@ client.on("message", async message => {
 
 // Require the authentication key file
 const auth = require("./auth.json");
+
+// Get Yandex API key
+const translate = require('yandex-translate')(auth.yandex); // For translations
 
 // Login using auth.json
 client.login(auth.token);
