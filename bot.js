@@ -5,7 +5,7 @@ const { oneLine } = require('common-tags');
 const path = require('path');
 const config = require("./config.json");
 
-// Commando
+// Setup commando
 const client = new CommandoClient({
 	commandPrefix: config.prefix,
 	owner: config.owners,
