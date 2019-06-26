@@ -191,8 +191,10 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 // Message handler
 client.on("message", async message => {
 	// Run spam filter
-	if (client.guilds.get(message.guild.id).id == '525487377817534484') {
-		client.emit('checkMessage', message);
+	if (message.guild !== null) {
+		if (client.guilds.get(message.guild.id).id == '525487377817534484') {
+			client.emit('checkMessage', message);
+		};
 	};
 	
 	// Make sure the user isn't a bot
@@ -203,22 +205,24 @@ client.on("message", async message => {
 		const msg = `${message}`
 		if (!(msg.startsWith("http") || msg.startsWith("]"))) {
 			if (!(msg.startsWith(":") && msg.indexOf(' ') == -1 && msg.endsWith(":"))) {
-				translate.translate(`${message}`, { to: 'en' }, (err, res) => {
-					if (`${message}` !== `${res.text}`) {
-						if (`${res.text}` !== 'undefined') {
-							log.TRAN(`${message.author}: ${message} -> ${res.text}`);
-							const embed = new RichEmbed()
-							.setDescription(`**${res.text}**`)
-							.setAuthor(`${message.author.username} (${res.lang})`, message.author.displayAvatarURL)
-							.setColor(0x2F5EA3)
-							.setFooter('Translations from Yandex.Translate (http://cust.pw/y)')
-							return message.channel.send(embed);
-						}
-						else if (`${err}` !== 'undefined') {
-							log.ERROR(err);
-						};
+				if (msg.length > 5) {
+					const unique = msg.split('').filter(function(item, i, ar){ return ar.indexOf(item) === i; }).join('');
+					if (unique.length > 5) {
+						translate.translate(`${message}`, { to: 'en' }, (err, res) => {
+							if (`${message}` !== `${res.text}`) {
+								if (`${res.text}` !== 'undefined') {
+									log.TRAN(`${message.author}: ${message} -> ${res.text}`);
+									const embed = new RichEmbed()
+									.setDescription(`**${res.text}**`)
+									.setAuthor(`${message.author.username} (${res.lang})`, message.author.displayAvatarURL)
+									.setColor(0x2F5EA3)
+									.setFooter('Translations from Yandex.Translate (http://cust.pw/y)')
+									return message.channel.send(embed);
+								};
+							};
+						});
 					};
-				});
+				};
 			};
 		};
 	}
