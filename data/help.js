@@ -1,6 +1,7 @@
 const { stripIndents, oneLine } = require('common-tags');
 const Command = require('../base');
 const { disambiguation } = require('../../util');
+const config = require("../../../../../config.json");
 
 module.exports = class HelpCommand extends Command {
 	constructor(client) {
@@ -10,7 +11,7 @@ module.exports = class HelpCommand extends Command {
 			memberName: 'help',
 			aliases: ['commands'],
 			description: 'Displays a list of available commands, or detailed information for a specified command.',
-			guildOnly: true,
+			// guildOnly: true,
 			details: oneLine`
 				The command may be part of a command name or a whole command name.
 				If it isn't specified, all available commands will be listed.
@@ -23,7 +24,7 @@ module.exports = class HelpCommand extends Command {
 					key: 'command',
 					prompt: 'Which command would you like to view the help for?',
 					type: 'string',
-					default: ''
+					default: 'all'
 				}
 			]
 		});
@@ -77,12 +78,11 @@ module.exports = class HelpCommand extends Command {
 				messages.push(await msg.direct(stripIndents`
 					${oneLine`
 						To run a command in ${msg.guild ? msg.guild.name : 'any server'},
-						use ${Command.usage('command', msg.guild ? msg.guild.commandPrefix : null, this.client.user)}.
-						For example, ${Command.usage('prefix', msg.guild ? msg.guild.commandPrefix : null, this.client.user)}.
+						use ${Command.usage(`${config.prefix}command`)}.
+						For example, ${Command.usage(`${config.prefix}prefix`)}.
 					`}
 
-					Use ${this.usage('<command>', null, null)} to view detailed information about a specific command.
-					Use ${this.usage('all', null, null)} to view a list of *all* commands, not just available ones.
+					Use \`${config.prefix}help <command>\` to view detailed information about a specific command.
 
 					__**${showAll ? 'All commands' : `Available commands in ${msg.guild || 'this DM'}`}**__
 
