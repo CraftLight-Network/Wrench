@@ -5,6 +5,8 @@ const { shuffle, list } = require('../util');
 const types = ['multiple', 'boolean'];
 const difficulties = ['easy', 'medium', 'hard'];
 const choices = ['A', 'B', 'C', 'D'];
+var typeNew = 'multiple';
+var difNew = 'medium';
 
 module.exports = class quizCommand extends Command {
 	constructor(client) {
@@ -24,7 +26,7 @@ module.exports = class quizCommand extends Command {
 					key: 'difficulty',
 					prompt: `What should the difficulty be? Either ${list(difficulties, 'or')}.`,
 					type: 'string',
-					default: '',
+					default: 'rand',
 					oneOf: difficulties,
 					parse: difficulty => difficulty.toLowerCase()
 				},
@@ -32,7 +34,7 @@ module.exports = class quizCommand extends Command {
 					key: 'type',
 					prompt: `Which type of question would you like? Either ${list(types, 'or')}.`,
 					type: 'string',
-					default: 'multiple',
+					default: 'rand',
 					oneOf: types,
 					parse: type => type.toLowerCase()
 				}
@@ -43,14 +45,36 @@ module.exports = class quizCommand extends Command {
 
 	async run(msg, { type, difficulty }) {
 		try {
+			if (type == 'rand') {
+				const typeSet = Math.floor(Math.random() * 2) + 1;
+				if (typeSet == 1) {
+					var typeNew = 'multiple';
+				} else {
+					var typeNew = 'boolean';
+				};
+			} else {
+				var typeNew = type;
+			};
+			if (difficulty == 'rand') {
+				const difSet = Math.floor(Math.random() * 3) + 1;
+				if (difSet == 1) {
+					var difNew = 'easy';
+				} else if (difSet == 2) {
+					var difNew = 'medium';
+				} else if (difSet == 3) {
+					var difNew = 'hard';
+				};
+			} else {
+				var difNew = difficulty;
+			};
 			const { body } = await request
-				.get('https://opentdb.com/api.php')
-				.query({
-					amount: 1,
-					type,
-					encode: 'url3986',
-					difficulty
-				});
+			.get('https://opentdb.com/api.php')
+			.query({
+				amount: 1,
+				typeNew,
+				encode: 'url3986',
+				difNew
+			});
 			if (!body.results) return msg.reply('Oh no, a question could not be fetched. Try again later!');
 			const answers = body.results[0].incorrect_answers.map(answer => decodeURIComponent(answer.toLowerCase()));
 			const correct = decodeURIComponent(body.results[0].correct_answer.toLowerCase());
