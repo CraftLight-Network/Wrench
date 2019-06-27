@@ -205,22 +205,24 @@ client.on("message", async message => {
 		const msg = `${message}`
 		if (!(msg.startsWith("http") || msg.startsWith("]"))) {
 			if (!(msg.startsWith(":") && msg.indexOf(' ') == -1 && msg.endsWith(":"))) {
-				if (msg.length > 5) {
-					const unique = msg.split('').filter(function(item, i, ar){ return ar.indexOf(item) === i; }).join('');
-					if (unique.length > 5) {
-						translate.translate(`${message}`, { to: 'en' }, (err, res) => {
-							if (`${message}` !== `${res.text}`) {
-								if (`${res.text}` !== 'undefined') {
-									log.TRAN(`${message.author}: ${message} -> ${res.text}`);
-									const embed = new RichEmbed()
-									.setDescription(`**${res.text}**`)
-									.setAuthor(`${message.author.username} (${res.lang})`, message.author.displayAvatarURL)
-									.setColor(0x2F5EA3)
-									.setFooter('Translations from Yandex.Translate (http://cust.pw/y)')
-									return message.channel.send(embed);
+				if (msg.length > 5) { 
+					if (msg.split(" ").length !== Math.round(msg.length / 2)) {
+						const unique = msg.split('').filter(function(item, i, ar){ return ar.indexOf(item) === i; }).join('');
+						if (unique.length > 5) {
+							translate.translate(`${message}`, { to: 'en' }, (err, res) => {
+								if (`${message}` !== `${res.text}`) {
+									if (`${res.text}` !== 'undefined') {
+										log.TRAN(`${message.author}: ${message} -> ${res.text}`);
+										const embed = new RichEmbed()
+										.setDescription(`**${res.text}**`)
+										.setAuthor(`${message.author.username} (${res.lang})`, message.author.displayAvatarURL)
+										.setColor(0x2F5EA3)
+										.setFooter('Translations from Yandex.Translate (http://cust.pw/y)')
+										return message.channel.send(embed);
+									};
 								};
-							};
-						});
+							});
+						};
 					};
 				};
 			};
