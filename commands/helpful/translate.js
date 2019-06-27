@@ -2,6 +2,7 @@ const { Command } = require('discord.js-commando');
 const auth = require("../../auth.json");
 const { RichEmbed } = require('discord.js');
 const translate = require('yandex-translate')(auth.yandex);
+const { stripIndents } = require('common-tags');
 
 module.exports = class translateCommand extends Command {
 	constructor(client) {
@@ -11,8 +12,13 @@ module.exports = class translateCommand extends Command {
 			aliases: ['tran'],
 			memberName: 'translate',
 			description: 'Translate text to another language.',
-			examples: ['translate de Hello!', 'translate de es Hallo!'],
+			examples: ['translate en de Hello!', 'translate de es Hallo!'],
 			guildOnly: true,
+			details: stripIndents`
+				**Languages** http://cust.pw/tl
+				**To translate** Run \`translate <from> <to> <text to translate>\`
+			`,
+
 			args: [
 				{
 					key: 'langFrom',
