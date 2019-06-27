@@ -19,7 +19,7 @@ module.exports = class memeCommand extends Command {
 			aliases: ['memes', 'dankmeme', 'dankmemes'],
 			group: 'fun',
 			memberName: 'meme',
-			description: 'Grab a random meme from r/dankmemes',
+			description: 'Grab a random meme from a list of subreddits',
 			examples: ['meme'],
 			guildOnly: true
 		});
