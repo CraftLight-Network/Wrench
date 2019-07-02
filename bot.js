@@ -1,5 +1,7 @@
 // // Bot setup
 const { CommandoClient } = require('discord.js-commando');
+const RateLimiter = require('limiter').RateLimiter;
+const TokenBucket = require('limiter').TokenBucket;
 const antispam = require('discord-anti-spam');
 const { RichEmbed } = require('discord.js');
 const { oneLine } = require('common-tags');
@@ -62,22 +64,22 @@ const log = new (winston.Logger)({
 		'OK': 0,
 		'CMD': 1,
 		'TRAN': 2,
-		'INFO': 3,
-		'WARN': 4,
-		'ERROR': 5,
-		'CONSOLE': 6,
-		'BLANK': 7,
+		'EMPT': 3,
+		'INFO': 4,
+		'WARN': 5,
+		'ERROR': 6,
+		'CONSOLE': 7,
 		'DEBUG': 8,
 	},
 	colors: {
 		'OK': 'green',
 		'CMD': 'cyan',
 		'TRAN': 'cyan',
+		'EMPT': 'black',
 		'INFO': 'blue',
 		'WARN': 'yellow',
 		'ERROR': 'red',
 		'CONSOLE': 'grey',
-		'BLANK': 'black',
 		'DEBUG': 'magenta'
 	},
 	handleExceptions: true,
@@ -109,8 +111,6 @@ client.on('debug', debug => log.DEBUG(debug)); // Debug
 client.on("guildCreate", guild => {log.INFO(`Added in a new server: ${guild.name} (id: ${guild.id})`);}); // Notify the console that a new server is using the bot
 client.on("guildDelete", guild => {log.INFO(`Removed from server: ${guild.name} (id: ${guild.id})`);}); // Notify the console that a server removed the bot
 client.on('disconnect', event => {log.ERROR(`[DISCONNECT] ${event.code}`);process.exit(0);}); // Notify the console that the bot has disconnected
-
-
 
 // // Client actions
 
@@ -209,25 +209,51 @@ client.on("message", async message => {
 					if (msg.split(" ").length !== Math.round(msg.length / 2)) {
 						const unique = msg.split('').filter(function(item, i, ar){ return ar.indexOf(item) === i; }).join('');
 						if (unique.length > 5) {
-							translate.translate(`${message}`, { to: 'en' }, (err, res) => {
-								if (`${message}` !== `${res.text}`) {
-									if (`${res.text}` !== 'undefined') {
-										log.TRAN(`${message.author}: ${message} -> ${res.text}`);
-										const embed = new RichEmbed()
-										.setDescription(`**${res.text}**`)
-										.setAuthor(`${message.author.username} (${res.lang})`, message.author.displayAvatarURL)
-										.setColor(0x2F5EA3)
-										.setFooter('Translations from Yandex.Translate (http://cust.pw/y)')
-										return message.channel.send(embed);
+							if (config.provider === 'yandex') {
+								translate.translate(`${message}`, { to: 'en' }, (err, res) => {
+									if (`${message}` !== `${res.text}`) {
+										if (`${res.text}` !== 'undefined') {
+											log.TRAN(`${message.author}: ${message} -> ${res.text}`);
+											const embed = new RichEmbed()
+											.setDescription(`**${res.text}**`)
+											.setAuthor(`${message.author.username} (${res.lang})`, message.author.displayAvatarURL)
+											.setColor(0x2F5EA3)
+											.setFooter('Translations from Yandex.Translate (http://cust.pw/y)')
+											return message.channel.send(embed);
+										};
 									};
-								};
-							});
-						};
-					};
-				};
-			};
-		};
-	}
+								});
+							};
+							if (config.provider === 'google') {
+								const limiter = new RateLimiter(500, 100000);
+								limiter.removeTokens(1, function(err, remainingRequests) {
+									var FILL_RATE = 1024 * 1024 * 1048576;
+									const bucket = new TokenBucket(FILL_RATE, 'day', null);
+									bucket.removeTokens(`${message}`, function() {
+										translate.detectLanguage(`${message}`, function(err, detection) {
+											if (detection.language !== 'en') {
+												translate.translate(`${message}`, 'en', (err, translation) => {
+													if (`${translation.translatedText}` !== 'undefined') {
+														log.TRAN(`${message.author}: ${message} -> ${translation.translatedText}`);
+														const embed = new RichEmbed()
+														.setDescription(`**${translation.translatedText}**`)
+														.setAuthor(`${message.author.username} (${detection.language}-en)`, message.author.displayAvatarURL)
+														.setColor(0x2F5EA3)
+														return message.channel.send(embed);
+													};
+												console.log(translation.translatedText);
+												});
+											}
+										});
+									});
+								});
+							}
+						}
+					}
+				}
+			}
+		}
+	};
 		
 	// Check if it starts with the prefix
 	if (message.content.indexOf(config.prefix) !== 0) {
@@ -254,8 +280,15 @@ client.on("message", async message => {
 // Require the authentication key file
 const auth = require("./auth.json");
 
-// Get Yandex API key
-const translate = require('yandex-translate')(auth.yandex); // For translations
-
+// Login to the right translator
+if (config.translator === 'enabled') {
+	if (config.provider === 'yandex') {
+		log.INFO('Using Yandex.Translate')
+		var translate = require('yandex-translate')(auth.yandex); // Get Yandex API key
+	} else if (config.provider === 'google') {
+		log.INFO('Using Google Translate')
+		var translate = require('google-translate')(auth.google); // Get Google API key
+	}
+};
 // Login using auth.json
 client.login(auth.token);
