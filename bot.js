@@ -241,7 +241,6 @@ client.on("message", async message => {
 														.setColor(0x2F5EA3)
 														return message.channel.send(embed);
 													};
-												console.log(translation.translatedText);
 												});
 											}
 										});
