@@ -230,22 +230,38 @@ client.on("message", async message => {
 									var FILL_RATE = 1024 * 1024 * 1048576;
 									const bucket = new TokenBucket(FILL_RATE, 'day', null);
 									bucket.removeTokens(`${message}`, function() {
-										translate.detectLanguage(`${message}`, function(err, detection) {
-											if (detection.language !== 'en') {
-												translate.translate(`${message}`, 'en', (err, translation) => {
-													if (`${translation.translatedText}` !== 'undefined') {
-														if (`${message}` !== `${translation.translatedText}`) {
-															log.TRAN(`${message.author}: ${message} -> ${translation.translatedText}`);
-															const embed = new RichEmbed()
-															.setDescription(`**${translation.translatedText}**`)
-															.setAuthor(`${message.author.username} (${detection.language}-en)`, message.author.displayAvatarURL)
-															.setColor(0x2F5EA3)
-															return message.channel.send(embed);
+										if (config.detect === 'true') {
+											translate.detectLanguage(`${message}`, function(err, detection) {
+												if (detection.language !== 'en' && detection.confidence >= 0.5 || detection.isReliable === 'true') {
+													translate.translate(`${message}`, 'en', (err, translation) => {
+														if (`${translation.translatedText}` !== 'undefined') {
+															if (`${message}` !== `${translation.translatedText}`) {
+																log.TRAN(`${message.author}: ${message} -> ${translation.translatedText}`);
+																const embed = new RichEmbed()
+																.setDescription(`**${translation.translatedText}**`)
+																.setAuthor(`${message.author.username} (${detection.language}-en)`, message.author.displayAvatarURL)
+																.setColor(0x2F5EA3)
+																return message.channel.send(embed);
+															};
 														};
+													});
+												}
+											});
+										} else {
+											translate.translate(`${message}`, 'en', (err, translation) => {
+												if (`${translation.translatedText}` !== 'undefined') {
+													if (`${message}` !== `${translation.translatedText}`) {
+														log.TRAN(`${message.author}: ${message} -> ${translation.translatedText}`);
+														const embed = new RichEmbed()
+														.setDescription(`**${translation.translatedText}**`)
+														.setAuthor(`${message.author.username} (${translation.detectedSourceLanguage}-en)`, message.author.displayAvatarURL)
+														.setColor(0x2F5EA3)
+														return message.channel.send(embed);
 													};
-												});
-											}
-										});
+												};
+											});
+										
+										}
 									});
 								});
 							}
@@ -255,7 +271,7 @@ client.on("message", async message => {
 			}
 		}
 	};
-		
+	
 	// Check if it starts with the prefix
 	if (message.content.indexOf(config.prefix) !== 0) {
 		// Add to the message counter
@@ -288,6 +304,9 @@ if (config.translator === 'enabled') {
 		var translate = require('yandex-translate')(auth.yandex); // Get Yandex API key
 	} else if (config.provider === 'google') {
 		log.INFO('Using Google Translate')
+		if (config.detect === 'true') {
+			log.INFO('Use the detect API function. !! THIS COSTS !!');
+		}
 		var translate = require('google-translate')(auth.google); // Get Google API key
 	}
 };
