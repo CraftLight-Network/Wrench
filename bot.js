@@ -234,12 +234,14 @@ client.on("message", async message => {
 											if (detection.language !== 'en') {
 												translate.translate(`${message}`, 'en', (err, translation) => {
 													if (`${translation.translatedText}` !== 'undefined') {
-														log.TRAN(`${message.author}: ${message} -> ${translation.translatedText}`);
-														const embed = new RichEmbed()
-														.setDescription(`**${translation.translatedText}**`)
-														.setAuthor(`${message.author.username} (${detection.language}-en)`, message.author.displayAvatarURL)
-														.setColor(0x2F5EA3)
-														return message.channel.send(embed);
+														if (`${message}` !== `${translation.translatedText}`) {
+															log.TRAN(`${message.author}: ${message} -> ${translation.translatedText}`);
+															const embed = new RichEmbed()
+															.setDescription(`**${translation.translatedText}**`)
+															.setAuthor(`${message.author.username} (${detection.language}-en)`, message.author.displayAvatarURL)
+															.setColor(0x2F5EA3)
+															return message.channel.send(embed);
+														};
 													};
 												});
 											}
