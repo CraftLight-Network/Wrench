@@ -202,7 +202,10 @@ client.on("message", async message => {
 	
 	// Auto translate message
 	if (config.translator === 'enabled') {
-		const msg = `${message}`
+		const tmpMsg = `${message}`
+		const msg = tmpMsg.replace(/<@.*>|@[a-zA-Z0-9]*/gm, "<MENTION>")
+		console.log(msg)
+		console.log(tmpMsg)
 		if (!(msg.startsWith("http") || msg.startsWith("]"))) {
 			if (!(msg.startsWith(":") && msg.indexOf(' ') == -1 && msg.endsWith(":"))) {
 				if (msg.length > 5) { 
@@ -210,10 +213,10 @@ client.on("message", async message => {
 						const unique = msg.split('').filter(function(item, i, ar){ return ar.indexOf(item) === i; }).join('');
 						if (unique.length > 5) {
 							if (config.provider === 'yandex') {
-								translate.translate(`${message}`, { to: 'en' }, (err, res) => {
-									if (`${message}` !== `${res.text}`) {
+								translate.translate(`${msg}`, { to: 'en' }, (err, res) => {
+									if (`${msg}` !== `${res.text}`) {
 										if (`${res.text}` !== 'undefined') {
-											log.TRAN(`${message.author}: ${message} -> ${res.text}`);
+											log.TRAN(`${message.author}: ${msg} -> ${res.text}`);
 											const embed = new RichEmbed()
 											.setDescription(`**${res.text}**`)
 											.setAuthor(`${message.author.username} (${res.lang})`, message.author.displayAvatarURL)
@@ -229,14 +232,14 @@ client.on("message", async message => {
 								limiter.removeTokens(1, function(err, remainingRequests) {
 									var FILL_RATE = 1024 * 1024 * 1048576;
 									const bucket = new TokenBucket(FILL_RATE, 'day', null);
-									bucket.removeTokens(`${message}`, function() {
+									bucket.removeTokens(`${msg}`, function() {
 										if (config.detect === 'true') {
-											translate.detectLanguage(`${message}`, function(err, detection) {
+											translate.detectLanguage(`${msg}`, function(err, detection) {
 												if (detection.language !== 'en' && detection.confidence >= 0.5 || detection.isReliable === 'true') {
-													translate.translate(`${message}`, 'en', (err, translation) => {
+													translate.translate(`${msg}`, 'en', (err, translation) => {
 														if (`${translation.translatedText}` !== 'undefined') {
-															if (`${message}` !== `${translation.translatedText}`) {
-																log.TRAN(`${message.author}: ${message} -> ${translation.translatedText}`);
+															if (`${msg}` !== `${translation.translatedText}`) {
+																log.TRAN(`${message.author}: ${msg} -> ${translation.translatedText}`);
 																const embed = new RichEmbed()
 																.setDescription(`**${translation.translatedText}**`)
 																.setAuthor(`${message.author.username} (${detection.language}-en)`, message.author.displayAvatarURL)
@@ -248,10 +251,10 @@ client.on("message", async message => {
 												}
 											});
 										} else {
-											translate.translate(`${message}`, 'en', (err, translation) => {
+											translate.translate(`${msg}`, 'en', (err, translation) => {
 												if (`${translation.translatedText}` !== 'undefined') {
-													if (`${message}` !== `${translation.translatedText}`) {
-														log.TRAN(`${message.author}: ${message} -> ${translation.translatedText}`);
+													if (`${msg}` !== `${translation.translatedText}`) {
+														log.TRAN(`${message.author}: ${msg} -> ${translation.translatedText}`);
 														const embed = new RichEmbed()
 														.setDescription(`**${translation.translatedText}**`)
 														.setAuthor(`${message.author.username} (${translation.detectedSourceLanguage}-en)`, message.author.displayAvatarURL)
