@@ -48,7 +48,6 @@ const messagesRead = new Enmap({
 });
 
 
-
 // // Logging
 
 // Timestamps
@@ -138,14 +137,14 @@ client.on("ready", () => {
 	log.OK(`---------------------------------------------`);
 	log.OK(`BOT START ON: ${utcDate}`);
 	log.OK(`---------------------------------------------`);
-	log.OK(`[READY] Bot has started.`)
+	log.OK(`[READY] Bot has started.`);
 	log.INFO(`Name: ${client.user.tag} ID: ${client.user.id}`);
-	log.INFO(`Active in ${client.guilds.size} servers.`)
-	log.INFO(` `)
-	log.INFO(`Press CTRL+C to stop the bot.`)
+	log.INFO(`Active in ${client.guilds.size} servers.`);
+	log.INFO(` `);
+	log.INFO(`Press CTRL+C to stop the bot.`);
 	
 	// Default activity message
-	client.user.setActivity("a game.")
+	client.user.setActivity("a game.");
 	
 	// Random activity message
 	setInterval(() => {
@@ -190,22 +189,24 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 
 // Message handler
 client.on("message", async message => {
+	// Make sure enmap exists
+	commandsRead.ensure("number", 0);
+	messagesRead.ensure("number", 0);
+    
 	// Run spam filter
 	if (message.guild !== null) {
 		if (client.guilds.get(message.guild.id).id == '525487377817534484') {
 			client.emit('checkMessage', message);
-		};
-	};
+		}
+	}
 	
 	// Make sure the user isn't a bot
 	if (message.author.bot) return;
 	
 	// Auto translate message
 	if (config.translator === 'enabled') {
-		const tmpMsg = `${message}`
-		const msg = tmpMsg.replace(/<@.*>|@[a-zA-Z0-9]*/gm, "<MENTION>")
-		console.log(msg)
-		console.log(tmpMsg)
+		const tmpMsg = `${message}`;
+		const msg = tmpMsg.replace(/<@.*>|@[a-zA-Z0-9]*/gm, "<MENTION>");
 		if (!(msg.startsWith("http") || msg.startsWith("]"))) {
 			if (!(msg.startsWith(":") && msg.indexOf(' ') == -1 && msg.endsWith(":"))) {
 				if (msg.length > 5) { 
@@ -221,12 +222,12 @@ client.on("message", async message => {
 											.setDescription(`**${res.text}**`)
 											.setAuthor(`${message.author.username} (${res.lang})`, message.author.displayAvatarURL)
 											.setColor(0x2F5EA3)
-											.setFooter('Translations from Yandex.Translate (http://cust.pw/y)')
+											.setFooter('Translations from Yandex.Translate (http://cust.pw/y)');
 											return message.channel.send(embed);
-										};
-									};
+										}
+									}
 								});
-							};
+							}
 							if (config.provider === 'google') {
 								const limiter = new RateLimiter(500, 100000);
 								limiter.removeTokens(1, function(err, remainingRequests) {
@@ -243,10 +244,10 @@ client.on("message", async message => {
 																const embed = new RichEmbed()
 																.setDescription(`**${translation.translatedText}**`)
 																.setAuthor(`${message.author.username} (${detection.language}-en)`, message.author.displayAvatarURL)
-																.setColor(0x2F5EA3)
+																.setColor(0x2F5EA3);
 																return message.channel.send(embed);
-															};
-														};
+															}
+														}
 													});
 												}
 											});
@@ -258,7 +259,7 @@ client.on("message", async message => {
 														const embed = new RichEmbed()
 														.setDescription(`**${translation.translatedText}**`)
 														.setAuthor(`${message.author.username} (${translation.detectedSourceLanguage}-en)`, message.author.displayAvatarURL)
-														.setColor(0x2F5EA3)
+														.setColor(0x2F5EA3);
 														return message.channel.send(embed);
 													};
 												};
