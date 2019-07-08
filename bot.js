@@ -187,6 +187,7 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 })
 */
 
+
 // Message handler
 client.on("message", async message => {
 	// Make sure enmap exists
@@ -203,9 +204,11 @@ client.on("message", async message => {
 	// Make sure the user isn't a bot
 	if (message.author.bot) return;
 	
+	// Odd error fix
+	const tmpMsg = `${message}`;
+	
 	// Auto translate message
 	if (config.translator === 'enabled') {
-		const tmpMsg = `${message}`;
 		const msg = tmpMsg.replace(/<@.*>|@[a-zA-Z0-9]*/gm, "<MENTION>");
 		if (!(msg.startsWith("http") || msg.startsWith("]"))) {
 			if (!(msg.startsWith(":") && msg.indexOf(' ') == -1 && msg.endsWith(":"))) {
@@ -275,6 +278,12 @@ client.on("message", async message => {
 			}
 		}
 	};
+	
+	// Neat message responses
+	const greeting = ['HELLO', 'HI', 'HEY', 'HOWDY', 'HOLA']
+	if (greeting.includes(tmpMsg.replace(/ .*/,'').toUpperCase())) {
+		message.react('👋');
+	}
 	
 	// Check if it starts with the prefix
 	if (message.content.indexOf(config.prefix) !== 0) {
