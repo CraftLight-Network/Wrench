@@ -3,6 +3,5 @@
 	"prefix": "]",
 	"logchannel": "",
 	"translator": "enabled",
-	"provider": "google",
-	"detect": "false"
+	"provider": "google"
 }
