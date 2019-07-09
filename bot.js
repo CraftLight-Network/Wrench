@@ -209,7 +209,9 @@ client.on("message", async message => {
 	
 	// Auto translate message
 	if (config.translator === 'enabled') {
-		const msg = tmpMsg.replace(/<@.*>|@[a-zA-Z0-9]*/gm, "<MENTION>").replace(/<http.*>[a-zA-Z0-9]*/gm, "<LINK>").replace(/<:.*>[a-zA-Z0-9]*/gm, "<EMOJI>");
+		const users = message.guild.roles.get(message.guild.id).members.map(m=>m.user.username).join('||').toUpperCase().replace(/\d+/gm, "").split('||');
+		var msg = tmpMsg.replace(/<(@.*?)>/g, "").replace(/http.[^\s]*/g, "").replace(/<(:.*?)>|:\S*:(?!\S)/g, "");
+		if (new RegExp(users.join("|")).test(msg.toUpperCase())) return;
 		if (msg.length > 5) { 
 			if (msg.split(" ").length !== Math.round(msg.length / 2)) {
 				const unique = msg.split('').filter(function(item, i, ar){ return ar.indexOf(item) === i; }).join('');
@@ -236,7 +238,7 @@ client.on("message", async message => {
 							const bucket = new TokenBucket(FILL_RATE, 'day', null);
 							bucket.removeTokens(`${msg}`, function() {
 								translate.detectLanguage(`${msg}`, function(err, detection) {
-									if (detection.language !== 'en' && detection.confidence >= 0.5 || detection.isReliable === 'true') {
+									if (detection.language !== 'en' && detection.confidence >= 0.8 || detection.isReliable === 'true') {
 										translate.translate(`${msg}`, 'en', (err, translation) => {
 											if (`${translation.translatedText}` !== 'undefined') {
 												if (`${msg}` !== `${translation.translatedText}`) {
