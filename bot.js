@@ -210,7 +210,7 @@ client.on("message", async message => {
 	// Auto translate message
 	if (config.translator === 'enabled') {
 		const users = message.guild.roles.get(message.guild.id).members.map(m=>m.user.username).join('||').toUpperCase().replace(/\d+/gm, "").split('||');
-		var msg = tmpMsg.replace(/<(@.*?)>/g, "").replace(/http.[^\s]*/g, "").replace(/<(:.*?)>|:\S*:(?!\S)/g, "");
+		var msg = tmpMsg.replace(/\n/g, "").replace(/<(@.*?)>/g, "").replace(/http.[^\s]*/ig, "").replace(/<(:.*?)>|:\S*:(?!\S)/g, "").replace(/<(:.*?)>/ig, "").replace(/`\S*[\s\S](.*?)`\n*\S*/gm, ""); // Mention, Link, Emojis, Code
 		if (new RegExp(users.join("|")).test(msg.toUpperCase())) return;
 		if (msg.length > 5) { 
 			if (msg.split(" ").length !== Math.round(msg.length / 2)) {
