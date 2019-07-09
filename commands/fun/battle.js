@@ -76,7 +76,7 @@ module.exports = class battleCommand extends Command {
 				} else if (choice === 'final') {
 					const final = randomRange(battle.defender.guard ? 40 : 100, battle.defender.guard ? 50 : 150);
 					await msg.say(`${battle.attacker} uses their final move, dealing **${final}** damage!`);
-					battle.defender.dealDamage(150);
+					battle.defender.dealDamage(final);
 					battle.attacker.useMP(battle.attacker.mp);
 					battle.attacker.usedFinal = true;
 					battle.reset();
