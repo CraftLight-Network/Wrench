@@ -1,6 +1,6 @@
 {
   "name": "WrenchBot",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "This bot is used mainly for servers in the CustomCraft Network.\r If you would like to see this bot in action, go to https://discord.gg/sAxRWVb\r Please do not take this bot and claim it as your own.\r You are free to use this on your own server, but there is no documentation.",
   "main": "bot.js",
   "dependencies": {

@@ -11,6 +11,11 @@ const messagesRead = new Enmap({
 	autoFetch: true,
 	fetchAll: false
 });
+const translationsDone = new Enmap({
+	name: "translations-done",
+	autoFetch: true,
+	fetchAll: false
+});
 
 module.exports = class botinfoCommand extends Command {
 	constructor(client) {
@@ -29,8 +34,8 @@ module.exports = class botinfoCommand extends Command {
 		});
 	}
 	run(msg) {
-		commandsRead.fetchEverything()
-		messagesRead.fetchEverything()
+		commandsRead.fetchEverything();
+		messagesRead.fetchEverything();
 		return msg.embed({
 			color: 3447003,
 			description: stripIndents`
@@ -45,7 +50,8 @@ module.exports = class botinfoCommand extends Command {
 
 				__**Stats:**__
 				Messages processed: ${messagesRead.get("number")}
-				Commands processed: ${commandsRead.get("number")}
+				Commands used: ${commandsRead.get("number")}
+				Translations done: ${translationsDone.get("number")}
 			`
 		});
 	}

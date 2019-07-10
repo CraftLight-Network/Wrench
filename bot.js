@@ -1,3 +1,26 @@
+/*
+			  _______
+			 /		 \
+			/	/####-
+		   /   /
+		__/	  /####
+	   /		 \
+	  /			./
+	 /			/	________ ________
+	 \_____	  //   |  |	 |	|	 ___ |
+	 /@@@//	 //	   |  |	 |	|		 |
+	/  /_/	//	   |		|	 ___ |
+	\_/ /  //	   |________|________|
+	  _/__//
+	 /	 / /			WrenchBot
+	/	/ /	   Fun and Helpful Discord Bot
+   /   / /
+  /	  / /				 v1.2.0
+ /	 / /		Github: http://cust.pw/wb
+/  O  /		   Issues: http://cust.pw/wbis
+\____/
+*/
+
 // // Bot setup
 const { CommandoClient } = require('discord.js-commando');
 const RateLimiter = require('limiter').RateLimiter;
@@ -22,9 +45,8 @@ client.registry
 		['fun', 'Fun'],
 		['editing', 'Editing'],
 		['helpful', 'Helpful'],
-		// ['moderation', 'Moderation'],
+		['staff', 'Staff'],
 		['info', 'Info'],
-		// ['owner', 'Owner'],
 	])
 	.registerDefaultGroups()
 	.registerDefaultCommands({
@@ -46,6 +68,32 @@ const messagesRead = new Enmap({
 	autoFetch: true,
 	fetchAll: false
 });
+// Translation counter
+const translationsDone = new Enmap({
+	name: "translations-done",
+	autoFetch: true,
+	fetchAll: false
+});
+// Per-server settings
+client.settings = new Enmap({
+	name: "settings",
+	fetchAll: false,
+	autoFetch: true,
+	cloneLevel: 'deep'
+});
+
+// Default settings
+const defaultSettings = {
+	logChannel: "log", // In the future...
+	welcome: "false",
+	welcomeChannel: "in-and-out",
+	welcomeMessage: "Welcome {{user}}! Make sure to follow the rules!",
+	leave: "leave",
+	leaveChannel: "in-and-out",
+	leaveMessage: "{{user}} just left. That's sad.",
+	botChannelOnly: "false",
+	botChannel: "commands"
+}
 
 
 // // Logging
@@ -98,8 +146,8 @@ const log = new (winston.Logger)({
 			maxSize: '128m',
 			maxFiles: '14d',
 			level: 'BLANK'
-        }),
-    ]
+		}),
+	]
 });
 
 process.on('unhandledRejection', (err, p) => {log.ERROR(`Rejected Promise: ${p} / Rejection: ${err}`);}); // Unhandled Rejection
@@ -107,29 +155,38 @@ client.on('error', err => log.ERROR(err)); // Errors
 client.on('warn', warn => log.WARN(warn)); // Warnings
 client.on('log', log => log.CONSOLE(log)); // Logs
 client.on('debug', debug => log.DEBUG(debug)); // Debug
-client.on("guildCreate", guild => {log.INFO(`Added in a new server: ${guild.name} (id: ${guild.id})`);}); // Notify the console that a new server is using the bot
-client.on("guildDelete", guild => {log.INFO(`Removed from server: ${guild.name} (id: ${guild.id})`);}); // Notify the console that a server removed the bot
-client.on('disconnect', event => {log.ERROR(`[DISCONNECT] ${event.code}`);process.exit(0);}); // Notify the console that the bot has disconnected
+client.on("guildCreate", guild => {log.INFO(`Added in a new server: ${guild.name} (id: ${guild.id})`)}); // Notify the console that a new server is using the bot
+
+// Notify the console that a server removed the bot
+client.on("guildDelete", guild => { 
+	log.INFO(`Removed from server: ${guild.name} (id: ${guild.id})`);
+	client.settings.delete(guild.id);
+});
+// Events when a user is added
+client.on("guildMemberAdd", member => {
+	client.settings.ensure(member.guild.id, defaultSettings);
+	client.settings.fetchEverything();
+	if (client.settings.get(member.guild.id, "welcome") === 'false') return;
+	let welcomeMessage = client.settings.get(member.guild.id, "welcomeMessage");
+	welcomeMessage = welcomeMessage.replace("{{user}}", `<@${member.user.id}>`);
+	member.guild.channels.find("name", client.settings.get(member.guild.id, "welcomeChannel")).send(welcomeMessage).catch(console.error);
+});
+// Events when a user is removed
+client.on("guildMemberRemove", member => {
+	client.settings.ensure(member.guild.id, defaultSettings);
+	client.settings.fetchEverything();
+	if (client.settings.get(member.guild.id, "leave") === 'false') return;
+	let welcomeMessage = client.settings.get(member.guild.id, "leaveMessage");
+	leaveMessage = leaveMessage.replace("{{user}}", member.user.tag);
+	member.guild.channels.find("name", client.settings.get(member.guild.id, "leaveChannel")).send(leaveMessage).catch(console.error);
+});
+
+client.on('disconnect', event => {log.ERROR(`[DISCONNECT] ${event.code}`);process.exit(0)}); // Notify the console that the bot has disconnected
 
 // // Client actions
 
 // Set the activity list
-const activities_list = [
-	"]help", 
-	"on CustomCraft",
-	"a game.",
-	"customcraft.online",
-	"http://cust.pw/",
-	"http://cust.pw/d",
-	"on Fallout Salvation",
-	"FS: WNC",
-	"with code.",
-	"with Edude42",
-	"with Spade",
-	"with Cas",
-	"with Braven",
-	"things."
-];
+const activities_list = [`${config.prefix}help`,  "On CustomCraft", "On Fallout Salvation", "On Ethereal", "with code", "with Edude42", "with Braven", "with Spade", "with Cas", "."];
 
 // When the bot starts
 client.on("ready", () => {
@@ -172,7 +229,7 @@ client.on('guildMemberAdd', member => {
 });
 
 /*
-// Music !! VERY WIP !!
+// Music !! VERY WIP !!	  Note: This most likely will not be updated for a while
 client.on('voiceStateUpdate', (oldMember, newMember) => {
 	const channel = client.channels.get("525499487049875456");
 	console.log(channel.members)
@@ -189,16 +246,15 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 
 
 // Message handler
-client.on("message", async message => {
+client.on("message", async (message) => {
 	// Make sure enmap exists
 	commandsRead.ensure("number", 0);
 	messagesRead.ensure("number", 0);
-    
+	translationsDone.ensure("number", 0);
+	
 	// Run spam filter
 	if (message.guild !== null) {
-		if (client.guilds.get(message.guild.id).id == '525487377817534484') {
-			client.emit('checkMessage', message);
-		}
+		client.emit('checkMessage', message);
 	}
 	
 	// Make sure the user isn't a bot
@@ -217,9 +273,11 @@ client.on("message", async message => {
 				const unique = msg.split('').filter(function(item, i, ar){ return ar.indexOf(item) === i; }).join('');
 				if (unique.length > 5) {
 					if (config.provider === 'yandex') {
+						if (message.content.indexOf(config.prefix) === 0) return;
 						translate.translate(`${msg}`, { to: 'en' }, (err, res) => {
 							if (`${msg}` !== `${res.text}`) {
 								if (`${res.text}` !== 'undefined') {
+									translationsDone.inc("number");
 									log.TRAN(`${message.author}: ${msg} -> ${res.text}`);
 									const embed = new RichEmbed()
 									.setDescription(`**${res.text}**`)
@@ -237,11 +295,13 @@ client.on("message", async message => {
 							var FILL_RATE = 1024 * 1024 * 1048576;
 							const bucket = new TokenBucket(FILL_RATE, 'day', null);
 							bucket.removeTokens(`${msg}`, function() {
+								if (message.content.indexOf(config.prefix) === 0) return;
 								translate.detectLanguage(`${msg}`, function(err, detection) {
 									if (detection.language !== 'en' && detection.confidence >= 0.8 || detection.isReliable === 'true') {
 										translate.translate(`${msg}`, 'en', (err, translation) => {
 											if (`${translation.translatedText}` !== 'undefined') {
 												if (`${msg}` !== `${translation.translatedText}`) {
+													translationsDone.inc("number");
 													log.TRAN(`${message.author}: ${msg} -> ${translation.translatedText}`);
 													const embed = new RichEmbed()
 													.setDescription(`**${translation.translatedText}**`)
@@ -262,9 +322,30 @@ client.on("message", async message => {
 	};
 	
 	// Neat message responses
-	const greeting = ['HELLO', 'HI', 'HEY', 'HOWDY', 'HOLA']
-	if (greeting.includes(tmpMsg.replace(/ .*/,'').toUpperCase())) {
-		message.react('👋');
+	const greeting = ['hello', 'hallo', 'hi', 'hey', 'howdy', 'sup', 'yo', 'hola', 'bonjour', 'salut']
+	const farewell = ['goodbye', 'bye', 'cya']
+	
+	if (greeting.includes(tmpMsg.replace(/ .*/,'').toLowerCase()) && tmpMsg.split(' ').length === 1) {
+		message.react('👋').then(async function () {
+			await message.react('🇭');
+			await message.react('🇮');
+		});
+	}
+	if (farewell.includes(tmpMsg.replace(/ .*/,'').toLowerCase()) && tmpMsg.split(' ').length === 1) {
+		message.react('👋').then(async function () {
+			await message.react('🇧');
+			await message.react('🇾');
+			await message.react('🇪');
+		});
+	}
+
+	
+	// Check if it's in a bot-only channel (If needed)
+	if (client.settings.get(message.guild.id, "botChannelOnly") == 'true' && message.content.indexOf(config.prefix) === 0) {
+		console.log('botOnly True and prefix detected')
+		if (message.channel.name !== client.settings.get(message.guild.id, "botChannel")) {
+			message.author.send('Please do not use bot commands in that channel! You will be punished.'); // No punishment yet
+		}
 	}
 	
 	// Check if it starts with the prefix
@@ -283,6 +364,7 @@ client.on("message", async message => {
 
 	// Add to the Enmap stats
 	commandsRead.inc("number");
+	
 });
 
 
