@@ -251,7 +251,7 @@ client.on("message", async (message) => {
 	commandsRead.ensure("number", 0);
 	messagesRead.ensure("number", 0);
 	translationsDone.ensure("number", 0);
-	client.settings.ensure(member.guild.id, defaultSettings);
+	client.settings.ensure(message.guild.id, defaultSettings);
 	
 	// Run spam filter
 	if (message.guild !== null && message.attachments.size <= 0) {
