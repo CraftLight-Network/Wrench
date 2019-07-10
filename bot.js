@@ -253,7 +253,7 @@ client.on("message", async (message) => {
 	translationsDone.ensure("number", 0);
 	
 	// Run spam filter
-	if (message.guild !== null) {
+	if (message.guild !== null && message.attachments.size <= 0) {
 		client.emit('checkMessage', message);
 	}
 	
