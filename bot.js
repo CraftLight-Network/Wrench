@@ -88,7 +88,7 @@ const defaultSettings = {
 	welcome: "false",
 	welcomeChannel: "in-and-out",
 	welcomeMessage: "Welcome {{user}}! Make sure to follow the rules!",
-	leave: "leave",
+	leave: "false",
 	leaveChannel: "in-and-out",
 	leaveMessage: "{{user}} just left. That's sad.",
 	botChannelOnly: "false",
@@ -176,7 +176,7 @@ client.on("guildMemberRemove", member => {
 	client.settings.ensure(member.guild.id, defaultSettings);
 	client.settings.fetchEverything();
 	if (client.settings.get(member.guild.id, "leave") === 'false') return;
-	let welcomeMessage = client.settings.get(member.guild.id, "leaveMessage");
+	let leaveMessage = client.settings.get(member.guild.id, "leaveMessage");
 	leaveMessage = leaveMessage.replace("{{user}}", member.user.tag);
 	member.guild.channels.find("name", client.settings.get(member.guild.id, "leaveChannel")).send(leaveMessage).catch(console.error);
 });
