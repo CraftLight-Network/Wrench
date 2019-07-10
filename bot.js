@@ -216,11 +216,11 @@ client.on("ready", () => {
 		interval: 3000, // How many seconds in ms for buffers
 		warningMessage: "stop spamming! Change your message or slow down.", // Warn message
 		banMessage: "spammed and got banned!", // Ban message
-		maxDuplicatesWarning: 3, // Max duplicates before warn
+		maxDuplicatesWarning: 5, // Max duplicates before warn
 		maxDuplicatesBan: 10, // Max duplicates before ban
 		deleteMessagesAfterBanForPastDays: 1, // Delete messages x days ago
-		exemptRoles: ["Admin", "Manager"], // Ignored roles
-		exemptUsers: ["Edude42#2812"] // Ignored users
+		exemptRoles: ["Admin", "Manager"], // Ignored roles NOTE: Will make server-specific
+		exemptUsers: ["Edude42#2812", "WrenchBot#3085"] // Ignored users
 	});
 });
 
