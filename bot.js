@@ -251,7 +251,9 @@ client.on("message", async (message) => {
 	commandsRead.ensure("number", 0);
 	messagesRead.ensure("number", 0);
 	translationsDone.ensure("number", 0);
-	client.settings.ensure(message.guild.id, defaultSettings);
+	if (message.guild !== null) {
+		client.settings.ensure(message.guild.id, defaultSettings);
+	}
 	
 	// Run spam filter
 	if (message.guild !== null && message.attachments.size <= 0) {
@@ -265,10 +267,16 @@ client.on("message", async (message) => {
 	const tmpMsg = `${message}`;
 	
 	// Auto translate message
+	const excludedWords = ['af', 'bruh']; // Put problematic words here
+	
 	if (config.translator === 'enabled') {
+		if (message.guild == null) return;
+		var exclude = new RegExp('\\b' + excludedWords.join('\\b|\\b') + '\\b');
 		const users = message.guild.roles.get(message.guild.id).members.map(m=>m.user.username).join('||').toUpperCase().replace(/\d+/gm, "").split('||');
-		var msg = tmpMsg.replace(/\n/g, "").replace(/<(@.*?)>/g, "").replace(/http.[^\s]*/ig, "").replace(/<(:.*?)>|:\S*:(?!\S)/g, "").replace(/<(:.*?)>/ig, "").replace(/`\S*[\s\S](.*?)`\n*\S*/gm, ""); // Mention, Link, Emojis, Code
-		if (new RegExp(users.join("|")).test(msg.toUpperCase())) return;
+		var msg = tmpMsg.replace(/\n/g, "").replace(/<(@.*?)>/g, "").replace(/http.[^\s]*/ig, "").replace(/<(:.*?)>|:\S*:(?!\S)/g, "").replace(/<(:.*?)>/ig, "").replace(/`\S*[\s\S](.*?)`\n*\S*/gm, "").replace(exclude, ""); // Mention, Link, Emojis, Code
+		if (new RegExp(users.join("|")).test(msg.toUpperCase())) {
+			var msg = msg.replace(new RegExp(users.join("|"), "i"), "");
+		}
 		if (msg.length > 5) { 
 			if (msg.split(" ").length !== Math.round(msg.length / 2)) {
 				const unique = msg.split('').filter(function(item, i, ar){ return ar.indexOf(item) === i; }).join('');
@@ -298,7 +306,7 @@ client.on("message", async (message) => {
 							bucket.removeTokens(`${msg}`, function() {
 								if (message.content.indexOf(config.prefix) === 0) return;
 								translate.detectLanguage(`${msg}`, function(err, detection) {
-									if (detection.language !== 'en' && detection.confidence >= 0.8 || detection.isReliable === 'true') {
+									if (detection.language !== 'en' && detection.confidence >= 0.8) {
 										translate.translate(`${msg}`, 'en', (err, translation) => {
 											if (`${translation.translatedText}` !== 'undefined') {
 												if (`${msg}` !== `${translation.translatedText}`) {
@@ -339,14 +347,16 @@ client.on("message", async (message) => {
 			await message.react('🇪');
 		});
 	}
-
 	
-	// Check if it's in a bot-only channel (If needed)
-	if (client.settings.get(message.guild.id, "botChannelOnly") == 'true' && message.content.indexOf(config.prefix) === 0) {
-		console.log('botOnly True and prefix detected')
-		if (message.channel.name !== client.settings.get(message.guild.id, "botChannel")) {
-			message.author.send('Please do not use bot commands in that channel! You will be punished.'); // No punishment yet
-		}
+	// Stop commands in the wrong channel (If needed)
+	if (message.guild !== null) {
+		client.dispatcher.addInhibitor(message => {
+			if (client.settings.get(message.guild.id, "botChannelOnly") === 'true' && message.content.indexOf(config.prefix) === 0) {
+				if (message.channel.name !== client.settings.get(message.guild.id, "botChannel")) {
+					return message.author.send('Please do not use bot commands in that channel!');
+				}
+			}
+		});
 	}
 	
 	// Check if it starts with the prefix
