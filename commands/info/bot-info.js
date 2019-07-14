@@ -36,6 +36,7 @@ module.exports = class botinfoCommand extends Command {
 	run(msg) {
 		commandsRead.fetchEverything();
 		messagesRead.fetchEverything();
+		const added = new Date(msg.guild.joinedTimestamp).toLocaleDateString("en-US");
 		return msg.embed({
 			color: 3447003,
 			description: stripIndents`
@@ -52,6 +53,7 @@ module.exports = class botinfoCommand extends Command {
 				Messages processed: ${messagesRead.get("number")}
 				Commands used: ${commandsRead.get("number")}
 				Translations done: ${translationsDone.get("number")}
+				Bot added on ${added}
 			`
 		});
 	}
