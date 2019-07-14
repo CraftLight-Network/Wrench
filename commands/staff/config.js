@@ -1,5 +1,6 @@
 const { CommandoClient } = require('discord.js-commando');
 const { Command } = require('discord.js-commando');
+const { RichEmbed } = require('discord.js');
 const config = require('../../config.json');
 const Enmap = require("enmap");
 
@@ -61,6 +62,19 @@ module.exports = class configCommand extends Command {
 	}
 	run(msg, { action, property, value }) {
 		if (action === '') return msg.reply('please specify if you want to view or set.');
+		if (action === 'help') {
+			const config = client.settings.get(msg.guild.id);
+			const embed = new RichEmbed()
+			.setAuthor(`${msg.guild.name}'s Config help`, msg.guild.iconURL)
+			.setDescription(`__**Property - Value**__\n`)
+			.setColor(0x2F5EA3)
+			.setURL('http://cust.pw/wb')
+			.setFooter(`More info on config values: http://cust.pw/wb`);
+			for(var attributename in config){
+				embed.description += `**${attributename}** - ${config[attributename]}\n`;
+			}
+			return msg.channel.send(embed);
+		}
 		if (property === '') return msg.reply(`please specify what setting you want to ${action}.`);
 		if (value === '' && action == 'set') return msg.reply(`please specify what you want to set \`${property}\` to.`);
 		const guildConf = client.settings.ensure(msg.guild.id, defaultSettings);
