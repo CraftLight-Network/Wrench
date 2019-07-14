@@ -116,7 +116,7 @@ echo WrenchBot Installer
 echo.
 echo Installing Updates...
 echo.
-choco upgrade all
+choco upgrade all -y
 git init
 git remote add origin https://github.com/Edude42/WrenchBot.git
 git fetch --all
@@ -210,7 +210,7 @@ echo WrenchBot Updater
 echo.
 echo Updating Chocolatey packages...
 echo.
-choco upgrade all
+choco upgrade all -y
 echo.
 echo Done! Moving on...
 echo.
