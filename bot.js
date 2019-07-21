@@ -50,11 +50,12 @@ client.registry
 	])
 	.registerDefaultGroups()
 	.registerDefaultCommands({
-		eval: false,
+		eval: false
 	})
 	.registerCommandsIn(path.join(__dirname, 'commands'));
 
 // Setup enmap
+const defaultSettings = require('./data/default.json');
 const Enmap = require("enmap");
 // Command counter
 const commandsRead = new Enmap({
@@ -82,18 +83,6 @@ client.settings = new Enmap({
 	cloneLevel: 'deep'
 });
 
-// Default settings
-const defaultSettings = {
-	logChannel: "log", // In the future...
-	welcome: "false",
-	welcomeChannel: "in-and-out",
-	welcomeMessage: "Welcome {{user}}! Make sure to follow the rules!",
-	leave: "false",
-	leaveChannel: "in-and-out",
-	leaveMessage: "{{user}} just left. That's sad.",
-	botChannelOnly: "false",
-	botChannel: "commands"
-}
 
 
 // // Logging
@@ -109,25 +98,19 @@ require('winston-daily-rotate-file');
 const log = new (winston.Logger)({
 	levels: {
 		'OK': 0,
-		'CMD': 1,
-		'TRAN': 2,
-		'EMPT': 3,
-		'INFO': 4,
-		'WARN': 5,
-		'ERROR': 6,
-		'CONSOLE': 7,
-		'DEBUG': 8,
+		'INFO': 1,
+		'CMD': 2,
+		'TRAN': 3,
+		'WARN': 4,
+		'ERROR': 5,
 	},
 	colors: {
 		'OK': 'green',
+		'INFO': 'blue',
 		'CMD': 'cyan',
 		'TRAN': 'cyan',
-		'EMPT': 'black',
-		'INFO': 'blue',
 		'WARN': 'yellow',
 		'ERROR': 'red',
-		'CONSOLE': 'grey',
-		'DEBUG': 'magenta'
 	},
 	handleExceptions: true,
 	transports: [
@@ -135,7 +118,7 @@ const log = new (winston.Logger)({
 			name: 'log-console',
 			timestamp: tsFormat,
 			colorize: true,
-			level: 'CONSOLE'
+			level: 'ERROR'
 		}),
 		new (winston.transports.DailyRotateFile)({ // File logging
 			name: 'log-file',
@@ -145,7 +128,7 @@ const log = new (winston.Logger)({
 			zippedArchive: true,
 			maxSize: '128m',
 			maxFiles: '14d',
-			level: 'BLANK'
+			level: 'ERROR'
 		}),
 	]
 });
@@ -154,34 +137,53 @@ process.on('unhandledRejection', (err, p) => {log.ERROR(`Rejected Promise: ${p} 
 client.on('error', err => log.ERROR(err)); // Errors
 client.on('warn', warn => log.WARN(warn)); // Warnings
 client.on('log', log => log.CONSOLE(log)); // Logs
-client.on('debug', debug => log.DEBUG(debug)); // Debug
-client.on("guildCreate", guild => {log.INFO(`Added in a new server: ${guild.name} (id: ${guild.id})`)}); // Notify the console that a new server is using the bot
+
+// Notify the console that a new server is using the bot
+client.on("guildCreate", guild => {log.INFO(`Added in a new server: ${guild.name} (id: ${guild.id})`); client.settings.ensure(guild.id)});
 
 // Notify the console that a server removed the bot
-client.on("guildDelete", guild => { 
-	log.INFO(`Removed from server: ${guild.name} (id: ${guild.id})`);
-	client.settings.delete(guild.id);
-});
+client.on("guildDelete", guild => {log.INFO(`Removed from server: ${guild.name} (id: ${guild.id})`); client.settings.delete(guild.id)});
+
 // Events when a user is added
 client.on("guildMemberAdd", member => {
 	client.settings.ensure(member.guild.id, defaultSettings);
 	client.settings.fetchEverything();
-	if (client.settings.get(member.guild.id, "welcome") === 'false') return;
-	let welcomeMessage = client.settings.get(member.guild.id, "welcomeMessage");
-	welcomeMessage = welcomeMessage.replace("{{user}}", `<@${member.user.id}>`);
-	member.guild.channels.find("name", client.settings.get(member.guild.id, "welcomeChannel")).send(welcomeMessage).catch(console.error);
+	
+	if (client.settings.get(member.guild.id, "welcome") !== 'none') {
+		if (!(member.guild.channels.find("name", client.settings.get(member.guild.id, "welcome")))) return;
+		
+		let welcomeMessage = client.settings.get(member.guild.id, "welcomeMessage");
+		welcomeMessage = welcomeMessage.replace("{{user}}", `<@${member.user.id}>`);
+		welcomeMessage = welcomeMessage.replace("{{id}}", member.user.id);
+		
+		member.guild.channels.find("name", client.settings.get(member.guild.id, "welcome")).send(welcomeMessage).catch(console.error);
+	}
+	
+	if (client.settings.get(member.guild.id, "joinRole") !== 'none') {
+		if (!(member.guild.roles.find("name", client.settings.get(member.guild.id, "joinRole")))) return;
+		
+		member.addRole(member.guild.roles.find("name", client.settings.get(member.guild.id, "joinRole")).id).catch(console.error);
+	}
 });
+
 // Events when a user is removed
 client.on("guildMemberRemove", member => {
 	client.settings.ensure(member.guild.id, defaultSettings);
 	client.settings.fetchEverything();
-	if (client.settings.get(member.guild.id, "leave") === 'false') return;
+	
+	if (client.settings.get(member.guild.id, "leave") === 'none') return;
+	if (!(member.guild.channels.find("name", client.settings.get(member.guild.id, "leave")))) return;
+	
 	let leaveMessage = client.settings.get(member.guild.id, "leaveMessage");
-	leaveMessage = leaveMessage.replace("{{user}}", member.user.tag);
-	member.guild.channels.find("name", client.settings.get(member.guild.id, "leaveChannel")).send(leaveMessage).catch(console.error);
+	leaveMessage = leaveMessage.replace("{{user}}", `<@${member.user.id}>`);
+	leaveMessage = leaveMessage.replace("{{id}}", member.user.id);
+	
+	member.guild.channels.find("name", client.settings.get(member.guild.id, "leave")).send(leaveMessage).catch(console.error);
 });
 
 client.on('disconnect', event => {log.ERROR(`[DISCONNECT] ${event.code}`);process.exit(0)}); // Notify the console that the bot has disconnected
+
+
 
 // // Client actions
 
@@ -224,9 +226,9 @@ client.on("ready", () => {
 	});
 });
 
-client.on('guildMemberAdd', member => {
-	member.addRole('525501371269513236');
-});
+//client.on('guildMemberAdd', member => {
+//	member.addRole('525501371269513236');
+//});
 
 /*
 // Music !! VERY WIP !!	  Note: This most likely will not be updated for a while
@@ -243,6 +245,7 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 	}
 })
 */
+
 
 
 // Message handler
@@ -301,12 +304,13 @@ client.on("message", async (message) => {
 					if (config.provider === 'google') {
 						const limiter = new RateLimiter(500, 100000);
 						limiter.removeTokens(1, function(err, remainingRequests) {
+							if (remainingRequests < 1) return;
 							var FILL_RATE = 1024 * 1024 * 1048576;
 							const bucket = new TokenBucket(FILL_RATE, 'day', null);
-							bucket.removeTokens(`${msg}`, function() {
+							bucket.removeTokens(msg.byteLength, function() {
 								if (message.content.indexOf(config.prefix) === 0) return;
 								translate.detectLanguage(`${msg}`, function(err, detection) {
-									if (detection.language !== 'en' && detection.confidence >= 0.8) {
+									if (detection.language !== 'en' && detection.confidence === 1) {
 										translate.translate(`${msg}`, 'en', (err, translation) => {
 											if (`${translation.translatedText}` !== 'undefined') {
 												if (`${msg}` !== `${translation.translatedText}`) {
@@ -332,7 +336,7 @@ client.on("message", async (message) => {
 	
 	// Neat message responses
 	const greeting = ['hello', 'hallo', 'hi', 'hey', 'howdy', 'sup', 'yo', 'hola', 'bonjour', 'salut']
-	const farewell = ['goodbye', 'bye', 'cya']
+	const farewell = ['goodbye', 'bye', 'cya', 'gtg']
 	
 	if (greeting.includes(tmpMsg.replace(/ .*/,'').toLowerCase()) && tmpMsg.split(' ').length === 1) {
 		message.react('👋').then(async function () {
@@ -351,8 +355,10 @@ client.on("message", async (message) => {
 	// Stop commands in the wrong channel (If needed)
 	if (message.guild !== null) {
 		client.dispatcher.addInhibitor(message => {
-			if (client.settings.get(message.guild.id, "botChannelOnly") === 'true' && message.content.indexOf(config.prefix) === 0) {
-				if (message.channel.name !== client.settings.get(message.guild.id, "botChannel")) {
+			if (client.settings.get(message.guild.id, "bot") !== "none" && message.content.indexOf(config.prefix) === 0) {
+				client.settings.fetchEverything();
+				if (!(client.settings.get(message.guild.id, "bot").includes(message.channel.name))) {
+					try {message.delete()} catch(err) {};
 					return message.author.send('Please do not use bot commands in that channel!');
 				}
 			}
@@ -375,7 +381,6 @@ client.on("message", async (message) => {
 
 	// Add to the Enmap stats
 	commandsRead.inc("number");
-	
 });
 
 
