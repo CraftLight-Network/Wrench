@@ -3,5 +3,5 @@
 	"prefix": "]",
 	"logchannel": "",
 	"translator": "enabled",
-	"provider": "google"
+	"provider": "yandex"
 }
