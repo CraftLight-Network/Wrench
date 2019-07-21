@@ -185,6 +185,7 @@ goto start
 cls
 call :resetErrorLevel
 if not exist node_modules goto runInstall
+if not exist .\data\launcherConfig goto runInstall
 net.exe session 1>NUL 2>NUL || (goto noAdmin)
 
 title WrenchBot Updater
@@ -256,6 +257,7 @@ goto start
 cls
 call :resetErrorLevel
 if not exist node_modules goto runInstall
+if not exist .\data\launcherConfig goto runInstall
 
 title WrenchBot Options
 echo.
