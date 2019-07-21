@@ -13,3 +13,4 @@ auth.json
 data/storage/
 data/enmap.*
 commands/owner/
+data/launcherConfig
