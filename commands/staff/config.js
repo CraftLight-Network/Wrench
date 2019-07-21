@@ -53,9 +53,9 @@ module.exports = class configCommand extends Command {
 		});
 	}
 	run(msg, { action, property, value }) {
-	    client.settings.ensure(msg.guild.id, defaultSettings);
-	    client.settings.fetchEverything();
-	    
+		client.settings.ensure(msg.guild.id, defaultSettings);
+		client.settings.fetchEverything();
+		
 		if (action === '') return msg.reply('please specify if you want to do.');
 		if (action === 'help') {
 			const config = client.settings.get(msg.guild.id);
@@ -72,13 +72,13 @@ module.exports = class configCommand extends Command {
 		}
 		
 		if (action === 'reset') {
-		    if (property === '') return msg.reply(`Are you sure you want to ${action}? Re-run the command with ${action} \`yes\``);
-		    if (property === 'yes') {
-		        client.settings.delete(msg.guild.id);
-		        client.settings.ensure(msg.guild.id, defaultSettings);
-		        msg.reply('The config has been reset and updated. Run the help command to see the new and current values.');
-		        return;
-		    }
+			if (property === '') return msg.reply(`Are you sure you want to ${action}? Re-run the command with ${action} \`yes\``);
+			if (property === 'yes') {
+				client.settings.delete(msg.guild.id);
+				client.settings.ensure(msg.guild.id, defaultSettings);
+				msg.reply('The config has been reset and updated. Run the help command to see the new and current values.');
+				return;
+			}
 		}
 		
 		if (property === '') return msg.reply(`please specify what setting you want to ${action}.`);
@@ -86,25 +86,25 @@ module.exports = class configCommand extends Command {
 		
 		if (action === 'set') { // SET
 			if (`${client.settings.get(msg.guild.id, property)}` !== 'undefined') {
-			    if (JSON.stringify(client.settings.get(msg.guild.id, property)).startsWith("[")) {
-			        return msg.say(`The setting "${property}" is an array object. Please use \`add\` or \`remove\` instead of \`set\``);
-			    }
+				if (JSON.stringify(client.settings.get(msg.guild.id, property)).startsWith("[")) {
+					return msg.say(`The setting "${property}" is an array object. Please use \`add\` or \`remove\` instead of \`set\``);
+				}
 				client.settings.set(msg.guild.id, value, property);
 				msg.say(`The setting "${property}" has been set to "${client.settings.get(msg.guild.id, property)}"`);
 			} else return msg.reply('that value does not exist in the system.');
 		} else if (action === 'add') { // ADD
-		    if (`${client.settings.get(msg.guild.id, property)}` !== 'undefined') {
-		        if (!(JSON.stringify(client.settings.get(msg.guild.id, property)).startsWith("["))) {
-			        return msg.say(`The setting "${property}" is not an array object. Please use \`set\``);
-			    }
+			if (`${client.settings.get(msg.guild.id, property)}` !== 'undefined') {
+				if (!(JSON.stringify(client.settings.get(msg.guild.id, property)).startsWith("["))) {
+					return msg.say(`The setting "${property}" is not an array object. Please use \`set\``);
+				}
 				client.settings.push(msg.guild.id, value, property);
 				msg.say(`The setting "${client.settings.get(msg.guild.id, property)}" has been added to "${property}"`);
 			} else return msg.reply('that value does not exist in the system.');
 		} else if (action === 'remove') { // REMOVE
-		    if (`${client.settings.get(msg.guild.id, property)}` !== 'undefined') {
-		        if (!(JSON.stringify(client.settings.get(msg.guild.id, property)).startsWith("["))) {
-			        return msg.say(`The setting "${property}" is not an array object. Please use \`set\``);
-			    }
+			if (`${client.settings.get(msg.guild.id, property)}` !== 'undefined') {
+				if (!(JSON.stringify(client.settings.get(msg.guild.id, property)).startsWith("["))) {
+					return msg.say(`The setting "${property}" is not an array object. Please use \`set\``);
+				}
 				client.settings.remove(msg.guild.id, value, property);
 				msg.say(`The setting "${client.settings.get(msg.guild.id, property)}" has been removed from "${property}"`);
 			} else return msg.reply('that value does not exist in the system.');
