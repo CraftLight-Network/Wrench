@@ -346,10 +346,22 @@ client.on("message", async (message) => {
 	commandsRead.inc("number");
 });
 
-// Export stuff that other commands might need
-module.exports = {
-	log
-};
+// Log deleted messages
+client.on("messageDelete", (message) => {
+	if (settings.get(message.guild.id, "log") !== 'none') {
+		// Stringify the message
+		const tmpMsg = `${message}`;
+		
+		if (!message.guild.channels.find(channel => channel.name == settings.get(message.guild.id, "log"))) return; 
+	
+		const embed = new RichEmbed()
+		.setFooter(new Date().toLocaleDateString("en-US"))
+		.setDescription(`By: **<@${message.author.id}>**\nContent: **${tmpMsg}**`) //.substring(0, 4) + "..."
+		.setAuthor('Message deleted', message.author.displayAvatarURL)
+		.setColor(0xFF0000);
+		message.guild.channels.find(channel => channel.name == settings.get(message.guild.id, "log")).send(embed).catch(console.error);
+	}
+});
 
 
 
