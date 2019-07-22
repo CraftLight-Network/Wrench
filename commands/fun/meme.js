@@ -11,7 +11,7 @@ const lastSub = new Enmap({
 	cloneLevel: 'deep'
 });
 
-const { subreddit } = require('../../data/meme');
+const { subreddit } = require('../../data/json/meme');
 
 module.exports = class memeCommand extends Command {
 	constructor(client) {

@@ -1,5 +1,5 @@
 const { Command } = require('discord.js-commando');
-const Battle = require('../../data/battle');
+const Battle = require('../../data/js/battle');
 const { list, firstUpperCase } = require('../util');
 const { verify } = require('../util');
 

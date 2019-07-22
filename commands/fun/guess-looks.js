@@ -3,7 +3,7 @@ const { oneLine } = require('common-tags');
 const { Random, MersenneTwister19937 } = require("random-js");
 
 const genders = ['male', 'female'];
-const { eyeColors, hairColors, hairStyles, extras } = require('../../data/guess-looks');
+const { eyeColors, hairColors, hairStyles, extras } = require('../../data/json/guess-looks');
 
 module.exports = class GuessLooksCommand extends Command {
 	constructor(client) {

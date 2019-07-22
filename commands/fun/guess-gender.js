@@ -4,16 +4,15 @@ const request = require('node-superfetch');
 module.exports = class genderCommand extends Command {
 	constructor(client) {
 		super(client, {
-			name: 'guess-gender',
-			aliases: ['gender', 'gender-guess'],
-			group: 'fun',
-			memberName: 'guess-gender',
-			description: 'Guess a name or user\'s gender.',
+			name: 'gender',
+			group: 'helpful',
+			memberName: 'gender',
+			description: 'Grab the gender of a real name.',
 			guildOnly: true,
 			args: [
 				{
 					key: 'name',
-					prompt: 'Who or what do you want me to guess the gender of?',
+					prompt: 'What\'s the name you want to grab the gender of?',
 					type: 'string'
 				}
 			]

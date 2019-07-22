@@ -1,5 +1,5 @@
 const { Command } = require('discord.js-commando');
-const signs = require('../../data/chinese-zodiac');
+const signs = require('../../data/json/chinese-zodiac');
 
 module.exports = class ChineseZodiacCommand extends Command {
 	constructor(client) {

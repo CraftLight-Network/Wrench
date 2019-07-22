@@ -1,7 +1,7 @@
 const { Command } = require('discord.js-commando');
 const { stripIndents } = require('common-tags');
 const { list } = require('../util');
-const sentences = require('../../data/typing-test');
+const sentences = require('../../data/json/typing-test');
 const difficulties = ['easy', 'medium', 'hard', 'extreme', 'impossible'];
 const times = {
 	easy: 25000,

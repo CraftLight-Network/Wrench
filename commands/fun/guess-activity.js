@@ -2,7 +2,7 @@ const { Command } = require('discord.js-commando');
 const { oneLine } = require('common-tags');
 const { Random } = require("random-js");
 
-const { activities } = require('../../data/guess-activity');
+const { activities } = require('../../data/json/guess-activity');
 
 module.exports = class GuessActivityCommand extends Command {
 	constructor(client) {

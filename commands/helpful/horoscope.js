@@ -3,7 +3,7 @@ const Discord = require("discord.js");
 const request = require('node-superfetch');
 const cheerio = require('cheerio');
 const { list, firstUpperCase } = require('../util');
-const signs = require('../../data/horoscope');
+const signs = require('../../data/json/horoscope');
 
 module.exports = class horoscopeCommand extends Command {
 	constructor(client) {
