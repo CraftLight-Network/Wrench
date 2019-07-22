@@ -1,16 +1,14 @@
-logs
-*.log
-logs/
-node_modules/
+# Node stuff
 .npm
 .node_repl_history
-*.tgz
+node_modules/
+
+# General files
 .env
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# Private files
+data/private
 auth.json
-data/storage/
-data/enmap.*
-commands/owner/
-data/launcherConfig
