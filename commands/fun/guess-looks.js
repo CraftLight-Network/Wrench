@@ -1,6 +1,6 @@
 const { Command } = require('discord.js-commando');
 const { oneLine } = require('common-tags');
-const Random = require('random-js');
+const { Random, MersenneTwister19937 } = require("random-js");
 
 const genders = ['male', 'female'];
 const { eyeColors, hairColors, hairStyles, extras } = require('../../data/guess-looks');
@@ -9,7 +9,7 @@ module.exports = class GuessLooksCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'guess-looks',
-			aliases: ['guess-my-looks', 'style'],
+			aliases: ['looks'],
 			group: 'fun',
 			memberName: 'guess-looks',
 			description: 'Guess what a user looks like.',
@@ -28,7 +28,7 @@ module.exports = class GuessLooksCommand extends Command {
 	run(msg, { user }) {
 		if (user.id === this.client.user.id) return msg.reply('Just look at my profile picture!');
 		const authorUser = user.id === msg.author.id;
-		const random = new Random(Random.engines.mt19937().seed(user.id));
+		const random = new Random(MersenneTwister19937.seed(Math.abs(user.id)));
 		const gender = genders[random.integer(0, genders.length - 1)];
 		const eyeColor = eyeColors[random.integer(0, eyeColors.length - 1)];
 		const hairColor = hairColors[random.integer(0, hairColors.length - 1)];
