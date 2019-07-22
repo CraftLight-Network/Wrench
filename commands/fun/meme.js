@@ -1,17 +1,11 @@
+const { subreddit } = require('../../data/json/meme');
 const { Command } = require('discord.js-commando');
 const Discord = require("discord.js");
 const snekfetch = require('snekfetch');
-const Random = require("random-js");
+const { Random } = require("random-js");
 
 const Enmap = require("enmap");
-const lastSub = new Enmap({
-	name: "lastSub",
-	autoFetch: true,
-	fetchAll: false,
-	cloneLevel: 'deep'
-});
-
-const { subreddit } = require('../../data/json/meme');
+const { lastSub } = require('../../data/js/enmap.js');
 
 module.exports = class memeCommand extends Command {
 	constructor(client) {
@@ -26,11 +20,14 @@ module.exports = class memeCommand extends Command {
 	}
 	async run(msg) {
 		const random = new Random();
-		var reddit = subreddit[random.integer(0, subreddit.length - 1)];
-		while (reddit == lastSub.get("reddit")) {
-			var reddit = subreddit[random.integer(0, subreddit.length - 1)];
+		let reddit = subreddit[random.integer(0, subreddit.length - 1)];		
+		lastSub.ensure(msg.guild.id, reddit);
+		
+		while (reddit === lastSub.get(msg.guild.id)) {
+			reddit = subreddit[random.integer(0, subreddit.length - 1)];
 		};
-		lastSub.set("reddit", reddit);
+		
+		lastSub.set(msg.guild.id, reddit)
 		
 		const { body } = await snekfetch
 		.get(`https://www.reddit.com/r/${reddit}.json?sort=top&t=week`)

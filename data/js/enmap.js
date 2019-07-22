@@ -29,10 +29,19 @@ const settings = new Enmap({
 	cloneLevel: 'deep',
 	dataDir: "./data/private/enmap"
 });
+// Last subreddit used
+const lastSub = new Enmap({
+	name: "lastSub",
+	fetchAll: false,
+	autoFetch: true,
+	cloneLevel: 'deep',
+	dataDir: "./data/private/enmap"
+});
 
 module.exports = {
 	commandsRead,
 	messagesRead,
 	translationsDone,
-	settings
+	settings,
+	lastSub
 };
