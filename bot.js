@@ -193,25 +193,9 @@ client.on("ready", () => {
 		maxDuplicatesWarning: 5, // Max duplicates before warn
 		maxDuplicatesBan: 15, // Max duplicates before ban
 		deleteMessagesAfterBanForPastDays: 1, // Delete messages x days ago
-		exemptUsers: ["Edude42#2812", "WrenchBot#3085"] // Ignored users
+		exemptUsers: config.owners // Ignored users
 	});
 });
-
-/*
-// Music !! VERY WIP !!	  Note: This most likely will not be updated for a while
-client.on('voiceStateUpdate', (oldMember, newMember) => {
-	const channel = client.channels.get("525499487049875456");
-	console.log(channel.members)
-	if (channel.members.size >= 1) {
-		channel.join()
-	}
-	if (channel.members.size == 1) {
-		if (newMember.user.id == '518961713098260490') {
-			channel.leave()
-		}
-	}
-})
-*/
 
 // Message handler
 client.on("message", async (message) => {
@@ -223,6 +207,9 @@ client.on("message", async (message) => {
 		settings.ensure(message.guild.id, defaultSettings);
 	}
 	
+	// Make sure the user isn't a bot
+	if (message.author.bot) return;
+	
 	// Log commands and increase message count
 	if (message.content.indexOf(config.prefix) === -1) return messagesRead.inc("number");
 	
@@ -233,9 +220,6 @@ client.on("message", async (message) => {
 	if (message.guild !== null && message.attachments.size <= 0) {
 		client.emit('checkMessage', message);
 	}
-	
-	// Make sure the user isn't a bot
-	if (message.author.bot) return;
 	
 	// Stringify the message
 	const tmpMsg = `${message}`;
@@ -324,7 +308,7 @@ client.on("message", async (message) => {
 	}
 	
 	// Stop commands in the wrong channel (If needed)
-	if (message.guild !== null && !message.author.hasPermission('MANAGE_GUILD')) {
+	if (message.guild !== null && !message.member.hasPermission('MANAGE_GUILD')) {
 		client.settings.fetchEverything();
 		if (client.settings.get(message.guild.id, "bot") !== "none" && message.content.indexOf(config.prefix) === 0) {
 			client.dispatcher.addInhibitor(message => {
@@ -354,5 +338,6 @@ if (config.translator === 'enabled') {
 		var translate = require('google-translate')(auth.google); // Get Google API key
 	}
 };
+
 // Login using auth.json
 client.login(auth.token);
