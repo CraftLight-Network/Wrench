@@ -1,12 +1,12 @@
 ﻿const { Command } = require('discord.js-commando');
-const { RichEmbed } = require('discord.js');
-const Random = require('random-js');
+const { Random, MersenneTwister19937 } = require("random-js");
+const { stripIndents } = require('common-tags');
 
 module.exports = class guessCoolnessCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'guess-coolness',
-			aliases: ['coolness', 'coolness-guess'],
+			aliases: ['coolness'],
 			group: 'fun',
 			memberName: 'guess-coolness',
 			description: 'Guess a user\'s coolness amount.',
@@ -23,25 +23,31 @@ module.exports = class guessCoolnessCommand extends Command {
 		});
 	}
 	run(msg, { user }) {
+		let color;
+		let emoji;
+		
+		const date = new Date();
+		const day = date.getDay();
+		const month = date.getMonth() + 1;
+		
 		if (user.id === this.client.user.id) return msg.reply('Me? I\'m the second coolest person ever.');
 		const authorUser = user.id === msg.author.id;
-		if (user.id == 272466470510788608) return msg.reply(`${authorUser ? 'you are' : `${user.username} is`} the most epic person. 👌`)
-		const random = new Random(Random.engines.mt19937().seed(user.id));
-		const number = new Random();
-		const coolness = random.integer(1, 100) + number.integer(-25, 25);
-		if (coolness < 50 ) {
-			var embed = new RichEmbed()
-				.setDescription(`${authorUser ? 'you have' : `${user.username} has`} ${coolness} points.`)
-				.setColor(`#ff0000`)
-				.setTimestamp();
-			return msg.embed(embed);
-		};
-		if (coolness >= 50 ) {
-			var embed = new RichEmbed()
-				.setDescription(`${authorUser ? 'you have' : `${user.username} has`} ${coolness} points.`)
-				.setColor(`#32CD32`)
-				.setTimestamp();
-			return msg.embed(embed);
-		}
+		if (user.id == 272466470510788608) return msg.reply(`${authorUser ? 'you are' : `${user.username} is`} the most epic person. 👌`);
+			
+		const random = new Random(MersenneTwister19937.seed(Math.abs(user.id)));
+		const randomDate = new Random(MersenneTwister19937.seed(Math.abs(month - day)));
+		const coolness = (random.integer(0, 100) - randomDate.integer(-25, 25));
+		if (coolness < 30) {color = 0xFF0000; emoji = "❌"}
+		if (coolness >= 30) {color = 0xFF7700; emoji = "😒"}
+		if (coolness >= 50) {color = 0xFFFF00; emoji = "😏"}
+		if (coolness >= 75) {color = 0x7FFF00; emoji = "👓"}
+		if (coolness >= 90) {color = 0x00FF00; emoji = "🕶️"}
+		
+		return msg.embed({
+			color: color,
+			description: stripIndents`
+				${authorUser ? 'you have' : `${user.username} has`} ${coolness} points. ${emoji}
+			`
+		});
 	}
 };

@@ -1,6 +1,6 @@
 const { Command } = require('discord.js-commando');
 const { oneLine } = require('common-tags');
-const Random = require('random-js');
+const { Random } = require("random-js");
 
 const { activities } = require('../../data/guess-activity');
 
@@ -8,7 +8,7 @@ module.exports = class GuessActivityCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'guess-activity',
-			aliases: ['activity', 'activities', 'doing', 'guess-activities'],
+			aliases: ['activity', 'doing'],
 			group: 'fun',
 			memberName: 'guess-activity',
 			description: 'Guess what a user is doing.',

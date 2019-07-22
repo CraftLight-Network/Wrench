@@ -1,15 +1,16 @@
 ﻿const { Command } = require('discord.js-commando');
-const Random = require('random-js');
+const { Random, MersenneTwister19937 } = require("random-js");
+const { stripIndents } = require('common-tags');
 
 module.exports = class GuessIQCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'guess-iq',
-			aliases: ['intelligence-quotient', 'smart', 'howsmart', 'iq'],
+			aliases: ['iq'],
 			group: 'fun',
 			memberName: 'guess-iq',
 			description: 'Guesses a user\'s IQ.',
-			examples: ['iq @user', 'iq @user'],
+			examples: ['guess-iq', 'guess-iq @user'],
 			guildOnly: true,
 			args: [
 				{
@@ -22,10 +23,31 @@ module.exports = class GuessIQCommand extends Command {
 		});
 	}
 	run(msg, { user }) {
+		let color;
+		let emoji;
+		
+		const date = new Date();
+	    const day = date.getDay();
+	    const month = date.getMonth() + 1;
+		
 		if (user.id === this.client.user.id) return msg.reply('I have the power of code and the internet. So basically, ∞');
+		const authorUser = user.id === msg.author.id;
 		if (user.id == 272466470510788608) return msg.reply(`${user.id === msg.author.id ? 'Your' : `${user.username}'s`} IQ is over the 64 bit integer limit.`);
-		const random = new Random(Random.engines.mt19937().seed(user.id));
-		const score = random.integer(20, 170);
-		return msg.reply(`${user.id === msg.author.id ? 'Your' : `${user.username}'s`} IQ is ${score}.`);
+		
+		const random = new Random(MersenneTwister19937.seed(Math.abs(user.id)));
+		const randomDate = new Random(MersenneTwister19937.seed(Math.abs(month - day)));
+		const iq = (random.integer(25, 228) - randomDate.integer(-25, 25));
+		if (iq < 50) {color = 0xFF0000; emoji = "❌"}
+		if (iq >= 50) {color = 0xFF7700; emoji = "😒"}
+		if (iq >= 100) {color = 0xFFFF00; emoji = "🤓"}
+		if (iq >= 150) {color = 0x7FFF00; emoji = "👓"}
+		if (iq >= 200) {color = 0x00FF00; emoji = "🧠"}
+		
+		return msg.embed({
+			color: color,
+			description: stripIndents`
+				${authorUser ? 'your' : `${user.username}'s`} IQ is ${iq}. ${emoji}
+			`
+		});
 	}
 };

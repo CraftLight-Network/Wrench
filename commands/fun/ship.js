@@ -1,5 +1,5 @@
 const { Command } = require('discord.js-commando');
-const Random = require('random-js');
+const { Random, MersenneTwister19937 } = require("random-js");
 const { stripIndents } = require('common-tags');
 
 module.exports = class shipCommand extends Command {
@@ -30,20 +30,26 @@ module.exports = class shipCommand extends Command {
 	}
 
 	run(msg, { first, second }) {
-		if (first.id === second.id) return msg.reply('I know it\'s the 21st century, but nobody can be biologically asexual.');
+	    const date = new Date();
+	    const day = date.getDay();
+	    const month = date.getMonth() + 1;
+	    let color;
+	    let emoji;
+	    
+		if (first.id === second.id) return msg.reply('You can\'t ship yourself. It never works out.');
 		const botText = first.id === this.client.user.id || second.id === this.client.user.id
 			? `But ${first.id === msg.author.id || second.id === msg.author.id ? 'you\'re' : 'they\'re'} not a robot. So, it doesn't work out.`
 			: '';
-		const random = new Random(Random.engines.mt19937().seed(Math.abs(first.id - second.id)));
-		const level = random.integer(0, 100);
-		if (level >= 50) {
-			var color = 0x32CD32
-			var emoji = "💓"
-		};
-		if (level < 50) {
-			var color = 0xff0000
-			var emoji = "💔"
-		};
+		
+		const random = new Random(MersenneTwister19937.seed(Math.abs(first.id - second.id)));
+		const randomDate = new Random(MersenneTwister19937.seed(Math.abs(month - day)));
+		const level = (random.integer(0, 100) - randomDate.integer(0, 15));
+		if (level < 30) {color = 0xFF0000; emoji = "❌"}
+		if (level >= 30) {color = 0xFF7700; emoji = "💔"}
+		if (level >= 50) {color = 0xFFFF00; emoji = "❤"}
+		if (level >= 75) {color = 0x7FFF00; emoji = "💓"}
+		if (level >= 90) {color = 0x00FF00; emoji = "💕"}
+		
 		return msg.embed({
 			color: color,
 			description: stripIndents`
