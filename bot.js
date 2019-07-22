@@ -125,19 +125,29 @@ client.on("guildMemberAdd", member => {
 	settings.fetchEverything();
 	
 	if (settings.get(member.guild.id, "welcome") !== 'none') {
-		if (!(member.guild.channels.find("name", settings.get(member.guild.id, "welcome")))) return;
+		if (!member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "welcome"))) return;
 		
 		let welcomeMessage = settings.get(member.guild.id, "welcomeMessage");
 		welcomeMessage = welcomeMessage.replace("{{user}}", `<@${member.user.id}>`);
 		welcomeMessage = welcomeMessage.replace("{{id}}", member.user.id);
 		
-		member.guild.channels.find("name", settings.get(member.guild.id, "welcome")).send(welcomeMessage).catch(console.error);
+		member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "welcome")).send(welcomeMessage).catch(console.error);
 	}
 	
 	if (settings.get(member.guild.id, "joinRole") !== 'none') {
-		if (!(member.guild.roles.find("name", settings.get(member.guild.id, "joinRole")))) return;
+		if (!member.guild.roles.find(role => role.name == settings.get(member.guild.id, "joinRole"))) return;
 		
-		member.addRole(member.guild.roles.find("name", settings.get(member.guild.id, "joinRole")).id).catch(console.error);
+		member.addRole(member.guild.roles.find(role => role.name == settings.get(member.guild.id, "joinRole")).id).catch(console.error);
+	}
+	
+	if (settings.get(member.guild.id, "log") !== 'none') {
+		if (!member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "log"))) return;
+	
+		const embed = new RichEmbed()
+		.setDescription(`**<@${member.user.id}>**`)
+		.setAuthor('Member joined', member.displayAvatarURL)
+		.setColor(0x00FF00);
+		member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "log")).send(embed).catch(console.error);
 	}
 });
 
@@ -146,14 +156,25 @@ client.on("guildMemberRemove", member => {
 	settings.ensure(member.guild.id, defaultSettings);
 	settings.fetchEverything();
 	
-	if (settings.get(member.guild.id, "leave") === 'none') return;
-	if (!(member.guild.channels.find("name", settings.get(member.guild.id, "leave")))) return;
+	if (settings.get(member.guild.id, "leave") !== 'none') {
+		if (!member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "leave"))) return;
 	
-	let leaveMessage = settings.get(member.guild.id, "leaveMessage");
-	leaveMessage = leaveMessage.replace("{{user}}", `<@${member.user.id}>`);
-	leaveMessage = leaveMessage.replace("{{id}}", member.user.id);
+		let leaveMessage = settings.get(member.guild.id, "leaveMessage");
+		leaveMessage = leaveMessage.replace("{{user}}", `<@${member.user.id}>`);
+		leaveMessage = leaveMessage.replace("{{id}}", member.user.id);
+		
+		member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "leave")).send(leaveMessage).catch(console.error);
+	}
 	
-	member.guild.channels.find("name", settings.get(member.guild.id, "leave")).send(leaveMessage).catch(console.error);
+	if (settings.get(member.guild.id, "log") !== 'none') {
+		if (!member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "log"))) return; 
+	
+		const embed = new RichEmbed()
+		.setDescription(`**<@${member.user.id}>**`)
+		.setAuthor('Member left', member.displayAvatarURL)
+		.setColor(0xFF0000);
+		member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "log")).send(embed).catch(console.error);
+	}
 });
 
 client.on('disconnect', event => {log.ERROR(`[DISCONNECT] ${event.code}`);process.exit(0)}); // Notify the console that the bot has disconnected
@@ -209,12 +230,6 @@ client.on("message", async (message) => {
 	
 	// Make sure the user isn't a bot
 	if (message.author.bot) return;
-	
-	// Log commands and increase message count
-	if (message.content.indexOf(config.prefix) === -1) return messagesRead.inc("number");
-	
-	log.CMD(`${message.author}: ${message}`);
-	commandsRead.inc("number");
 	
 	// Run spam filter
 	if (message.guild !== null && message.attachments.size <= 0) {
@@ -308,17 +323,25 @@ client.on("message", async (message) => {
 	}
 	
 	// Stop commands in the wrong channel (If needed)
+	client.settings = settings
+	
 	if (message.guild !== null && !message.member.hasPermission('MANAGE_GUILD')) {
 		client.settings.fetchEverything();
 		if (client.settings.get(message.guild.id, "bot") !== "none" && message.content.indexOf(config.prefix) === 0) {
-			client.dispatcher.addInhibitor(message => {
-				if (!(client.settings.get(message.guild.id, "bot").includes(message.channel.name))) {
+			if (!(client.settings.get(message.guild.id, "bot").includes(message.channel.name))) {
+				client.dispatcher.addInhibitor(message => {
 					try {message.delete()} catch(err) {};
 					return message.author.send('Please do not use bot commands in that channel!');
-				}
-			});
+				});
+			}
 		}
 	}
+	
+	// Log commands and increase message count
+	if (message.content.indexOf(config.prefix) === -1) return messagesRead.inc("number");
+	
+	log.CMD(`${message.author}: ${message}`);
+	commandsRead.inc("number");
 });
 
 
