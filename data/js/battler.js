@@ -1,5 +1,5 @@
 const { stripIndents } = require('common-tags');
-const { list } = require('../commands/util');
+const { list } = require('../../commands/util');
 const choices = ['attack', 'defend', 'special', 'cure', 'final', 'run'];
 
 module.exports = class Battler {

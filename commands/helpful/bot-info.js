@@ -1,31 +1,18 @@
 const { Command } = require('discord.js-commando');
 const { stripIndents } = require('common-tags');
+
 const Enmap = require("enmap");
-const commandsRead = new Enmap({
-	name: "commands-read",
-	autoFetch: true,
-	fetchAll: false
-});
-const messagesRead = new Enmap({
-	name: "messages-read",
-	autoFetch: true,
-	fetchAll: false
-});
-const translationsDone = new Enmap({
-	name: "translations-done",
-	autoFetch: true,
-	fetchAll: false
-});
+const { commandsRead, messagesRead, translationsDone } = require('../../data/js/enmap.js');
 
 module.exports = class botinfoCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'bot-info',
-			aliases: ['bot', 'botinfo', 'bot-info', 'bot-stats', 'botstats', 'stats'],
-			group: 'info',
+			aliases: ['bot'],
+			group: 'helpful',
 			memberName: 'bot-info',
 			description: 'Displays information about this bot.',
-			examples: ['bot-info', 'botinfo'],
+			examples: ['bot-info'],
 			guildOnly: true,
 			throttling: {
 				usages: 2,

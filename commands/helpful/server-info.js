@@ -10,15 +10,15 @@ const humanLevels = {
 	4: '┻━┻ ﾐヽ(ಠ益ಠ)ノ彡┻━┻'
 };
 
-module.exports = class ServerInfoCommand extends Command {
+module.exports = class serverInfoCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'server-info',
-			aliases: ['server', 'info', 'serverinfo'],
-			group: 'info',
+			aliases: ['server', 'info'],
+			group: 'helpful',
 			memberName: 'server-info',
 			description: 'Info of the server.',
-			examples: ['info', 'server-info'],
+			examples: ['server-info'],
 			guildOnly: true,
 			throttling: {
 				usages: 2,

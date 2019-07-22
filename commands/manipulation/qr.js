@@ -3,12 +3,12 @@ const request = require('node-superfetch');
 
 const { shorten } = require('../util');
 
-module.exports = class QRCodeCommand extends Command {
+module.exports = class qrCommand extends Command {
 	constructor(client) {
 		super(client, {
 			name: 'qr',
-			aliases: ['scan-qr-code', 'scan-qr', 'read-qr', 'read-qr-code'],
-			group: 'editing',
+			aliases: ['qr-code'],
+			group: 'manipulation',
 			memberName: 'qr',
 			description: 'Read a QR code from an image.',
 			examples: ['qr <image>'],

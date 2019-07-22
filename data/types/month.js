@@ -1,5 +1,5 @@
 const { ArgumentType } = require('discord.js-commando');
-const months = require('../month');
+const months = require('../json/month');
 
 module.exports = class MonthArgumentType extends ArgumentType {
 	constructor(client) {

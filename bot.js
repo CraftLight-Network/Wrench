@@ -43,10 +43,9 @@ client.registry
 	.registerTypesIn(path.join(__dirname, 'data/types'))
 	.registerGroups([
 		['fun', 'Fun'],
-		['editing', 'Editing'],
+		['manipulation', 'Manipulation'],
 		['helpful', 'Helpful'],
 		['staff', 'Staff'],
-		['info', 'Info'],
 	])
 	.registerDefaultGroups()
 	.registerDefaultCommands({
@@ -55,33 +54,9 @@ client.registry
 	.registerCommandsIn(path.join(__dirname, 'commands'));
 
 // Setup enmap
-const defaultSettings = require('./data/default.json');
 const Enmap = require("enmap");
-// Command counter
-const commandsRead = new Enmap({
-	name: "commands-read",
-	autoFetch: true,
-	fetchAll: false
-});
-// Message counter
-const messagesRead = new Enmap({
-	name: "messages-read",
-	autoFetch: true,
-	fetchAll: false
-});
-// Translation counter
-const translationsDone = new Enmap({
-	name: "translations-done",
-	autoFetch: true,
-	fetchAll: false
-});
-// Per-server settings
-client.settings = new Enmap({
-	name: "settings",
-	fetchAll: false,
-	autoFetch: true,
-	cloneLevel: 'deep'
-});
+const { commandsRead, messagesRead, translationsDone, settings } = require('./data/js/enmap.js');
+const defaultSettings = require('./data/json/default.json');
 
 
 
@@ -124,7 +99,7 @@ const log = new (winston.Logger)({
 			name: 'log-file',
 			json: false,
 			datePattern: 'YYYY-MM-DD',
-			filename: 'data/logs/log-%DATE%.log',
+			filename: 'data/private/logs/log-%DATE%.log',
 			zippedArchive: true,
 			maxSize: '128m',
 			maxFiles: '14d',
@@ -139,46 +114,46 @@ client.on('warn', warn => log.WARN(warn)); // Warnings
 client.on('log', log => log.CONSOLE(log)); // Logs
 
 // Notify the console that a new server is using the bot
-client.on("guildCreate", guild => {log.INFO(`Added in a new server: ${guild.name} (id: ${guild.id})`); client.settings.ensure(guild.id)});
+client.on("guildCreate", guild => {log.INFO(`Added in a new server: ${guild.name} (id: ${guild.id})`); settings.ensure(guild.id)});
 
 // Notify the console that a server removed the bot
-client.on("guildDelete", guild => {log.INFO(`Removed from server: ${guild.name} (id: ${guild.id})`); client.settings.delete(guild.id)});
+client.on("guildDelete", guild => {log.INFO(`Removed from server: ${guild.name} (id: ${guild.id})`); settings.delete(guild.id)});
 
 // Events when a user is added
 client.on("guildMemberAdd", member => {
-	client.settings.ensure(member.guild.id, defaultSettings);
-	client.settings.fetchEverything();
+	settings.ensure(member.guild.id, defaultSettings);
+	settings.fetchEverything();
 	
-	if (client.settings.get(member.guild.id, "welcome") !== 'none') {
-		if (!(member.guild.channels.find("name", client.settings.get(member.guild.id, "welcome")))) return;
+	if (settings.get(member.guild.id, "welcome") !== 'none') {
+		if (!(member.guild.channels.find("name", settings.get(member.guild.id, "welcome")))) return;
 		
-		let welcomeMessage = client.settings.get(member.guild.id, "welcomeMessage");
+		let welcomeMessage = settings.get(member.guild.id, "welcomeMessage");
 		welcomeMessage = welcomeMessage.replace("{{user}}", `<@${member.user.id}>`);
 		welcomeMessage = welcomeMessage.replace("{{id}}", member.user.id);
 		
-		member.guild.channels.find("name", client.settings.get(member.guild.id, "welcome")).send(welcomeMessage).catch(console.error);
+		member.guild.channels.find("name", settings.get(member.guild.id, "welcome")).send(welcomeMessage).catch(console.error);
 	}
 	
-	if (client.settings.get(member.guild.id, "joinRole") !== 'none') {
-		if (!(member.guild.roles.find("name", client.settings.get(member.guild.id, "joinRole")))) return;
+	if (settings.get(member.guild.id, "joinRole") !== 'none') {
+		if (!(member.guild.roles.find("name", settings.get(member.guild.id, "joinRole")))) return;
 		
-		member.addRole(member.guild.roles.find("name", client.settings.get(member.guild.id, "joinRole")).id).catch(console.error);
+		member.addRole(member.guild.roles.find("name", settings.get(member.guild.id, "joinRole")).id).catch(console.error);
 	}
 });
 
 // Events when a user is removed
 client.on("guildMemberRemove", member => {
-	client.settings.ensure(member.guild.id, defaultSettings);
-	client.settings.fetchEverything();
+	settings.ensure(member.guild.id, defaultSettings);
+	settings.fetchEverything();
 	
-	if (client.settings.get(member.guild.id, "leave") === 'none') return;
-	if (!(member.guild.channels.find("name", client.settings.get(member.guild.id, "leave")))) return;
+	if (settings.get(member.guild.id, "leave") === 'none') return;
+	if (!(member.guild.channels.find("name", settings.get(member.guild.id, "leave")))) return;
 	
-	let leaveMessage = client.settings.get(member.guild.id, "leaveMessage");
+	let leaveMessage = settings.get(member.guild.id, "leaveMessage");
 	leaveMessage = leaveMessage.replace("{{user}}", `<@${member.user.id}>`);
 	leaveMessage = leaveMessage.replace("{{id}}", member.user.id);
 	
-	member.guild.channels.find("name", client.settings.get(member.guild.id, "leave")).send(leaveMessage).catch(console.error);
+	member.guild.channels.find("name", settings.get(member.guild.id, "leave")).send(leaveMessage).catch(console.error);
 });
 
 client.on('disconnect', event => {log.ERROR(`[DISCONNECT] ${event.code}`);process.exit(0)}); // Notify the console that the bot has disconnected
@@ -188,7 +163,7 @@ client.on('disconnect', event => {log.ERROR(`[DISCONNECT] ${event.code}`);proces
 // // Client actions
 
 // Set the activity list
-const activities_list = [`${config.prefix}help`,  "On CustomCraft", "On Fallout Salvation", "On Ethereal", "with code", "with Edude42", "with Braven", "with Spade", "with Cas", "."];
+const activities_list = [`${config.prefix}help`,  "on CustomCraft", "on Fallout Salvation", "on Ethereal", "with code", "with Edude42", "with Braven", "with Spade", "with Cas", "."];
 
 // When the bot starts
 client.on("ready", () => {
@@ -196,11 +171,8 @@ client.on("ready", () => {
 	log.OK(`---------------------------------------------`);
 	log.OK(`BOT START ON: ${utcDate}`);
 	log.OK(`---------------------------------------------`);
-	log.OK(`[READY] Bot has started.`);
 	log.INFO(`Name: ${client.user.tag} ID: ${client.user.id}`);
 	log.INFO(`Active in ${client.guilds.size} servers.`);
-	log.INFO(` `);
-	log.INFO(`Press CTRL+C to stop the bot.`);
 	
 	// Default activity message
 	client.user.setActivity("a game.");
@@ -213,22 +185,17 @@ client.on("ready", () => {
 	
 	// Anti-spam setup
 	antispam(client, {
-		warnBuffer: 5, // Max messages before warn
+		warnBuffer: 7, // Max messages before warn
 		maxBuffer: 15, // Max messages before ban
-		interval: 3000, // How many seconds in ms for buffers
+		interval: 5000, // How many milliseconds the checks are for
 		warningMessage: "stop spamming! Change your message or slow down.", // Warn message
 		banMessage: "spammed and got banned!", // Ban message
 		maxDuplicatesWarning: 5, // Max duplicates before warn
-		maxDuplicatesBan: 10, // Max duplicates before ban
+		maxDuplicatesBan: 15, // Max duplicates before ban
 		deleteMessagesAfterBanForPastDays: 1, // Delete messages x days ago
-		exemptRoles: ["Admin", "Manager"], // Ignored roles NOTE: Will make server-specific
 		exemptUsers: ["Edude42#2812", "WrenchBot#3085"] // Ignored users
 	});
 });
-
-//client.on('guildMemberAdd', member => {
-//	member.addRole('525501371269513236');
-//});
 
 /*
 // Music !! VERY WIP !!	  Note: This most likely will not be updated for a while
@@ -246,8 +213,6 @@ client.on('voiceStateUpdate', (oldMember, newMember) => {
 })
 */
 
-
-
 // Message handler
 client.on("message", async (message) => {
 	// Make sure enmap exists
@@ -255,8 +220,14 @@ client.on("message", async (message) => {
 	messagesRead.ensure("number", 0);
 	translationsDone.ensure("number", 0);
 	if (message.guild !== null) {
-		client.settings.ensure(message.guild.id, defaultSettings);
+		settings.ensure(message.guild.id, defaultSettings);
 	}
+	
+	// Log commands and increase message count
+	if (message.content.indexOf(config.prefix) === -1) return messagesRead.inc("number");
+	
+	log.CMD(`${message.author}: ${message}`);
+	commandsRead.inc("number");
 	
 	// Run spam filter
 	if (message.guild !== null && message.attachments.size <= 0) {
@@ -266,7 +237,7 @@ client.on("message", async (message) => {
 	// Make sure the user isn't a bot
 	if (message.author.bot) return;
 	
-	// Odd error fix
+	// Stringify the message
 	const tmpMsg = `${message}`;
 	
 	// Auto translate message
@@ -355,32 +326,15 @@ client.on("message", async (message) => {
 	// Stop commands in the wrong channel (If needed)
 	if (message.guild !== null) {
 		client.dispatcher.addInhibitor(message => {
-			if (client.settings.get(message.guild.id, "bot") !== "none" && message.content.indexOf(config.prefix) === 0) {
-				client.settings.fetchEverything();
-				if (!(client.settings.get(message.guild.id, "bot").includes(message.channel.name))) {
+			if (settings.get(message.guild.id, "bot") !== "none" && message.content.indexOf(config.prefix) === 0) {
+				settings.fetchEverything();
+				if (!(settings.get(message.guild.id, "bot").includes(message.channel.name))) {
 					try {message.delete()} catch(err) {};
 					return message.author.send('Please do not use bot commands in that channel!');
 				}
 			}
 		});
 	}
-	
-	// Check if it starts with the prefix
-	if (message.content.indexOf(config.prefix) !== 0) {
-		// Add to the message counter
-		messagesRead.inc("number");
-		return;
-	}
-	
-	// Split the command
-	const args = message.content.slice(config.prefix.length).trim().split(/ +/g);
-	const command = args.shift().toLowerCase();
-	
-	// Log the command
-	log.CMD(`${message.author}: ${command}`);
-
-	// Add to the Enmap stats
-	commandsRead.inc("number");
 });
 
 

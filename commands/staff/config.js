@@ -1,23 +1,10 @@
-const { CommandoClient } = require('discord.js-commando');
-const defaultSettings = require('../../data/default.json');
 const { Command } = require('discord.js-commando');
 const { RichEmbed } = require('discord.js');
 const config = require('../../config.json');
+
 const Enmap = require("enmap");
-
-const client = new CommandoClient({
-	commandPrefix: config.prefix,
-	owner: config.owners,
-	disableEveryone: true,
-	unknownCommandResponse: false,
-});
-
-client.settings = new Enmap({
-		name: "settings",
-		fetchAll: false,
-		autoFetch: true,
-		cloneLevel: 'deep'
-});
+const { commandsRead, messagesRead, translationsDone, settings } = require('../../data/js/enmap.js');
+const defaultSettings = require('../../data/json/default.json');
 
 module.exports = class configCommand extends Command {
 	constructor(client) {
@@ -53,12 +40,12 @@ module.exports = class configCommand extends Command {
 		});
 	}
 	run(msg, { action, property, value }) {
-		client.settings.ensure(msg.guild.id, defaultSettings);
-		client.settings.fetchEverything();
+		settings.ensure(msg.guild.id, defaultSettings);
+		settings.fetchEverything();
 		
 		if (action === '') return msg.reply('please specify if you want to do.');
 		if (action === 'help') {
-			const config = client.settings.get(msg.guild.id);
+			const config = settings.get(msg.guild.id);
 			const embed = new RichEmbed()
 			.setAuthor(`${msg.guild.name}'s Config help`, msg.guild.iconURL)
 			.setDescription(`__**Property - Value**__\n`)
@@ -74,8 +61,8 @@ module.exports = class configCommand extends Command {
 		if (action === 'reset') {
 			if (property === '') return msg.reply(`Are you sure you want to ${action}? Re-run the command with ${action} \`yes\``);
 			if (property === 'yes') {
-				client.settings.delete(msg.guild.id);
-				client.settings.ensure(msg.guild.id, defaultSettings);
+				settings.delete(msg.guild.id);
+				settings.ensure(msg.guild.id, defaultSettings);
 				msg.reply('The config has been reset and updated. Run the help command to see the new and current values.');
 				return;
 			}
@@ -85,32 +72,32 @@ module.exports = class configCommand extends Command {
 		if (value === '' && action == 'set') return msg.reply(`please specify what you want to set \`${property}\` to.`);
 		
 		if (action === 'set') { // SET
-			if (`${client.settings.get(msg.guild.id, property)}` !== 'undefined') {
-				if (JSON.stringify(client.settings.get(msg.guild.id, property)).startsWith("[")) {
+			if (`${settings.get(msg.guild.id, property)}` !== 'undefined') {
+				if (JSON.stringify(settings.get(msg.guild.id, property)).startsWith("[")) {
 					return msg.say(`The setting "${property}" is an array object. Please use \`add\` or \`remove\` instead of \`set\``);
 				}
-				client.settings.set(msg.guild.id, value, property);
-				msg.say(`The setting "${property}" has been set to "${client.settings.get(msg.guild.id, property)}"`);
+				settings.set(msg.guild.id, value, property);
+				msg.say(`The setting "${property}" has been set to "${settings.get(msg.guild.id, property)}"`);
 			} else return msg.reply('that value does not exist in the system.');
 		} else if (action === 'add') { // ADD
-			if (`${client.settings.get(msg.guild.id, property)}` !== 'undefined') {
-				if (!(JSON.stringify(client.settings.get(msg.guild.id, property)).startsWith("["))) {
+			if (`${settings.get(msg.guild.id, property)}` !== 'undefined') {
+				if (!(JSON.stringify(settings.get(msg.guild.id, property)).startsWith("["))) {
 					return msg.say(`The setting "${property}" is not an array object. Please use \`set\``);
 				}
-				client.settings.push(msg.guild.id, value, property);
-				msg.say(`The setting "${client.settings.get(msg.guild.id, property)}" has been added to "${property}"`);
+				settings.push(msg.guild.id, value, property);
+				msg.say(`The setting "${settings.get(msg.guild.id, property)}" has been added to "${property}"`);
 			} else return msg.reply('that value does not exist in the system.');
 		} else if (action === 'remove') { // REMOVE
-			if (`${client.settings.get(msg.guild.id, property)}` !== 'undefined') {
-				if (!(JSON.stringify(client.settings.get(msg.guild.id, property)).startsWith("["))) {
+			if (`${settings.get(msg.guild.id, property)}` !== 'undefined') {
+				if (!(JSON.stringify(settings.get(msg.guild.id, property)).startsWith("["))) {
 					return msg.say(`The setting "${property}" is not an array object. Please use \`set\``);
 				}
-				client.settings.remove(msg.guild.id, value, property);
-				msg.say(`The setting "${client.settings.get(msg.guild.id, property)}" has been removed from "${property}"`);
+				settings.remove(msg.guild.id, value, property);
+				msg.say(`The setting "${settings.get(msg.guild.id, property)}" has been removed from "${property}"`);
 			} else return msg.reply('that value does not exist in the system.');
 		} else { // VIEW
-			if (`${client.settings.get(msg.guild.id, property, value)}` !== 'undefined') {
-				msg.say(`The setting "${property}" is set to "${client.settings.get(msg.guild.id, property)}"`);
+			if (`${settings.get(msg.guild.id, property, value)}` !== 'undefined') {
+				msg.say(`The setting "${property}" is set to "${settings.get(msg.guild.id, property)}"`);
 			} else return msg.reply('that value does not exist in the system.');
 		}
 	}
