@@ -144,8 +144,9 @@ client.on("guildMemberAdd", member => {
 		if (!member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "log"))) return;
 	
 		const embed = new RichEmbed()
+		.setFooter(new Date().toLocaleDateString("en-US"))
 		.setDescription(`**<@${member.user.id}>**`)
-		.setAuthor('Member joined', member.displayAvatarURL)
+		.setAuthor('Member joined', member.user.displayAvatarURL)
 		.setColor(0x00FF00);
 		member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "log")).send(embed).catch(console.error);
 	}
@@ -170,8 +171,9 @@ client.on("guildMemberRemove", member => {
 		if (!member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "log"))) return; 
 	
 		const embed = new RichEmbed()
+		.setFooter(new Date().toLocaleDateString("en-US"))
 		.setDescription(`**<@${member.user.id}>**`)
-		.setAuthor('Member left', member.displayAvatarURL)
+		.setAuthor('Member left', member.user.displayAvatarURL)
 		.setColor(0xFF0000);
 		member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "log")).send(embed).catch(console.error);
 	}
@@ -343,6 +345,11 @@ client.on("message", async (message) => {
 	log.CMD(`${message.author}: ${message}`);
 	commandsRead.inc("number");
 });
+
+// Export stuff that other commands might need
+module.exports = {
+	log
+};
 
 
 
