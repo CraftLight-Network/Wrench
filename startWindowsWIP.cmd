@@ -121,8 +121,6 @@ git init
 git remote add origin https://github.com/Edude42/WrenchBot.git
 git fetch --all
 git checkout -b master --track origin/master
-call npm install -g npm-check-updates
-call ncu -u
 call npm update
 call npm update -g
 call npm install
@@ -240,8 +238,6 @@ echo WrenchBot Updater
 echo.
 echo Updating NPM modules...
 echo.
-call npm install -g npm-check-updates
-call ncu -u
 call npm update
 call npm update -g
 call npm install
