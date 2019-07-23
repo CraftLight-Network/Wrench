@@ -92,7 +92,7 @@ const log = new (winston.Logger)({
 		new (winston.transports.Console)({ // Console logging
 			name: 'log-console',
 			timestamp: function() {
-				return new Date().toLocaleString("en-US");
+				return new Date().toLocaleString("en-US") + ' UTC';
 			},
 			colorize: true,
 			level: 'ERROR'
@@ -102,7 +102,7 @@ const log = new (winston.Logger)({
 			json: false,
 			datePattern: 'M-D-YYYY',
 			timestamp: function() {
-				return new Date().toLocaleString("en-US");
+				return new Date().toLocaleString("en-US") + ' UTC';
 			},
 			filename: 'data/private/logs/log-%DATE%.log',
 			zippedArchive: true,
@@ -113,6 +113,7 @@ const log = new (winston.Logger)({
 	]
 });
 
+client.on('disconnect', event => {log.ERROR(`[DISCONNECT] ${event.code}`);process.exit(0)}); // Notify the console that the bot has disconnected
 process.on('unhandledRejection', (err, p) => {log.ERROR(`Rejected Promise: ${p} / Rejection: ${err}`);}); // Unhandled Rejection
 client.on('error', err => log.ERROR(err)); // Errors
 client.on('warn', warn => log.WARN(warn)); // Warnings
@@ -149,7 +150,7 @@ client.on("guildMemberAdd", member => {
 		if (!member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "log"))) return;
 	
 		const embed = new RichEmbed()
-		.setFooter(new Date().toLocaleDateString("en-US"))
+		.setFooter(`${new Date().toLocaleString("en-US")} UTC`)
 		.setDescription(`**<@${member.user.id}>**`)
 		.setAuthor('Member joined', member.user.displayAvatarURL)
 		.setColor(0x00FF00);
@@ -176,15 +177,13 @@ client.on("guildMemberRemove", member => {
 		if (!member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "log"))) return; 
 	
 		const embed = new RichEmbed()
-		.setFooter(new Date().toLocaleDateString("en-US"))
+		.setFooter(`${new Date().toLocaleString("en-US")} UTC`)
 		.setDescription(`**<@${member.user.id}>**`)
 		.setAuthor('Member left', member.user.displayAvatarURL)
 		.setColor(0xFF0000);
 		member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "log")).send(embed).catch(console.error);
 	}
 });
-
-client.on('disconnect', event => {log.ERROR(`[DISCONNECT] ${event.code}`);process.exit(0)}); // Notify the console that the bot has disconnected
 
 
 
@@ -360,8 +359,8 @@ client.on("messageDelete", (message) => {
 		if (!message.guild.channels.find(channel => channel.name == settings.get(message.guild.id, "log"))) return; 
 	
 		const embed = new RichEmbed()
-		.setFooter(new Date().toLocaleDateString("en-US"))
-		.setDescription(`By: **<@${message.author.id}>**\nContent: **${tmpMsg}**`) //.substring(0, 4) + "..."
+		.setFooter(`${new Date().toLocaleString("en-US")} UTC`)
+		.setDescription(`By: **<@${message.author.id}>**\nContent: **${tmpMsg.substring(0, 750) + "..."}**`) //
 		.setAuthor('Message deleted', message.author.displayAvatarURL)
 		.setColor(0xFF0000);
 		message.guild.channels.find(channel => channel.name == settings.get(message.guild.id, "log")).send(embed).catch(console.error);
