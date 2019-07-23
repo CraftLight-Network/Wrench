@@ -91,14 +91,19 @@ const log = new (winston.Logger)({
 	transports: [
 		new (winston.transports.Console)({ // Console logging
 			name: 'log-console',
-			timestamp: tsFormat,
+			timestamp: function() {
+				return new Date().toLocaleString("en-US");
+			},
 			colorize: true,
 			level: 'ERROR'
 		}),
 		new (winston.transports.DailyRotateFile)({ // File logging
 			name: 'log-file',
 			json: false,
-			datePattern: 'YYYY-MM-DD',
+			datePattern: 'M-D-YYYY',
+			timestamp: function() {
+				return new Date().toLocaleString("en-US");
+			},
 			filename: 'data/private/logs/log-%DATE%.log',
 			zippedArchive: true,
 			maxSize: '128m',
@@ -208,15 +213,15 @@ client.on("ready", () => {
 	
 	// Anti-spam setup
 	antispam(client, {
-		warnBuffer: 7, // Max messages before warn
-		maxBuffer: 15, // Max messages before ban
-		interval: 5000, // How many milliseconds the checks are for
+		warnBuffer: 3, // Max messages before warn
+		maxBuffer: 5, // Max messages before ban
+		interval: 1000, // How many milliseconds the checks are for
 		warningMessage: "stop spamming! Change your message or slow down.", // Warn message
 		banMessage: "spammed and got banned!", // Ban message
-		maxDuplicatesWarning: 5, // Max duplicates before warn
-		maxDuplicatesBan: 15, // Max duplicates before ban
+		maxDuplicatesWarning: 7, // Max duplicates before warn
+		maxDuplicatesBan: 13, // Max duplicates before ban
 		deleteMessagesAfterBanForPastDays: 1, // Delete messages x days ago
-		exemptUsers: config.owners // Ignored users
+		exemptUsers: ['Edude42#2812', 'Spade#1690'] // Ignored users
 	});
 });
 
