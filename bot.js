@@ -258,8 +258,6 @@ client.on("message", async (message) => {
 		
 		const countSpace = tranMsg.replace(/[^a-zA-Z0-9 ]/gmi, "").trim();
 		const replace = countSpace.replace(/ +(?= )/gmi, " ").replace(/[^ ]/gmi, "").length+1;
-		console.log(countSpace.length);
-		console.log(replace);
         if (Math.round(countSpace.length / 2) === replace) return;
 		
 		if (tranMsg.length > 5) { 
