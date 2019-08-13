@@ -79,23 +79,35 @@ module.exports = class configCommand extends Command {
 				settings.set(msg.guild.id, value, property);
 				msg.say(`The setting "${property}" has been set to "${settings.get(msg.guild.id, property)}"`);
 			} else return msg.reply('that value does not exist in the system.');
-		} else if (action === 'add') { // ADD
+		}
+		
+		else if (action === 'add') { // ADD
 			if (`${settings.get(msg.guild.id, property)}` !== 'undefined') {
 				if (!(JSON.stringify(settings.get(msg.guild.id, property)).startsWith("["))) {
 					return msg.say(`The setting "${property}" is not an array object. Please use \`set\``);
 				}
 				settings.push(msg.guild.id, value, property);
 				msg.say(`The setting "${settings.get(msg.guild.id, property)}" has been added to "${property}"`);
+				if (settings.get(msg.guild.id, property).length > 1 && settings.get(msg.guild.id, property).includes('none')) {
+					settings.remove(msg.guild.id, "none", property);
+				}
 			} else return msg.reply('that value does not exist in the system.');
-		} else if (action === 'remove') { // REMOVE
+		}
+		
+		else if (action === 'remove') { // REMOVE
 			if (`${settings.get(msg.guild.id, property)}` !== 'undefined') {
 				if (!(JSON.stringify(settings.get(msg.guild.id, property)).startsWith("["))) {
 					return msg.say(`The setting "${property}" is not an array object. Please use \`set\``);
 				}
 				settings.remove(msg.guild.id, value, property);
 				msg.say(`The setting "${settings.get(msg.guild.id, property)}" has been removed from "${property}"`);
+				if (settings.get(msg.guild.id, property).length === 0) {
+					settings.push(msg.guild.id, "none", property);
+				}
 			} else return msg.reply('that value does not exist in the system.');
-		} else { // VIEW
+		}
+		
+		else { // VIEW
 			if (`${settings.get(msg.guild.id, property, value)}` !== 'undefined') {
 				msg.say(`The setting "${property}" is set to "${settings.get(msg.guild.id, property)}"`);
 			} else return msg.reply('that value does not exist in the system.');
