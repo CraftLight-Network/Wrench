@@ -330,18 +330,18 @@ client.on("message", async (message) => {
 	
 	// Stop commands in the wrong channel (If needed)
 	client.settings = settings
+	client.settings.fetchEverything();
 	
-	if (message.guild !== null && !message.member.hasPermission('MANAGE_GUILD')) {
-		client.settings.fetchEverything();
-		if (client.settings.get(message.guild.id, "bot") !== "none" && message.content.indexOf(config.prefix) === 0) {
-			if (!(client.settings.get(message.guild.id, "bot").includes(message.channel.name))) {
-				client.dispatcher.addInhibitor(message => {
+	client.dispatcher.addInhibitor(message => {
+		if (message.guild !== null && !message.member.hasPermission('MANAGE_GUILD')) {
+			if (client.settings.get(message.guild.id, "bot") !== "[ 'none' ]" && message.content.indexOf(config.prefix) === 0) {
+				if (!(client.settings.get(message.guild.id, "bot").includes(message.channel.name))) {
 					try {message.delete()} catch(err) {};
 					return message.author.send('Please do not use bot commands in that channel!');
-				});
+				}
 			}
-		}
-	}
+		}  
+	});
 	
 	// Log commands and increase message count
 	if (message.content.indexOf(config.prefix) === -1) return messagesRead.inc("number");
