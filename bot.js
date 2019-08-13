@@ -248,64 +248,58 @@ client.on("message", async (message) => {
 	// Auto translate message
 	const excludedWords = ['af', 'bruh']; // Put problematic words here
 	
-	if (config.translator === 'enabled') {
-		if (message.guild == null) return;
-		var exclude = new RegExp('\\b' + excludedWords.join('\\b|\\b') + '\\b');
+	if (config.translator === 'enabled') { // Time to redo this
+	    if (message.guild === null) return;
+		let tranMsg = tmpMsg.replace(new RegExp('\\b' + excludedWords.join('\\b|\\b') + '\\b'), "")
 		const users = message.guild.roles.get(message.guild.id).members.map(m=>m.user.username).join('||').toUpperCase().replace(/\d+/gm, "").split('||');
-		var msg = tmpMsg.replace(/\n/g, "").replace(/<(@.*?)>/g, "").replace(/http.[^\s]*/ig, "").replace(/<(:.*?)>|:\S*:(?!\S)/g, "").replace(/<(:.*?)>/ig, "").replace(/`\S*[\s\S](.*?)`\n*\S*/gm, "").replace(exclude, ""); // Mention, Link, Emojis, Code
-		if (new RegExp(users.join("|")).test(msg.toUpperCase())) {
-			var msg = msg.replace(new RegExp(users.join("|"), "i"), "");
-		}
-		if (msg.length > 5) { 
-			if (msg.split(" ").length !== Math.round(msg.length / 2)) {
-				const unique = msg.split('').filter(function(item, i, ar){ return ar.indexOf(item) === i; }).join('');
-				if (unique.length > 5) {
-					if (config.provider === 'yandex') {
+		
+		tranMsg = tranMsg.replace(/\n|<(@.*?)>|http.[^\s]*|<(:.*?)>|:\S*:(?!\S)|`\S*[\s\S](.*?)`\n*\S*/igm, "").replace(/\s+/g,' ').trim() // Single line, links, emoji x2, code , useless spaces
+		if (new RegExp(users.join("|")).test(tranMsg.toUpperCase())) {tranMsg = tranMsg.replace(new RegExp(users.join("|"), "i"), "")}
+		
+		const countSpace = tranMsg.replace(/[^a-zA-Z0-9 ]/gmi, "").trim();
+		const replace = countSpace.replace(/ +(?= )/gmi, " ").replace(/[^ ]/gmi, "").length+1;
+        if (Math.round(countSpace.length / 2) === replace) return;
+		
+		if (tranMsg.length > 5) { 
+			if (config.provider === 'yandex') {
+				if (message.content.indexOf(config.prefix) === 0) return;
+				translate.translate(tranMsg, {to: 'en'}, (err, res) => {
+					if (tranMsg === `${res.text}` || `${res.text}` === 'undefined') return;
+					translationsDone.inc("number");
+					log.TRAN(`${message.author}: ${tranMsg} -> ${res.text} (${res.lang})`);
+					const embed = new RichEmbed()
+					.setDescription(`**${res.text}**`)
+					.setAuthor(`${message.author.username} (${res.lang})`, message.author.displayAvatarURL)
+					.setColor(0x2F5EA3)
+					.setFooter('Translations from Yandex.Translate (http://cust.pw/y)');
+					return message.channel.send(embed);
+				});
+			}
+					
+			if (config.provider === 'google') {
+				const limiter = new RateLimiter(500, 100000);
+				limiter.removeTokens(1, function(err, remainingRequests) {
+					if (remainingRequests < 1) return;
+					const bucket = new TokenBucket('1024 * 1024 * 1048576', 'day', null);
+					bucket.removeTokens(tranMsg.byteLength, function() {
 						if (message.content.indexOf(config.prefix) === 0) return;
-						translate.translate(`${msg}`, { to: 'en' }, (err, res) => {
-							if (`${msg}` !== `${res.text}`) {
-								if (`${res.text}` !== 'undefined') {
-									translationsDone.inc("number");
-									log.TRAN(`${message.author}: ${msg} -> ${res.text}`);
-									const embed = new RichEmbed()
-									.setDescription(`**${res.text}**`)
-									.setAuthor(`${message.author.username} (${res.lang})`, message.author.displayAvatarURL)
-									.setColor(0x2F5EA3)
-									.setFooter('Translations from Yandex.Translate (http://cust.pw/y)');
-									return message.channel.send(embed);
-								}
+						translate.detectLanguage(tranMsg, function(err, detection) {
+							if (detection.language !== 'en' && detection.confidence === 1) {
+								translate.translate(tranMsg, 'en', (err, translation) => {
+								    if (tranMsg !== `${translation.translatedText}` || `${translation.translatedText}` !== 'undefined') {
+										translationsDone.inc("number");
+										log.TRAN(`${message.author}: ${tranMsg} -> ${translation.translatedText} (${detection.language}-en)`);
+										const embed = new RichEmbed()
+										.setDescription(`**${translation.translatedText}**`)
+										.setAuthor(`${message.author.username} (${detection.language}-en)`, message.author.displayAvatarURL)
+										.setColor(0x2F5EA3);
+										return message.channel.send(embed);
+									}
+			    				});
 							}
 						});
-					}
-					if (config.provider === 'google') {
-						const limiter = new RateLimiter(500, 100000);
-						limiter.removeTokens(1, function(err, remainingRequests) {
-							if (remainingRequests < 1) return;
-							var FILL_RATE = 1024 * 1024 * 1048576;
-							const bucket = new TokenBucket(FILL_RATE, 'day', null);
-							bucket.removeTokens(msg.byteLength, function() {
-								if (message.content.indexOf(config.prefix) === 0) return;
-								translate.detectLanguage(`${msg}`, function(err, detection) {
-									if (detection.language !== 'en' && detection.confidence === 1) {
-										translate.translate(`${msg}`, 'en', (err, translation) => {
-											if (`${translation.translatedText}` !== 'undefined') {
-												if (`${msg}` !== `${translation.translatedText}`) {
-													translationsDone.inc("number");
-													log.TRAN(`${message.author}: ${msg} -> ${translation.translatedText}`);
-													const embed = new RichEmbed()
-													.setDescription(`**${translation.translatedText}**`)
-													.setAuthor(`${message.author.username} (${detection.language}-en)`, message.author.displayAvatarURL)
-													.setColor(0x2F5EA3);
-													return message.channel.send(embed);
-												}
-											}
-										});
-									}
-								});
-							});
-						});
-					}
-				}
+					});
+				});
 			}
 		}
 	};
