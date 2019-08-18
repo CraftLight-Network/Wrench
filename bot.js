@@ -113,77 +113,9 @@ const log = new (winston.Logger)({
 	]
 });
 
-client.on('disconnect', event => {log.ERROR(`[DISCONNECT] ${event.code}`);process.exit(0)}); // Notify the console that the bot has disconnected
-process.on('unhandledRejection', (err, p) => {log.ERROR(`Rejected Promise: ${p} / Rejection: ${err}`);}); // Unhandled Rejection
-client.on('error', err => log.ERROR(err)); // Errors
-client.on('warn', warn => log.WARN(warn)); // Warnings
-client.on('log', log => log.CONSOLE(log)); // Logs
-
-// Notify the console that a new server is using the bot
-client.on("guildCreate", guild => {log.INFO(`Added in a new server: ${guild.name} (id: ${guild.id})`); settings.ensure(guild.id)});
-
-// Notify the console that a server removed the bot
-client.on("guildDelete", guild => {log.INFO(`Removed from server: ${guild.name} (id: ${guild.id})`); settings.delete(guild.id)});
-
-// Events when a user is added
-client.on("guildMemberAdd", member => {
-	settings.ensure(member.guild.id, defaultSettings);
-	settings.fetchEverything();
-	
-	if (settings.get(member.guild.id, "welcome") !== 'none') {
-		if (!member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "welcome"))) return;
-		
-		let welcomeMessage = settings.get(member.guild.id, "welcomeMessage");
-		welcomeMessage = welcomeMessage.replace("{{user}}", `<@${member.user.id}>`);
-		welcomeMessage = welcomeMessage.replace("{{id}}", member.user.id);
-		
-		member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "welcome")).send(welcomeMessage).catch(console.error);
-	}
-	
-	if (settings.get(member.guild.id, "joinRole") !== 'none') {
-		if (!member.guild.roles.find(role => role.name == settings.get(member.guild.id, "joinRole"))) return;
-		
-		member.addRole(member.guild.roles.find(role => role.name == settings.get(member.guild.id, "joinRole")).id).catch(console.error);
-	}
-	
-	if (settings.get(member.guild.id, "log") !== 'none') {
-		if (!member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "log"))) return;
-	
-		const embed = new RichEmbed()
-		.setFooter(`${new Date().toLocaleString("en-US")} UTC`)
-		.setDescription(`**<@${member.user.id}>**`)
-		.setAuthor('Member joined', member.user.displayAvatarURL)
-		.setColor(0x00FF00);
-		member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "log")).send(embed).catch(console.error);
-	}
-});
-
-// Events when a user is removed
-client.on("guildMemberRemove", member => {
-	settings.ensure(member.guild.id, defaultSettings);
-	settings.fetchEverything();
-	
-	if (settings.get(member.guild.id, "leave") !== 'none') {
-		if (!member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "leave"))) return;
-	
-		let leaveMessage = settings.get(member.guild.id, "leaveMessage");
-		leaveMessage = leaveMessage.replace("{{user}}", `<@${member.user.id}>`);
-		leaveMessage = leaveMessage.replace("{{id}}", member.user.id);
-		
-		member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "leave")).send(leaveMessage).catch(console.error);
-	}
-	
-	if (settings.get(member.guild.id, "log") !== 'none') {
-		if (!member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "log"))) return; 
-	
-		const embed = new RichEmbed()
-		.setFooter(`${new Date().toLocaleString("en-US")} UTC`)
-		.setDescription(`**<@${member.user.id}>**`)
-		.setAuthor('Member left', member.user.displayAvatarURL)
-		.setColor(0xFF0000);
-		member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "log")).send(embed).catch(console.error);
-	}
-});
+// Grab the logger
+const { logger } = require('./data/js/logger.js');
+logger(client, log, settings, defaultSettings);
 
 
 
@@ -212,9 +144,9 @@ client.on("ready", () => {
 	
 	// Anti-spam setup
 	antispam(client, {
-		warnBuffer: 3, // Max messages before warn
-		maxBuffer: 5, // Max messages before ban
-		interval: 1000, // How many milliseconds the checks are for
+		warnBuffer: 15, // Max messages before warn
+		maxBuffer: 25, // Max messages before ban
+		interval: 10000, // How many milliseconds the checks are for
 		warningMessage: "stop spamming! Change your message or slow down.", // Warn message
 		banMessage: "spammed and got banned!", // Ban message
 		maxDuplicatesWarning: 7, // Max duplicates before warn
@@ -242,71 +174,81 @@ client.on("message", async (message) => {
 		client.emit('checkMessage', message);
 	}
 	
-	// Stringify the message
+	// Stringify the message (lazy)
 	const tmpMsg = `${message}`;
 	
 	// Auto translate message
 	const excludedWords = ['af', 'bruh']; // Put problematic words here
 	
-	if (config.translator === 'enabled') { // Time to redo this
-	    if (message.guild === null) return;
-		let tranMsg = tmpMsg.replace(new RegExp('\\b' + excludedWords.join('\\b|\\b') + '\\b'), "")
-		const users = message.guild.roles.get(message.guild.id).members.map(m=>m.user.username).join('||').toUpperCase().replace(/\d+/gm, "").split('||');
-		
-		tranMsg = tranMsg.replace(/\n|<(@.*?)>|http.[^\s]*|<(:.*?)>|:\S*:(?!\S)|`\S*[\s\S](.*?)`\n*\S*/igm, "").replace(/\s+/g,' ').trim() // Single line, links, emoji x2, code , useless spaces
-		if (new RegExp(users.join("|")).test(tranMsg.toUpperCase())) {tranMsg = tranMsg.replace(new RegExp(users.join("|"), "i"), "")}
-		
-		const countSpace = tranMsg.replace(/[^a-zA-Z0-9 ]/gmi, "").trim();
-		const replace = countSpace.replace(/ +(?= )/gmi, " ").replace(/[^ ]/gmi, "").length+1;
-        if (Math.round(countSpace.length / 2) === replace) return;
-		
-		if (tranMsg.length > 5) { 
-			if (config.provider === 'yandex') {
-				if (message.content.indexOf(config.prefix) === 0) return;
-				translate.translate(tranMsg, {to: 'en'}, (err, res) => {
-					if (tranMsg === `${res.text}` || `${res.text}` === 'undefined') return;
-					translationsDone.inc("number");
-					log.TRAN(`${message.author}: ${tranMsg} -> ${res.text} (${res.lang})`);
-					const embed = new RichEmbed()
-					.setDescription(`**${res.text}**`)
-					.setAuthor(`${message.author.username} (${res.lang})`, message.author.displayAvatarURL)
-					.setColor(0x2F5EA3)
-					.setFooter('Translations from Yandex.Translate (http://cust.pw/y)');
-					return message.channel.send(embed);
-				});
-			}
-					
-			if (config.provider === 'google') {
-				const limiter = new RateLimiter(500, 100000);
-				limiter.removeTokens(1, function(err, remainingRequests) {
-					if (remainingRequests < 1) return;
-					const bucket = new TokenBucket('1024 * 1024 * 1048576', 'day', null);
-					bucket.removeTokens(tranMsg.byteLength, function() {
-						if (message.content.indexOf(config.prefix) === 0) return;
-						translate.detectLanguage(tranMsg, function(err, detection) {
-							if (detection.language !== 'en' && detection.confidence === 1) {
-								translate.translate(tranMsg, 'en', (err, translation) => {
-								    if (tranMsg !== `${translation.translatedText}` || `${translation.translatedText}` !== 'undefined') {
-										translationsDone.inc("number");
-										log.TRAN(`${message.author}: ${tranMsg} -> ${translation.translatedText} (${detection.language}-en)`);
-										const embed = new RichEmbed()
-										.setDescription(`**${translation.translatedText}**`)
-										.setAuthor(`${message.author.username} (${detection.language}-en)`, message.author.displayAvatarURL)
-										.setColor(0x2F5EA3);
-										return message.channel.send(embed);
-									}
-			    				});
-							}
+	function translateMessage() {
+		if (config.translator === 'enabled') {
+			if (message.guild === null) return;
+			let tranMsg = tmpMsg.replace(new RegExp('\\b' + excludedWords.join('\\b|\\b') + '\\b'), "")
+			const users = message.guild.roles.get(message.guild.id).members.map(m=>m.user.username).join('||').toUpperCase().replace(/\d+/gm, "").split('||');
+			
+			tranMsg = tranMsg.replace(/\n|<(@.*?)>|http.[^\s]*|<(:.*?)>|:\S*:(?!\S)|`\S*[\s\S](.*?)`\n*\S*/igm, "").replace(/\s+/g,' ').trim() // Single line, links, emoji x2, code , useless spaces
+			if (new RegExp(users.join("|")).test(tranMsg.toUpperCase())) {tranMsg = tranMsg.replace(new RegExp(users.join("|"), "i"), "")}
+			
+			const countSpace = tranMsg.replace(/[^a-zA-Z0-9 ]/gmi, "").trim();
+			const replace = countSpace.replace(/ +(?= )/gmi, " ").replace(/[^ ]/gmi, "").length+1;
+			if (Math.round(countSpace.length / 2) === replace) return;
+			
+			if (tranMsg.length > 5) {
+				if (config.provider === 'yandex') {
+					const monthBucket = new TokenBucket('1024 * 1024 * 10000000000', 'month', null);
+					monthBucket.removeTokens(tranMsg.byteLength, function() {
+						const dayBucket = new TokenBucket('1024 * 1024 * 1000000000', 'day', null);
+						dayBucket.removeTokens(tranMsg.byteLength, function() {
+							if (message.content.indexOf(config.prefix) === 0) return;
+							translate.translate(tranMsg, {to: 'en'}, (err, res) => {
+								if (tranMsg === `${res.text}` || `${res.text}` === 'undefined') return;
+								translationsDone.inc("number");
+								log.TRAN(`${message.author}: ${tranMsg} -> ${res.text} (${res.lang})`);
+								const embed = new RichEmbed()
+								.setDescription(`**${res.text}**`)
+								.setAuthor(`${message.author.username} (${res.lang})`, message.author.displayAvatarURL)
+								.setColor(0x2F5EA3)
+								.setFooter('Translations from Yandex.Translate (http://cust.pw/y)');
+								return message.channel.send(embed);
+							});
 						});
 					});
-				});
+				}
+						
+				if (config.provider === 'google') {
+					const limiter = new RateLimiter(500, 100000);
+					limiter.removeTokens(1, function(err, remainingRequests) {
+						if (remainingRequests < 1) return;
+						const bucket = new TokenBucket('1024 * 1024 * 1048576', 'day', null);
+						bucket.removeTokens(tranMsg.byteLength, function() {
+							if (message.content.indexOf(config.prefix) === 0) return;
+							translate.detectLanguage(tranMsg, function(err, detection) {
+								if (detection.language !== 'en' && detection.confidence === 1) {
+									translate.translate(tranMsg, 'en', (err, translation) => {
+										if (tranMsg !== `${translation.translatedText}` || `${translation.translatedText}` !== 'undefined') {
+											translationsDone.inc("number");
+											log.TRAN(`${message.author}: ${tranMsg} -> ${translation.translatedText} (${detection.language}-en)`);
+											const embed = new RichEmbed()
+											.setDescription(`**${translation.translatedText}**`)
+											.setAuthor(`${message.author.username} (${detection.language}-en)`, message.author.displayAvatarURL)
+											.setColor(0x2F5EA3);
+											return message.channel.send(embed);
+										}
+									});
+								}
+							});
+						});
+					});
+				}
 			}
 		}
 	};
+	translateMessage();
 	
 	// Neat message responses
-	const greeting = ['hello', 'hallo', 'hi', 'hey', 'howdy', 'sup', 'yo', 'hola', 'bonjour', 'salut']
-	const farewell = ['goodbye', 'bye', 'cya', 'gtg']
+	const greeting = ['hello', 'hallo', 'hi', 'hey', 'howdy', 'sup', 'yo', 'hola', 'bonjour', 'salut'];
+	const think = ['thinking', 'think', 'thonk', 'thonking'];
+	const farewell = ['goodbye', 'bye', 'cya', 'gtg'];
 	
 	if (greeting.includes(tmpMsg.replace(/ .*/,'').toLowerCase()) && tmpMsg.split(' ').length === 1) {
 		message.react('👋').then(async function () {
@@ -321,6 +263,16 @@ client.on("message", async (message) => {
 			await message.react('🇪');
 		});
 	}
+	if (think.includes(tmpMsg.replace(/ .*/,'').toLowerCase()) && tmpMsg.split(' ').length === 1) {
+		message.react('604381747328712879');
+	}
+	if (tmpMsg === 'lennyFace') message.channel.send('( ͡° ͜ʖ ͡°)');
+	if (tmpMsg === 'lennyPeek') message.channel.send('┬┴┬┴┤ ͡° ͜ʖ ͡°)├┬┴┬┴');
+	if (tmpMsg === 'lennyFight') message.channel.send('(ง ͡° ͜ʖ ͡°)ง');
+	if (tmpMsg === 'bdgFace') message.channel.send('<:bdg:604374158876344347>');
+	if (tmpMsg === 'bdgDab') message.channel.send('<:bdgDab:604381747899138067>');
+	if (tmpMsg === 'shockCat') message.channel.send('<:shockCat:604381747614056468>');
+	if (tmpMsg === 'hahREE') message.channel.send('<:hahREE:604381747513393182>');
 	
 	// Stop commands in the wrong channel (If needed)
 	client.settings = settings
@@ -338,28 +290,14 @@ client.on("message", async (message) => {
 	});
 	
 	// Log commands and increase message count
-	if (message.content.indexOf(config.prefix) === -1) return messagesRead.inc("number");
+	if (tmpMsg.charAt(0) === config.prefix) {
+		log.CMD(`${message.author}: ${message}`);
+		return commandsRead.inc("number");
+	}
 	
-	log.CMD(`${message.author}: ${message}`);
-	commandsRead.inc("number");
+	messagesRead.inc("number");
 });
 
-// Log deleted messages
-client.on("messageDelete", (message) => {
-	if (settings.get(message.guild.id, "log") !== 'none') {
-		// Stringify the message
-		const tmpMsg = `${message}`;
-		
-		if (!message.guild.channels.find(channel => channel.name == settings.get(message.guild.id, "log"))) return; 
-	
-		const embed = new RichEmbed()
-		.setFooter(`${new Date().toLocaleString("en-US")} UTC`)
-		.setDescription(`By: **<@${message.author.id}>**\nContent: **${tmpMsg.substring(0, 750) + "..."}**`) //
-		.setAuthor('Message deleted', message.author.displayAvatarURL)
-		.setColor(0xFF0000);
-		message.guild.channels.find(channel => channel.name == settings.get(message.guild.id, "log")).send(embed).catch(console.error);
-	}
-});
 
 
 
