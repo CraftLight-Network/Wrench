@@ -46,8 +46,8 @@ module.exports = class purgeCommand extends Command {
 				if (!msg.guild.channels.find(channel => channel.name == settings.get(msg.guild.id, "log"))) return; 
 				
 				const embed = new RichEmbed()
-				.setFooter(new Date().toLocaleDateString("en-US"))
-				.setDescription(`By: **<@${msg.author.id}>**\nIn: **<#${msg.channel.id}>**\nDeleted: **${number}**`)
+				.setFooter(`${new Date().toLocaleString("en-US")} UTC`)
+				.setDescription(`By: **<@${msg.author.id}>**\n\nIn: **<#${msg.channel.id}>**\nDeleted: **${number}**`)
 				.setAuthor('Message purge', msg.author.displayAvatarURL)
 				.setColor(0xFF0000);
 				msg.guild.channels.find(channel => channel.name == settings.get(msg.guild.id, "log")).send(embed).catch(console.error);

@@ -109,17 +109,21 @@ module.exports.logger = function logger(client, log, settings, defaultSettings) 
 		if (settings.get(message.guild.id, "log") !== 'none') {
 			const tmpMsg = `${message}`; // Stringify the message (lazy)
 			if (!message.guild.channels.find(channel => channel.name == settings.get(message.guild.id, "log"))) return;
+			if (message.author.id === client.user.id) return;
 			
 			const user = await message.guild.fetchAuditLogs({type: 'MESSAGE_DELETE'}).then(audit => audit.entries.first())
-		
+			if (user.executor.id === client.user.id) return;
+			
 			const embed = new RichEmbed()
 			.setFooter(`${new Date().toLocaleString("en-US")} UTC`)
-			.setDescription(`By: **<@${user.executor.id}>**\n\nAuthor: **<@${message.author.id}>**\nContent: **${tmpMsg.substring(0, 750)}**`)
+			.setDescription(`By: **<@${user.executor.id}>**\n\nIn: **<#${message.channel.id}>**`)
 			.setAuthor('Message deleted', user.executor.displayAvatarURL)
 			.setColor(0xFF0000);
-			if (tmpMsg.length > 750) {
-				embed.description += " **...**";
-			}
+			if (message.author.id !== user.executor.id) {embed.description += `\nAuthor: **<@${message.author.id}>**`}
+			
+			embed.description += `\nContent: **${tmpMsg.substring(0, 750)}**`
+			if (tmpMsg.length > 750) {embed.description += " **...**"}
+			
 			message.guild.channels.find(channel => channel.name == settings.get(message.guild.id, "log")).send(embed).catch(console.error);
 		}
 	});
@@ -187,7 +191,7 @@ module.exports.logger = function logger(client, log, settings, defaultSettings) 
 			
 			const embed = new RichEmbed()
 			.setFooter(`${new Date().toLocaleString("en-US")} UTC`)
-			.setDescription(`By: **<@${user.executor.id}>**\n\nName: **${emoji.name}**`)
+			.setDescription(`By: **<@${user.executor.id}>**\n\nName: **${emoji.name}**\nEmoji: **https://cdn.discordapp.com/emojis/${emoji.id}.png**`)
 			.setAuthor('Emoji removed', user.executor.displayAvatarURL)
 			.setColor(0xFF0000);
 	
