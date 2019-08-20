@@ -183,10 +183,10 @@ client.on("message", async (message) => {
 	function translateMessage() {
 		if (config.translator === 'enabled') {
 			if (message.guild === null) return;
-			let tranMsg = tmpMsg.replace(new RegExp('\\b' + excludedWords.join('\\b|\\b') + '\\b'), "")
+			let tranMsg = tmpMsg.replace(new RegExp('\\b' + excludedWords.join('\\b|\\b') + '\\b'), "");
 			const users = message.guild.roles.get(message.guild.id).members.map(m=>m.user.username).join('||').toUpperCase().replace(/\d+/gm, "").split('||');
 			
-			tranMsg = tranMsg.replace(/\n|<(@.*?)>|http.[^\s]*|<(:.*?)>|:\S*:(?!\S)|`\S*[\s\S](.*?)`\n*\S*/igm, "").replace(/\s+/g,' ').trim() // Single line, links, emoji x2, code , useless spaces
+			tranMsg = tranMsg.replace(/\n|<(@.*?)>|http.[^\s]*|<(:.*?)>|:\S*:(?!\S)|`\S*[\s\S](.*?)`\n*\S*/igm, "").replace(/\s+/g,' ').replace(/((?![a-zA-ZàèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸçÇßØøÅåÆæœ ]).)*/g, '').trim(); // Single line, links, emoji x2, code , useless spaces, non-language characters
 			if (new RegExp(users.join("|")).test(tranMsg.toUpperCase())) {tranMsg = tranMsg.replace(new RegExp(users.join("|"), "i"), "")}
 			
 			const countSpace = tranMsg.replace(/[^a-zA-Z0-9 ]/gmi, "").trim();
