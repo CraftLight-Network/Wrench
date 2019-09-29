@@ -23,7 +23,7 @@ choice /C 12345 /N
 if %errorlevel% equ 1 goto install
 if %errorlevel% equ 2 goto update
 if %errorlevel% equ 3 goto options
-if %errorlevel% equ 3 goto launch
+if %errorlevel% equ 4 goto launch
 if %errorlevel% equ 5 exit
 
 
@@ -301,6 +301,9 @@ if exist .\data\launcherConfig\autoRestart (
 )
 ping 127.0.0.1 -n 4 > nul
 goto options
+
+:launch
+node bot.js
 
 
 

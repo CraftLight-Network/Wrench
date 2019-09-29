@@ -180,6 +180,7 @@ client.on("message", async (message) => {
 	// Auto translate message
 	const excludedWords = ['af', 'bruh']; // Put problematic words here
 	
+	// I truly hate this. Time to try this again.
 	function translateMessage() {
 		if (config.translator === 'enabled') {
 			if (message.guild === null) return;
