@@ -23,9 +23,9 @@
 
 // // Bot setup
 const { CommandoClient } = require('discord.js-commando');
+const DiscordAntiSpam = require("discord-anti-spam");
 const RateLimiter = require('limiter').RateLimiter;
 const TokenBucket = require('limiter').TokenBucket;
-const antispam = require('discord-anti-spam');
 const { RichEmbed } = require('discord.js');
 const { oneLine } = require('common-tags');
 const config = require("./config.json");
@@ -143,18 +143,22 @@ client.on("ready", () => {
 	}, 30000);
 	
 	// Anti-spam setup
-	antispam(client, {
-		warnBuffer: 15, // Max messages before warn
-		maxBuffer: 25, // Max messages before ban
-		interval: 10000, // How many milliseconds the checks are for
-		warningMessage: "stop spamming! Change your message or slow down.", // Warn message
-		banMessage: "spammed and got banned!", // Ban message
-		maxDuplicatesWarning: 7, // Max duplicates before warn
-		maxDuplicatesBan: 13, // Max duplicates before ban
-		deleteMessagesAfterBanForPastDays: 1, // Delete messages x days ago
-		exemptUsers: ['Edude42#2812', 'Spade#1690'] // Ignored users
+	const AntiSpam = new DiscordAntiSpam({
+		warnThreshold: 4,
+		kickThreshold: 7,
+		maxInterval: 2000, // Interval the thresholds are tested for
+		warnMessage: "{@user}, please stop spamming! Change your message or slow down.",
+		kickMessage: "**{user_tag}** was kicked for spamming.",
+		maxDuplicatesWarning: 4,
+		maxDuplicatesBan: 10,
+		deleteMessagesAfterBanForPastDays: 1, // (1-7)
+		exemptPermissions: ["MANAGE_GUILD", "MANAGE_MESSAGES", "ADMINISTRATOR"],
+		ignoreBots: false,
+		verbose: false,
 	});
 });
+
+AntiSpam.on("kickAdd", (member) => log.INFO(`KICK: ${member.user.tag} from ${member.guild.name}`));
 
 // Message handler
 client.on("message", async (message) => {
@@ -162,88 +166,80 @@ client.on("message", async (message) => {
 	commandsRead.ensure("number", 0);
 	messagesRead.ensure("number", 0);
 	translationsDone.ensure("number", 0);
-	if (message.guild !== null) {
-		settings.ensure(message.guild.id, defaultSettings);
-	}
+	if (message.guild !== null) settings.ensure(message.guild.id, defaultSettings);
 	
 	// Make sure the user isn't a bot
 	if (message.author.bot) return;
 	
+	// Make content stuff easier
+	const msg = message.content;
+
 	// Run spam filter
-	if (message.guild !== null && message.attachments.size <= 0) {
-		client.emit('checkMessage', message);
-	}
-	
-	// Stringify the message (lazy)
-	const tmpMsg = `${message}`;
-	
+	if (message.guild !== null) AntiSpam.message(msg);
+
 	// Auto translate message
-	const excludedWords = ['af', 'bruh']; // Put problematic words here
-	
 	// I truly hate this. Time to try this again.
-	function translateMessage() {
-		if (config.translator === 'enabled') {
-			if (message.guild === null) return;
-			let tranMsg = tmpMsg.replace(new RegExp('\\b' + excludedWords.join('\\b|\\b') + '\\b'), "");
-			const users = message.guild.roles.get(message.guild.id).members.map(m=>m.user.username).join('||').toUpperCase().replace(/\d+/gm, "").split('||');
-			
-			tranMsg = tranMsg.replace(/\n|<(@.*?)>|http.[^\s]*|<(:.*?)>|:\S*:(?!\S)|`\S*[\s\S](.*?)`\n*\S*/igm, "").replace(/\s+/g,' ').replace(/((?![a-zA-ZàèìòùÀÈÌÒÙáéíóúýÁÉÍÓÚÝâêîôûÂÊÎÔÛãñõÃÑÕäëïöüÿÄËÏÖÜŸçÇßØøÅåÆæœ ]).)*/g, '').trim(); // Single line, links, emoji x2, code , useless spaces, non-language characters
-			if (new RegExp(users.join("|")).test(tranMsg.toUpperCase())) {tranMsg = tranMsg.replace(new RegExp(users.join("|"), "i"), "")}
-			
-			const countSpace = tranMsg.replace(/[^a-zA-Z0-9 ]/gmi, "").trim();
-			const replace = countSpace.replace(/ +(?= )/gmi, " ").replace(/[^ ]/gmi, "").length+1;
-			if (Math.round(countSpace.length / 2) === replace) return;
-			
-			if (tranMsg.length > 5) {
-				if (config.provider === 'yandex') {
-					const monthBucket = new TokenBucket('1024 * 1024 * 10000000000', 'month', null);
-					monthBucket.removeTokens(tranMsg.byteLength, function() {
-						const dayBucket = new TokenBucket('1024 * 1024 * 1000000000', 'day', null);
-						dayBucket.removeTokens(tranMsg.byteLength, function() {
-							if (message.content.indexOf(config.prefix) === 0) return;
-							translate.translate(tranMsg, {to: 'en'}, (err, res) => {
-								if (tranMsg === `${res.text}` || `${res.text}` === 'undefined') return;
-								translationsDone.inc("number");
-								log.TRAN(`${message.author}: ${tranMsg} -> ${res.text} (${res.lang})`);
-								const embed = new RichEmbed()
-								.setDescription(`**${res.text}**`)
-								.setAuthor(`${message.author.username} (${res.lang})`, message.author.displayAvatarURL)
-								.setColor(0x2F5EA3)
-								.setFooter('Translations from Yandex.Translate (http://cust.pw/y)');
-								return message.channel.send(embed);
-							});
-						});
-					});
-				}
-						
-				if (config.provider === 'google') {
-					const limiter = new RateLimiter(500, 100000);
-					limiter.removeTokens(1, function(err, remainingRequests) {
-						if (remainingRequests < 1) return;
-						const bucket = new TokenBucket('1024 * 1024 * 1048576', 'day', null);
-						bucket.removeTokens(tranMsg.byteLength, function() {
-							if (message.content.indexOf(config.prefix) === 0) return;
-							translate.detectLanguage(tranMsg, function(err, detection) {
-								if (detection.language !== 'en' && detection.confidence === 1) {
-									translate.translate(tranMsg, 'en', (err, translation) => {
-										if (tranMsg !== `${translation.translatedText}` || `${translation.translatedText}` !== 'undefined') {
-											translationsDone.inc("number");
-											log.TRAN(`${message.author}: ${tranMsg} -> ${translation.translatedText} (${detection.language}-en)`);
-											const embed = new RichEmbed()
-											.setDescription(`**${translation.translatedText}**`)
-											.setAuthor(`${message.author.username} (${detection.language}-en)`, message.author.displayAvatarURL)
-											.setColor(0x2F5EA3);
-											return message.channel.send(embed);
-										}
-									});
-								}
-							});
-						});
-					});
-				}
-			}
+	const LanguageDetect = require('languagedetect');
+	const lngDetector = new LanguageDetect();
+
+	let translate = msg;
+	async function translateMessage() {
+		if (config.translator !== 'enabled' || msg.charAt(0) === config.prefix) return;
+
+		// Message sanitization
+		// Members
+		if (message.guild !== null) {
+			let users = message.guild.roles.get(message.guild.id).members.map(m => m.user.username).join('|');
+			translate = translate.replace(new RegExp(users, "gi"), '');
 		}
-	};
+
+		translate = translate.replace(/http.[^\s]*/gu, '')		// Links
+		.replace(/<@.*>|@[^\s]+/gu, '')							// Mentions
+		.replace(/<:.*>|:.*:/gu, '')							// Emojis
+		.replace(/[^\p{L}1-9'",!?.\-+\s]/giu, '')				// Symbols
+		.replace(/\s+|`/gu, ' ').trim();						// Trimming
+
+		// Ignore s p a c e d messages
+		if (Math.round(translate.length / 2) === translate.split(" ").length) return;
+
+		// Detect language
+		if (translate.length < 5) return;
+		const language = lngDetector.detect(translate)[0];
+		if (language && language.includes('english')) return;
+
+		// Ratelimiting
+		const monthBucket = new TokenBucket('10000000', 'month', null);
+		if (!monthBucket.tryRemoveTokens(msg.length)) return;
+		const dayBucket = new TokenBucket('322580', 'day', null);
+		if (!dayBucket.tryRemoveTokens(msg.length)) return;
+
+		if (config.provider === 'yandex') {
+			translator.translate(translate, {to: 'en'}, (err, translated) => {
+				if (translate === `${translated.text}`) return;
+				translationsDone.inc("number");
+				log.TRAN(`${message.author}: ${translate} -> ${translated.text} (${translated.lang})`);
+
+				const embed = new RichEmbed()
+				.setAuthor(`${message.author.username} (${translated.lang})`, message.author.displayAvatarURL)
+				.setDescription(`**${translated.text}**`)
+				.setFooter('Translations from Yandex.Translate (http://cust.pw/y)')
+				.setColor(0x2F5EA3);
+				return message.channel.send(embed);
+			});
+		} else if (config.provider === 'google') {
+			translator.translate(translate, 'en', (err, translated) => {
+				translationsDone.inc("number");
+				log.TRAN(`${message.author}: ${translate} -> ${translated.translatedText} (${translated.detectedSourceLanguage}-en)`);
+
+				const embed = new RichEmbed()
+				.setAuthor(`${message.author.username} (${translated.detectedSourceLanguage}-en)`, message.author.displayAvatarURL)
+				.setDescription(`**${translated.translatedText}**`)
+				.setFooter('Translations from Google Translate')
+				.setColor(0x2F5EA3);
+				return message.channel.send(embed);
+			});
+		}
+	}
 	translateMessage();
 	
 	// Neat message responses
@@ -251,29 +247,29 @@ client.on("message", async (message) => {
 	const think = ['thinking', 'think', 'thonk', 'thonking'];
 	const farewell = ['goodbye', 'bye', 'cya', 'gtg'];
 	
-	if (greeting.includes(tmpMsg.replace(/ .*/,'').toLowerCase()) && tmpMsg.split(' ').length === 1) {
+	if (greeting.includes(msg.replace(/ .*/,'').toLowerCase()) && msg.split(' ').length === 1) {
 		message.react('👋').then(async function () {
 			await message.react('🇭');
 			await message.react('🇮');
 		});
 	}
-	if (farewell.includes(tmpMsg.replace(/ .*/,'').toLowerCase()) && tmpMsg.split(' ').length === 1) {
+	if (farewell.includes(msg.replace(/ .*/,'').toLowerCase()) && msg.split(' ').length === 1) {
 		message.react('👋').then(async function () {
 			await message.react('🇧');
 			await message.react('🇾');
 			await message.react('🇪');
 		});
 	}
-	if (think.includes(tmpMsg.replace(/ .*/,'').toLowerCase()) && tmpMsg.split(' ').length === 1) {
+	if (think.includes(msg.replace(/ .*/,'').toLowerCase()) && msg.split(' ').length === 1) {
 		message.react('604381747328712879');
 	}
-	if (tmpMsg === 'lennyFace') message.channel.send('( ͡° ͜ʖ ͡°)');
-	if (tmpMsg === 'lennyPeek') message.channel.send('┬┴┬┴┤ ͡° ͜ʖ ͡°)├┬┴┬┴');
-	if (tmpMsg === 'lennyFight') message.channel.send('(ง ͡° ͜ʖ ͡°)ง');
-	if (tmpMsg === 'bdgFace') message.channel.send('<:bdg:604374158876344347>');
-	if (tmpMsg === 'bdgDab') message.channel.send('<:bdgDab:604381747899138067>');
-	if (tmpMsg === 'shockCat') message.channel.send('<:shockCat:604381747614056468>');
-	if (tmpMsg === 'hahREE') message.channel.send('<:hahREE:604381747513393182>');
+	if (msg === 'lennyFace') message.channel.send('( ͡° ͜ʖ ͡°)');
+	if (msg === 'lennyPeek') message.channel.send('┬┴┬┴┤ ͡° ͜ʖ ͡°)├┬┴┬┴');
+	if (msg === 'lennyFight') message.channel.send('(ง ͡° ͜ʖ ͡°)ง');
+	if (msg === 'bdgFace') message.channel.send('<:bdg:604374158876344347>');
+	if (msg === 'bdgDab') message.channel.send('<:bdgDab:604381747899138067>');
+	if (msg === 'shockCat') message.channel.send('<:shockCat:604381747614056468>');
+	if (msg === 'hahREE') message.channel.send('<:hahREE:604381747513393182>');
 	
 	// Stop commands in the wrong channel (If needed)
 	client.settings = settings
@@ -291,7 +287,7 @@ client.on("message", async (message) => {
 	});
 	
 	// Log commands and increase message count
-	if (tmpMsg.charAt(0) === config.prefix) {
+	if (msg.charAt(0) === config.prefix) {
 		log.CMD(`${message.author}: ${message}`);
 		return commandsRead.inc("number");
 	}
@@ -311,10 +307,10 @@ const auth = require("./auth.json");
 if (config.translator === 'enabled') {
 	if (config.provider === 'yandex') {
 		log.INFO('Using Yandex.Translate')
-		var translate = require('yandex-translate')(auth.yandex); // Get Yandex API key
+		var translator = require('yandex-translate')(auth.yandex); // Get Yandex API key
 	} else if (config.provider === 'google') {
 		log.INFO('Using Google Translate !! THIS COSTS !!')
-		var translate = require('google-translate')(auth.google); // Get Google API key
+		var translator = require('google-translate')(auth.google); // Get Google API key
 	}
 };
 

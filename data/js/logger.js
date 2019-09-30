@@ -107,7 +107,7 @@ module.exports.logger = function logger(client, log, settings, defaultSettings) 
 	// Log deleted messages
 	client.on("messageDelete", async (message) => {
 		if (settings.get(message.guild.id, "log") !== 'none') {
-			const tmpMsg = `${message}`; // Stringify the message (lazy)
+			const msg = `${message}`; // Stringify the message (lazy)
 			if (!message.guild.channels.find(channel => channel.name == settings.get(message.guild.id, "log"))) return;
 			if (message.author.id === client.user.id) return;
 			
@@ -121,8 +121,8 @@ module.exports.logger = function logger(client, log, settings, defaultSettings) 
 			.setColor(0xFF0000);
 			if (message.author.id !== user.executor.id) {embed.description += `\nAuthor: **<@${message.author.id}>**`}
 			
-			embed.description += `\nContent: **${tmpMsg.substring(0, 750)}**`
-			if (tmpMsg.length > 750) {embed.description += " **...**"}
+			embed.description += `\nContent: **${msg.substring(0, 750)}**`
+			if (msg.length > 750) {embed.description += " **...**"}
 			
 			message.guild.channels.find(channel => channel.name == settings.get(message.guild.id, "log")).send(embed).catch(console.error);
 		}
