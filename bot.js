@@ -141,23 +141,21 @@ client.on("ready", () => {
 		const index = Math.floor(Math.random() * (activities_list.length - 1) + 1);
 		client.user.setActivity(activities_list[index]);
 	}, 30000);
-	
-	// Anti-spam setup
-	const AntiSpam = new DiscordAntiSpam({
-		warnThreshold: 4,
-		kickThreshold: 7,
-		maxInterval: 2000, // Interval the thresholds are tested for
-		warnMessage: "{@user}, please stop spamming! Change your message or slow down.",
-		kickMessage: "**{user_tag}** was kicked for spamming.",
-		maxDuplicatesWarning: 4,
-		maxDuplicatesBan: 10,
-		deleteMessagesAfterBanForPastDays: 1, // (1-7)
-		exemptPermissions: ["MANAGE_GUILD", "MANAGE_MESSAGES", "ADMINISTRATOR"],
-		ignoreBots: false,
-		verbose: false,
-	});
 });
-
+// Anti-spam setup
+const AntiSpam = new DiscordAntiSpam({
+	warnThreshold: 4,
+	kickThreshold: 7,
+	maxInterval: 2000, // Interval the thresholds are tested for
+	warnMessage: "{@user}, please stop spamming! Change your message or slow down.",
+	kickMessage: "**{user_tag}** was kicked for spamming.",
+	maxDuplicatesWarning: 4,
+	maxDuplicatesBan: 10,
+	deleteMessagesAfterBanForPastDays: 1, // (1-7)
+	exemptPermissions: ["MANAGE_GUILD", "MANAGE_MESSAGES", "ADMINISTRATOR"],
+	ignoreBots: false,
+	verbose: false,
+});
 AntiSpam.on("kickAdd", (member) => log.INFO(`KICK: ${member.user.tag} from ${member.guild.name}`));
 
 // Message handler
@@ -175,7 +173,7 @@ client.on("message", async (message) => {
 	const msg = message.content;
 
 	// Run spam filter
-	if (message.guild !== null) AntiSpam.message(msg);
+	if (message.guild !== null) AntiSpam.message(message);
 
 	// Auto translate message
 	// I truly hate this. Time to try this again.
