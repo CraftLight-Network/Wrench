@@ -166,17 +166,14 @@ client.on("message", async (message) => {
 	translationsDone.ensure("number", 0);
 	if (message.guild !== null) settings.ensure(message.guild.id, defaultSettings);
 	
-	// Make sure the user isn't a bot
+	// Message checks
 	if (message.author.bot) return;
-	
+	if (message.guild !== null) AntiSpam.message(message);
+
 	// Make content stuff easier
 	const msg = message.content;
 
-	// Run spam filter
-	if (message.guild !== null) AntiSpam.message(message);
-
 	// Auto translate message
-	// I truly hate this. Time to try this again.
 	const LanguageDetect = require('languagedetect');
 	const lngDetector = new LanguageDetect();
 
@@ -194,8 +191,8 @@ client.on("message", async (message) => {
 		translate = translate.replace(/http.[^\s]*/gu, '')		// Links
 		.replace(/<@.*>|@[^\s]+/gu, '')							// Mentions
 		.replace(/<:.*>|:.*:/gu, '')							// Emojis
-		.replace(/[^\p{L}1-9'",!?.\-+\s]/giu, '')				// Symbols
-		.replace(/\s+|`/gu, ' ').trim();						// Trimming
+		.replace(/[^\p{L}1-9.,!?'"\-+\s]/giu, '')				// Symbols
+		.replace(/`|\s+/gu, ' ').trim();						// Trimming
 
 		// Ignore s p a c e d messages
 		if (Math.round(translate.length / 2) === translate.split(" ").length) return;
@@ -211,6 +208,7 @@ client.on("message", async (message) => {
 		const dayBucket = new TokenBucket('322580', 'day', null);
 		if (!dayBucket.tryRemoveTokens(msg.length)) return;
 
+		// Translate the message
 		if (config.provider === 'yandex') {
 			translator.translate(translate, {to: 'en'}, (err, translated) => {
 				if (translate === `${translated.text}`) return;
@@ -277,7 +275,7 @@ client.on("message", async (message) => {
 		if (message.guild !== null && !message.member.hasPermission('MANAGE_GUILD')) {
 			if (client.settings.get(message.guild.id, "bot") !== "[ 'none' ]" && message.content.indexOf(config.prefix) === 0) {
 				if (!(client.settings.get(message.guild.id, "bot").includes(message.channel.name))) {
-					try {message.delete()} catch(err) {};
+					try {message.delete()} catch(err) {log.ERROR(`[${err}] Attempted to delete message in ${message.guild.name}.`)};
 					return message.author.send('Please do not use bot commands in that channel!');
 				}
 			}
