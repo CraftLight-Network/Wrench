@@ -29,7 +29,9 @@ const TokenBucket = require('limiter').TokenBucket;
 const { RichEmbed } = require('discord.js');
 const { oneLine } = require('common-tags');
 const config = require("./config.json");
+const http = require('http');
 const path = require('path');
+const fs = require('fs');
 
 // Commando
 const client = new CommandoClient({
@@ -117,15 +119,40 @@ const log = new (winston.Logger)({
 const { logger } = require('./data/js/logger.js');
 logger(client, log, settings, defaultSettings);
 
+// Bad link array
+// Grab the latest Unified HOSTS (Unified + Gambling + Fakenews + Porn)
+async function downloadHOSTS() {
+	http.get("http://sbc.io/hosts/alternates/fakenews-gambling-porn/hosts", function(response) {
+		if (response.statusCode === 200) {
+			const file = fs.createWriteStream("HOSTS.txt", {flags: 'w'});
+			response.pipe(file);
+		}
+	});
+}
+
+// Create the file just in case
+fs.writeFile("HOSTS.txt", "", downloadHOSTS);
+
+// Create the array and check the message
+var hostsArray;
+async function badSites(message) {
+	fs.readFile("HOSTS.txt", "utf-8", function(err, data) {
+		hostsArray = data.replace(/#.*|[0-9].[0-9].[0-9].[0-9]/gmi, "").trim();
+		hostsArray = hostsArray.split("\n").filter(Boolean).slice(14).map(el => el.trim());
+	});
+}
+
 
 
 // // Client actions
 
 // Set the activity list
-const activities_list = [`${config.prefix}help`,  "on CustomCraft", "on Fallout Salvation", "on Ethereal", "with code", "with Edude42", "with Braven", "with Spade", "with Cas", "."];
+const activities_list = [`${config.prefix}help`,  "on CustomCraft", "on Fallout Salvation", "on Ethereal", "with code", "with Edude42", "with Braven", "with Spade", "with Cas", ".", "?"];
 
 // When the bot starts
-client.on("ready", () => {
+client.on("ready", async () => {
+	await badSites();
+
 	// Startup messages
 	log.OK(`---------------------------------------------`);
 	log.OK(`BOT START ON: ${utcDate}`);
@@ -158,6 +185,39 @@ const AntiSpam = new DiscordAntiSpam({
 });
 AntiSpam.on("kickAdd", (member) => log.INFO(`KICK: ${member.user.tag} from ${member.guild.name}`));
 
+// Auto-mod function
+async function autoMod(message) {
+	const msg = message.content;
+
+	// Remove invite links
+	if (msg.includes('discord.gg/'||'discordapp.com/invite/')) {
+		if (message.member.hasPermission(["ADMINISTRATOR", "MANAGE_GUILD"])) return;
+		message.delete().then(async function() {
+			message.reply("please do not send invite links here!").then(mesg => {mesg.delete(5000)});
+		});
+	}
+
+	// Check for bad links
+	if (hostsArray.includes(msg)) {
+		if (message.member.hasPermission(["ADMINISTRATOR", "MANAGE_GUILD"]) || msg.includes('https://discordapp.com/channels/*')) return;
+		message.delete().then(async function() {
+			message.reply("please do not send that link here!").then(mesg => {mesg.delete(5000)});
+		});
+	}
+
+	// Check for spam
+	let msgWords = msg.split(" ");
+	let msgUnique = [...new Set(msgWords)].length;
+	if (msgWords.length / 3 > msgUnique) {
+		//if (message.member.hasPermission(["ADMINISTRATOR", "MANAGE_GUILD"])) return;
+		message.delete().then(async function() {
+			message.reply("please stop spamming! Change your message or slow down.").then(mesg => {mesg.delete(5000)});
+			console.log(`Message deleted; ${message.member}; ${msg}`)
+		});
+	}
+	if (message.guild !== null && message.attachments.size == 0) AntiSpam.message(message);
+}
+
 // Message handler
 client.on("message", async (message) => {
 	// Make sure enmap exists
@@ -165,10 +225,10 @@ client.on("message", async (message) => {
 	messagesRead.ensure("number", 0);
 	translationsDone.ensure("number", 0);
 	if (message.guild !== null) settings.ensure(message.guild.id, defaultSettings);
-	
+
 	// Message checks
 	if (message.author.bot) return;
-	if (message.guild !== null) AntiSpam.message(message);
+	await autoMod(message);
 
 	// Make content stuff easier
 	const msg = message.content;
@@ -239,7 +299,7 @@ client.on("message", async (message) => {
 	translateMessage();
 	
 	// Neat message responses
-	const greeting = ['hello', 'hallo', 'hi', 'hey', 'howdy', 'sup', 'yo', 'hola', 'bonjour', 'salut'];
+	const greeting = ['greetings', 'hello', 'hallo', 'hi', 'hey', 'howdy', 'sup', 'yo', 'hola', 'bonjour', 'salut'];
 	const think = ['thinking', 'think', 'thonk', 'thonking'];
 	const farewell = ['goodbye', 'bye', 'cya', 'gtg'];
 	
