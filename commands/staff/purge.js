@@ -27,18 +27,38 @@ module.exports = class purgeCommand extends Command {
 					}
 				},
 				{
-					key: 'confirmation',
-					prompt: 'Are you sure you want to do this? `yes` | `no`',
-					type: 'string',
-					parse: confirmation => confirmation.toLowerCase(),
+					key: 'member',
+					prompt: 'Who\'s messages will be purged?',
+					type: 'member',
 					default: ''
-				}
+				},
 			]
 		});
 	}
-	run(msg, { number, confirmation }) {
-		if (confirmation === 'yes') {
-			msg.channel.bulkDelete(number + 1)
+	run(msg, { number, member }) {
+		let userMember;
+		if (member !== '') {
+			if (msg.author.id === member) {userMember = msg.channel.fetchMessages({ limit: number + 1 })} else {msg.channel.fetchMessages({ limit: number })}
+			
+			userMember.then(messages => {
+				messages.filter(m => m.author.id === member.user.id).forEach(async (userMessage) => {
+					await userMessage.delete();
+				});
+			}).catch(console.error);
+			settings.ensure(msg.guild.id, defaultSettings);
+			settings.fetchEverything();
+			if (settings.get(msg.guild.id, "log") !== 'none') {
+				if (!msg.guild.channels.find(channel => channel.name == settings.get(msg.guild.id, "log"))) return; 
+				
+				const embed = new RichEmbed()
+				.setFooter(`${new Date().toLocaleString("en-US")} UTC`)
+				.setDescription(`By: **<@${msg.author.id}>**\n\nIn: **<#${msg.channel.id}>**\nUser: **${member}**\nDeleted: **${number}**`)
+				.setAuthor('Message purge', msg.author.displayAvatarURL)
+				.setColor(0xFF0000);
+				msg.guild.channels.find(channel => channel.name == settings.get(msg.guild.id, "log")).send(embed).catch(console.error);
+			}
+		} else {
+			msg.channel.bulkDelete(number + 1);
 			
 			settings.ensure(msg.guild.id, defaultSettings);
 			settings.fetchEverything();
@@ -52,6 +72,6 @@ module.exports = class purgeCommand extends Command {
 				.setColor(0xFF0000);
 				msg.guild.channels.find(channel => channel.name == settings.get(msg.guild.id, "log")).send(embed).catch(console.error);
 			}
-		}  else return msg.reply(`Are you sure you want to purge ${number} messags? Re-run the command with ${number} \`yes\``);
+		}
 	}
 };

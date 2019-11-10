@@ -12,3 +12,6 @@ desktop.ini
 # Private files
 data/private
 auth.json
+
+# Owner commands
+commands/staff/cc-rules.js
