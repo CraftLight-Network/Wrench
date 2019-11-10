@@ -103,6 +103,7 @@ echo Installing Dependencies...
 echo.
 choco install python2 -y --force
 call npm install --global windows-build-tools@latest --vs2015
+call npm install --global --prodution --vs2015 --add-python-to-path windows-build-tools node-gyp
 call npm install
 echo.
 echo Done! Moving on...
@@ -166,7 +167,7 @@ goto finished
 	echo {
 	echo     "token": "%token%",
 	echo     "yandex": "%yandex%",
-	echo     "google": "%google%",
+	echo     "google": "%google%"
 	echo }
 )>"auth.json"
 
