@@ -39,6 +39,7 @@
     "request-promise": "^4.2.4",
     "sequelize": "^5.19.1",
     "snekfetch": "^4.0.4",
+    "string-similarity": "^3.0.0",
     "stringstream": "^1.0.0",
     "winston": "2.4.4",
     "winston-daily-rotate-file": "^3.10.0",

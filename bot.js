@@ -26,9 +26,11 @@ const { CommandoClient } = require('discord.js-commando');
 const DiscordAntiSpam = require("discord-anti-spam");
 const RateLimiter = require('limiter').RateLimiter;
 const TokenBucket = require('limiter').TokenBucket;
+const similar = require('string-similarity');
 const { RichEmbed } = require('discord.js');
 const { oneLine } = require('common-tags');
 const config = require("./config.json");
+const moment = require('moment');
 const http = require('http');
 const path = require('path');
 const fs = require('fs');
@@ -55,10 +57,19 @@ client.registry
 	})
 	.registerCommandsIn(path.join(__dirname, 'commands'));
 
+// Sleep function
+const { delayFor } = require('discord.js').Util;
+
 // Setup enmap
 const Enmap = require("enmap");
 const { commandsRead, messagesRead, translationsDone, settings } = require('./data/js/enmap.js');
 const defaultSettings = require('./data/json/default.json');
+const tempBans = new Enmap({
+	name: "tempBans",
+	autoFetch: true,
+	fetchAll: false
+});
+tempBans.ensure("bans", [""]);
 
 
 
@@ -137,7 +148,7 @@ fs.writeFile("HOSTS.txt", "", downloadHOSTS);
 var hostsArray;
 async function badSites(message) {
 	fs.readFile("HOSTS.txt", "utf-8", function(err, data) {
-		hostsArray = data.replace(/#.*|[0-9].[0-9].[0-9].[0-9]/gmi, "").trim();
+		hostsArray = data.replace(/#.*|[0-9].[0-9].[0-9].[0-9]\s/gmi, "").trim();
 		hostsArray = hostsArray.split("\n").filter(Boolean).slice(14).map(el => el.trim());
 	});
 }
@@ -159,6 +170,39 @@ client.on("ready", async () => {
 	log.OK(`---------------------------------------------`);
 	log.INFO(`Name: ${client.user.tag} ID: ${client.user.id}`);
 	log.INFO(`Active in ${client.guilds.size} servers.`);
+	
+	async function banCheck() {
+		while (true) {
+			tempBans.fetchEverything();
+			tempBans.evict("bans");
+			
+			tempBans.forEach(async (value, key) => {
+				if (moment(Date.now()).toDate() >= moment(value.inTime).toDate()) {
+					const guild = client.guilds.get(value.guild);
+					const user = await client.fetchUser(value.member);
+					
+					guild.unban(value.member, {
+						reason: `UNBAN: By: ${value.by.tag} | ${value.inTime} | ${value.reason}`
+					}).then(() => {
+						const embed = new RichEmbed()
+						.setFooter(`${new Date().toLocaleString("en-US")} UTC`)
+						.setDescription(`By: **<@${value.by}>**\n\nBanned: **${user.tag}**\nUnban from ban **${value.time}** ago.`)
+						.setAuthor('User unbanned', user.displayAvatarURL)
+						.setColor(0x00FF00);
+						
+						tempBans.delete(key)
+						guild.channels.find(channel => channel.name == settings.get(guild.id, "log")).send(embed).catch(console.error);
+					}).catch(err => {
+						tempBans.delete(key)
+						console.error(err);
+					});
+				}
+			});
+			
+			await delayFor(1000);
+		}
+	}
+	banCheck();
 	
 	// Default activity message
 	client.user.setActivity("a game.");
@@ -185,38 +229,7 @@ const AntiSpam = new DiscordAntiSpam({
 });
 AntiSpam.on("kickAdd", (member) => log.INFO(`KICK: ${member.user.tag} from ${member.guild.name}`));
 
-// Auto-mod function
-async function autoMod(message) {
-	const msg = message.content;
 
-	// Remove invite links
-	if (msg.includes('discord.gg/'||'discordapp.com/invite/')) {
-		if (message.member.hasPermission(["ADMINISTRATOR", "MANAGE_GUILD"])) return;
-		message.delete().then(async function() {
-			message.reply("please do not send invite links here!").then(mesg => {mesg.delete(5000)});
-		});
-	}
-
-	// Check for bad links
-	if (hostsArray.includes(msg)) {
-		if (message.member.hasPermission(["ADMINISTRATOR", "MANAGE_GUILD"]) || msg.includes('https://discordapp.com/channels/*')) return;
-		message.delete().then(async function() {
-			message.reply("please do not send that link here!").then(mesg => {mesg.delete(5000)});
-		});
-	}
-
-	// Check for spam
-	let msgWords = msg.split(" ");
-	let msgUnique = [...new Set(msgWords)].length;
-	if (msgWords.length / 3 > msgUnique) {
-		//if (message.member.hasPermission(["ADMINISTRATOR", "MANAGE_GUILD"])) return;
-		message.delete().then(async function() {
-			message.reply("please stop spamming! Change your message or slow down.").then(mesg => {mesg.delete(5000)});
-			console.log(`Message deleted; ${message.member}; ${msg}`)
-		});
-	}
-	if (message.guild !== null && message.attachments.size == 0) AntiSpam.message(message);
-}
 
 // Message handler
 client.on("message", async (message) => {
@@ -230,6 +243,38 @@ client.on("message", async (message) => {
 	if (message.author.bot) return;
 	await autoMod(message);
 
+	// Auto-mod
+	async function autoMod(message) {
+		if (message.member.hasPermission(["ADMINISTRATOR", "MANAGE_GUILD"])) return;
+		const msg = message.content;
+	
+		// Remove invite links
+		if (msg.includes('discord.gg/' || 'discordapp.com/invite/' || !'https://cdn.discordapp.com/')) {
+			return message.delete().then(async function() {
+				message.reply("please do not send invite links here!").then(mesg => {mesg.delete(5000)});
+			});
+		}
+	
+		// Check for bad links
+		if (hostsArray.includes(msg)) {
+			if (msg.includes('https://discordapp.com/channels/') || msg.includes('https://cdn.discordapp.com/')) return;
+			return message.delete().then(async function() {
+				message.reply("please do not send that link here!").then(mesg => {mesg.delete(5000)});
+			});
+		}
+	
+		// Check for spam
+		let msgWords = msg.split(" ");
+		let msgUnique = [...new Set(msgWords)].length;
+		if (msgWords.length / 3 > msgUnique) {
+			return message.delete().then(async function() {
+				message.reply("please stop spamming! Change your message or slow down.").then(mesg => {mesg.delete(5000)});
+				console.log(`Message deleted; ${message.member}; ${msg}`)
+			});
+		}
+		if (message.guild !== null && message.attachments.size == 0) AntiSpam.message(message);
+	}
+	
 	// Make content stuff easier
 	const msg = message.content;
 
@@ -260,8 +305,10 @@ client.on("message", async (message) => {
 		// Detect language
 		if (translate.length < 5) return;
 		const language = lngDetector.detect(translate)[0];
-		if (language && language.includes('english')) return;
-
+		
+		if (!language && language[0] === "english") return;
+		if (language[1] <= 0.30) return;
+		
 		// Ratelimiting
 		const monthBucket = new TokenBucket('10000000', 'month', null);
 		if (!monthBucket.tryRemoveTokens(msg.length)) return;
@@ -271,6 +318,7 @@ client.on("message", async (message) => {
 		// Translate the message
 		if (config.provider === 'yandex') {
 			translator.translate(translate, {to: 'en'}, (err, translated) => {
+				if (similar.compareTwoStrings(translate, `${translated.text}`) >= 0.75) return;
 				if (translate === `${translated.text}`) return;
 				translationsDone.inc("number");
 				log.TRAN(`${message.author}: ${translate} -> ${translated.text} (${translated.lang})`);
@@ -284,6 +332,8 @@ client.on("message", async (message) => {
 			});
 		} else if (config.provider === 'google') {
 			translator.translate(translate, 'en', (err, translated) => {
+				if (similar.compareTwoStrings(translate, `${translated.translatedText}`) >= 0.75) return;
+				if (translate === `${translated.translatedText}`) return;
 				translationsDone.inc("number");
 				log.TRAN(`${message.author}: ${translate} -> ${translated.translatedText} (${translated.detectedSourceLanguage}-en)`);
 
@@ -298,7 +348,7 @@ client.on("message", async (message) => {
 	}
 	translateMessage();
 	
-	// Neat message responses
+	// Message reactions/responses
 	const greeting = ['greetings', 'hello', 'hallo', 'hi', 'hey', 'howdy', 'sup', 'yo', 'hola', 'bonjour', 'salut'];
 	const think = ['thinking', 'think', 'thonk', 'thonking'];
 	const farewell = ['goodbye', 'bye', 'cya', 'gtg'];
