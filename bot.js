@@ -234,8 +234,6 @@ AntiSpam.on("kickAdd", (member) => log.INFO(`KICK: ${member.user.tag} from ${mem
 
 // Message handler
 client.on("message", async (message) => {
-	// if (message.author.id === "272466470510788608") message.channel.setName("channel  space");
-	
 	// Make sure enmap exists
 	commandsRead.ensure("number", 0);
 	messagesRead.ensure("number", 0);
