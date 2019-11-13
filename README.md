@@ -31,10 +31,15 @@ This will not show you how to install Node.js and such on your device. You must 
 ## Config
 The bot has a lot of config. Here you'll find server-side and Discord-side values.<br/>
 ### Server-side:
-owners: Array of Discord user ID's. Put your ID in here. [Discord user ID]<br/>
-prefix: The character the bot uses as the command prefix. [any ASCII character]<br/>
-translator: Whether or not the translator is enabled. [enabled, disabled]<br/>
-provider: What translator provider the bot uses. [yandex, google, baidu]<br/>
+`owners:` Array of Discord user ID's. Put your ID in here. [Discord user ID]<br/>
+`prefix:` The character the bot uses as the command prefix. [any ASCII character]<br/>
+`translator:` Whether or not the translator is enabled. [enabled, disabled]<br/>
+`provider:` What translator provider the bot uses. [yandex, baidu, google]<br/>
+
+#### Providers:
+`yandex` - Fast and free, not the most accurate.<br/>
+`baidu` - Slow and free, very accurate.<br/>
+`google` - Fast but paid, very accurate.<br/>
 
 ### Discord-side: (none = disabled)
 bot: If set, the bot can only be used in these channels. [channel name]<br/>
