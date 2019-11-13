@@ -12,15 +12,15 @@ const { commandsRead, messagesRead, translationsDone, settings } = require('../.
 if (config.translator === 'enabled') {
 	if (config.provider === 'yandex') {
 		var translator = require('yandex-translate')(auth.yandex);
-		var link = 'http://cust.pw/yl';
+		var link = 'http://cust.pw/yandexlang';
 	}
 	if (config.provider === 'google') {
 		var translator = require('google-translate')(auth.google);
-		var link = 'http://cust.pw/gl';
+		var link = 'http://cust.pw/googlelang';
 	}
 	if (config.provider === 'baidu') {
 		var translator = require("baidu-translate-api");
-		var link = 'http://cust.pw/bl';
+		var link = 'http://cust.pw/baidulang';
 	}
 }
 
@@ -76,14 +76,14 @@ module.exports = class translateCommand extends Command {
 			
 			if (config.provider === 'yandex') {
 				translator.translate(translate, { from: `${langFrom}`, to: `${langTo}` }, (err, translated) => {
-					if (`${translated.text}` === undefined) return msg.reply('you entered an invalid language! Go to http://cust.pw/tl to see availible languages!');
+					if (`${translated.text}` === undefined) return msg.reply('you entered an invalid language! Go to http://cust.pw/yandexlang to see availible languages!');
 					translationsDone.inc("number");
 					
 					const embed = new RichEmbed()
 					.setDescription(`**${translated.text}**`)
 					.setAuthor(`${msg.author.username} (${translated.lang})`, msg.author.displayAvatarURL)
 					.setColor(0x2F5EA3)
-					.setFooter('Translations from Yandex.Translate (http://cust.pw/y)');
+					.setFooter('Translations from Yandex.Translate (http://cust.pw/yandex)');
 					return msg.channel.send(embed);
 				});
 			}
@@ -96,14 +96,14 @@ module.exports = class translateCommand extends Command {
 				translator.translate(translate, `${langFrom}`, `${langTo}`, (err, translated) => {
 					try {
 						if (`${translated.translatedText}` === undefined) {return;}
-					} catch (e) {return msg.reply('you entered an invalid language! Go to http://cust.pw/gl to see availible languages!')}
+					} catch (e) {return msg.reply('you entered an invalid language! Go to http://cust.pw/googlelang to see availible languages!')}
 					translationsDone.inc("number");
 					
 					const embed = new RichEmbed()
 					.setDescription(`**${translated.translatedText}**`)
 					.setAuthor(`${msg.author.username} (${langFrom}-${langTo})`, msg.author.displayAvatarURL)
 					.setColor(0x2F5EA3)
-					.setFooter('Translations from Google Translate.');
+					.setFooter('Translations from Google Translate. (http://cust.pw/google)');
 					return msg.channel.send(embed);
 				});
 			}
@@ -115,10 +115,10 @@ module.exports = class translateCommand extends Command {
 					const embed = new RichEmbed()
 					.setAuthor(`${msg.author.username} (${langFrom}-${langTo})`, msg.author.displayAvatarURL)
 					.setDescription(`**${translated.trans_result.dst}**`)
-					.setFooter('Translations from Baidu.')
+					.setFooter('Translations from Baidu Translate. (http://cust.pw/baidu)')
 					.setColor(0x2F5EA3);
 					return msg.channel.send(embed);
-				}).catch(function (error) {return msg.reply('you entered an invalid language! Go to http://cust.pw/bl to see availible languages!')});
+				}).catch(function (error) {return msg.reply('you entered an invalid language! Go to http://cust.pw/baidulang to see availible languages!')});
 			}
 		} else return;
 	}
