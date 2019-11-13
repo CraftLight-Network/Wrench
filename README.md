@@ -34,7 +34,7 @@ The bot has a lot of config. Here you'll find server-side and Discord-side value
 owners: Array of Discord user ID's. Put your ID in here. [Discord user ID]<br/>
 prefix: The character the bot uses as the command prefix. [any ASCII character]<br/>
 translator: Whether or not the translator is enabled. [enabled, disabled]<br/>
-provider: What translator provider the bot uses. [yandex, google]<br/>
+provider: What translator provider the bot uses. [yandex, google, baidu]<br/>
 
 ### Discord-side: (none = disabled)
 bot: If set, the bot can only be used in these channels. [channel name]<br/>
