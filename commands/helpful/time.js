@@ -11,7 +11,7 @@ module.exports = class timeCommand extends Command {
 			group: 'helpful',
 			memberName: 'time',
 			description: 'Calculates what time it is in different time zones.',
-			details: '**Zones:** <http://cust.pw/wtz>',
+			details: '**Zones:** <http://cust.pw/timezones>',
 			guildOnly: true,
 			args: [
 				{
@@ -26,9 +26,8 @@ module.exports = class timeCommand extends Command {
 	}
 
 	run(msg, { timeZone }) {
-		if (!moment.tz.zone(timeZone)) {
-			return msg.reply('Invalid time zone. Refer to <http://cust.pw/wtz>.');
-		}
+		if (!moment.tz.zone(timeZone)) return msg.reply('Invalid time zone. Refer to <http://cust.pw/timezones>.');
+		
 		const time = moment().tz(timeZone).format('h:mm A');
 		const location = timeZone.split('/');
 		const main = firstUpperCase(location[0], /[_ ]/);
