@@ -359,7 +359,7 @@ client.on("message", async (message) => {
 				const embed = new RichEmbed()
 				.setAuthor(`${message.author.username} (${translated.from}-en)`, message.author.displayAvatarURL)
 				.setDescription(`**${translated.trans_result.dst}**`)
-				.setFooter('Translations from Baidu. (http://cust.pw/baidu)')
+				.setFooter('Translations from Baidu Translate. (http://cust.pw/baidu)')
 				.setColor(0x2F5EA3);
 				return message.channel.send(embed);
 			});
