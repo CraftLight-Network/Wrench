@@ -435,7 +435,7 @@ if (config.translator === 'enabled') {
 	} else if (config.provider === 'baidu') {
 		log.TRAN('Using Baidu');
 		var translator = require("baidu-translate-api"); // Get Baidu Translator
-	} else {log.TRAN('Translator provider is invalid! Valid providers: yandex, google, baidu')}
+	} else {log.TRAN('Translator provider is invalid! Valid providers: yandex, baidu, google')}
 }
 
 // Login using auth.json
