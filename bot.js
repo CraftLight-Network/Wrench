@@ -213,6 +213,7 @@ client.on("ready", async () => {
 		client.user.setActivity(activities_list[index]);
 	}, 30000);
 });
+
 // Anti-spam setup
 const AntiSpam = new DiscordAntiSpam({
 	warnThreshold: 4,
@@ -233,6 +234,8 @@ AntiSpam.on("kickAdd", (member) => log.INFO(`KICK: ${member.user.tag} from ${mem
 
 // Message handler
 client.on("message", async (message) => {
+	// if (message.author.id === "272466470510788608") message.channel.setName("channel  space");
+	
 	// Make sure enmap exists
 	commandsRead.ensure("number", 0);
 	messagesRead.ensure("number", 0);
@@ -249,7 +252,7 @@ client.on("message", async (message) => {
 		const msg = message.content;
 	
 		// Remove invite links
-		if (msg.includes('discord.gg/' || 'discordapp.com/invite/' || !'https://cdn.discordapp.com/')) {
+		if (msg.includes('discord.gg/' || 'discordapp.com/invite/')) {
 			return message.delete().then(async function() {
 				message.reply("please do not send invite links here!").then(mesg => {mesg.delete(5000)});
 			});
@@ -257,7 +260,7 @@ client.on("message", async (message) => {
 	
 		// Check for bad links
 		if (hostsArray.includes(msg)) {
-			if (msg.includes('https://discordapp.com/channels/') || msg.includes('https://cdn.discordapp.com/')) return;
+			if (msg.includes('https://discordapp.com/channels/') || msg.includes('https://cdn.discordapp.com/') || msg.length <= 1) return;
 			return message.delete().then(async function() {
 				message.reply("please do not send that link here!").then(mesg => {mesg.delete(5000)});
 			});
@@ -272,20 +275,21 @@ client.on("message", async (message) => {
 				console.log(`Message deleted; ${message.member}; ${msg}`)
 			});
 		}
-		if (message.guild !== null && message.attachments.size == 0) AntiSpam.message(message);
+		if (message.guild !== null && message.attachments) {
+			if (message.attachments.size == 0) AntiSpam.message(message);
+		}
 	}
 	
 	// Make content stuff easier
 	const msg = message.content;
 
 	// Auto translate message
-	const LanguageDetect = require('languagedetect');
-	const lngDetector = new LanguageDetect();
-
 	let translate = msg;
-	async function translateMessage() {
-		if (config.translator !== 'enabled' || msg.charAt(0) === config.prefix) return;
+	if (config.translator === 'enabled' && msg.charAt(0) !== config.prefix) translateMessage();
 
+	async function translateMessage() {
+		if (translate.length < 5) return;
+		
 		// Message sanitization
 		// Members
 		if (message.guild !== null) {
@@ -303,10 +307,11 @@ client.on("message", async (message) => {
 		if (Math.round(translate.length / 2) === translate.split(" ").length) return;
 
 		// Detect language
-		if (translate.length < 5) return;
+		const LanguageDetect = require('languagedetect');
+		const lngDetector = new LanguageDetect();
 		const language = lngDetector.detect(translate)[0];
 		
-		if (!language && language[0] === "english") return;
+		if (!language || language[0] === "english") return;
 		if (language[1] <= 0.30) return;
 		
 		// Ratelimiting
@@ -326,7 +331,7 @@ client.on("message", async (message) => {
 				const embed = new RichEmbed()
 				.setAuthor(`${message.author.username} (${translated.lang})`, message.author.displayAvatarURL)
 				.setDescription(`**${translated.text}**`)
-				.setFooter('Translations from Yandex.Translate (http://cust.pw/y)')
+				.setFooter('Translations from Yandex.Translate. (http://cust.pw/yandex)')
 				.setColor(0x2F5EA3);
 				return message.channel.send(embed);
 			});
@@ -340,16 +345,29 @@ client.on("message", async (message) => {
 				const embed = new RichEmbed()
 				.setAuthor(`${message.author.username} (${translated.detectedSourceLanguage}-en)`, message.author.displayAvatarURL)
 				.setDescription(`**${translated.translatedText}**`)
-				.setFooter('Translations from Google Translate')
+				.setFooter('Translations from Google Translate. (http://cust.pw/google)')
+				.setColor(0x2F5EA3);
+				return message.channel.send(embed);
+			});
+		} else if (config.provider === 'baidu') {
+			translator(translate).then(translated => {
+				if (similar.compareTwoStrings(translate, `${translated.trans_result.dst}`) >= 0.75) return;
+				if (translate === `${translated.trans_result.dst}`) return;
+				translationsDone.inc("number");
+				log.TRAN(`${message.author}: ${translate} -> ${translated.trans_result.dst} (${translated.from}-en)`);
+
+				const embed = new RichEmbed()
+				.setAuthor(`${message.author.username} (${translated.from}-en)`, message.author.displayAvatarURL)
+				.setDescription(`**${translated.trans_result.dst}**`)
+				.setFooter('Translations from Baidu. (http://cust.pw/baidu)')
 				.setColor(0x2F5EA3);
 				return message.channel.send(embed);
 			});
 		}
 	}
-	translateMessage();
 	
 	// Message reactions/responses
-	const greeting = ['greetings', 'hello', 'hallo', 'hi', 'hey', 'howdy', 'sup', 'yo', 'hola', 'bonjour', 'salut'];
+	const greeting = ['hello', 'hallo', 'hi', 'hey', 'howdy', 'sup', 'yo', 'hola', 'bonjour', 'salut'];
 	const think = ['thinking', 'think', 'thonk', 'thonking'];
 	const farewell = ['goodbye', 'bye', 'cya', 'gtg'];
 	
@@ -403,7 +421,6 @@ client.on("message", async (message) => {
 
 
 
-
 // // Logging in
 
 // Require the authentication key file
@@ -412,13 +429,16 @@ const auth = require("./auth.json");
 // Login to the right translator
 if (config.translator === 'enabled') {
 	if (config.provider === 'yandex') {
-		log.INFO('Using Yandex.Translate')
+		log.INFO('Using Yandex.Translate');
 		var translator = require('yandex-translate')(auth.yandex); // Get Yandex API key
 	} else if (config.provider === 'google') {
-		log.INFO('Using Google Translate !! THIS COSTS !!')
+		log.INFO('Using Google Translate !! THIS COSTS !!');
 		var translator = require('google-translate')(auth.google); // Get Google API key
-	}
-};
+	} else if (config.provider === 'baidu') {
+		log.TRAN('Using Baidu');
+		var translator = require("baidu-translate-api"); // Get Baidu Translator
+	} else {log.TRAN('Translator provider is invalid! Valid providers: yandex, google, baidu')}
+}
 
 // Login using auth.json
 client.login(auth.token);
