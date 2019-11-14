@@ -326,18 +326,16 @@ client.on("message", async (message) => {
 		if (!monthBucket.tryRemoveTokens(msg.length)) return;
 		const dayBucket = new TokenBucket('322580', 'day', null);
 		if (!dayBucket.tryRemoveTokens(msg.length)) return;
-		const secondBucket = new TokenBucket('1', 'second', null);
-		if (!dayBucket.tryRemoveTokens(msg.length)) return;
 
 		// Translate the message
 		if (config.provider === 'yandex') {
 			translator.translate(translate, {to: 'en'}, (err, translated) =>
 				translatedEmbed(translated.text, translated.lang, "", "Yandex.Translate", "yandex")
-			);
+			).catch(function () {const hide = 1});
 		} else if (config.provider === 'google') {
 			translator.translate(translate, 'en', (err, translated) =>
 				translatedEmbed(translated.translatedText, translated.detectedSourceLanguage, "-en", "Google Translate", "google")
-			);
+			).catch(function () {const hide = 1});
 		} else if (config.provider === 'baidu') {
 			translator(translate).then(translated => 
 				translatedEmbed(translated.trans_result.dst, translated.from, "-en", "Baidu Translate", "baidu")
@@ -345,8 +343,6 @@ client.on("message", async (message) => {
 		}
 		
 		function translatedEmbed(translatedText, translatedFrom, translatedTo, provider, link) {
-			console.log(similar.compareTwoStrings(translate, `${translatedText}`) >= 0.75)
-			
 			if (similar.compareTwoStrings(translate, `${translatedText}`) >= 0.75) return;
 			if (translate === `${translatedText}`) return;
 			translationsDone.inc("number");

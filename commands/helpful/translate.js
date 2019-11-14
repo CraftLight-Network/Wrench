@@ -63,6 +63,16 @@ module.exports = class translateCommand extends Command {
 		if (config.translator === 'enabled') {
 			translationsDone.ensure("number", 0);
 			let translate = `${langTran}`;
+			let translatedText;
+			let translatedFrom;
+			let translatedTo;
+			let provider;
+			let link;
+			
+			if (translate.length < 5) return;
+			
+			// Message sanitization
+			// Members
 			if (msg.guild !== null) {
 				let users = msg.guild.roles.get(msg.guild.id).members.map(m => m.user.username).join('|');
 				translate = translate.replace(new RegExp(users, "gi"), '');
@@ -73,52 +83,42 @@ module.exports = class translateCommand extends Command {
 			.replace(/<:.*>|:.*:/gu, '')							// Emojis
 			.replace(/[^\p{L}1-9.,!?'"\-+\s]/giu, '')				// Symbols
 			.replace(/`|\s+/gu, ' ').trim();						// Trimming
-			
-			if (config.provider === 'yandex') {
-				translator.translate(translate, { from: `${langFrom}`, to: `${langTo}` }, (err, translated) => {
-					if (`${translated.text}` === undefined) return msg.reply('you entered an invalid language! Go to http://cust.pw/yandexlang to see availible languages!');
-					translationsDone.inc("number");
-					
-					const embed = new RichEmbed()
-					.setDescription(`**${translated.text}**`)
-					.setAuthor(`${msg.author.username} (${translated.lang})`, msg.author.displayAvatarURL)
-					.setColor(0x2F5EA3)
-					.setFooter('Translations from Yandex.Translate (http://cust.pw/yandex)');
-					return msg.channel.send(embed);
-				});
-			}
-			if (config.provider === 'google') {
-				const monthBucket = new TokenBucket('10000000', 'month', null);
-				if (!monthBucket.tryRemoveTokens(msg.length)) return;
-				const dayBucket = new TokenBucket('322580', 'day', null);
-				if (!dayBucket.tryRemoveTokens(msg.length)) return;
-				
-				translator.translate(translate, `${langFrom}`, `${langTo}`, (err, translated) => {
-					try {
-						if (`${translated.translatedText}` === undefined) {return;}
-					} catch (e) {return msg.reply('you entered an invalid language! Go to http://cust.pw/googlelang to see availible languages!')}
-					translationsDone.inc("number");
-					
-					const embed = new RichEmbed()
-					.setDescription(`**${translated.translatedText}**`)
-					.setAuthor(`${msg.author.username} (${langFrom}-${langTo})`, msg.author.displayAvatarURL)
-					.setColor(0x2F5EA3)
-					.setFooter('Translations from Google Translate. (http://cust.pw/google)');
-					return msg.channel.send(embed);
-				});
-			}
-			if (config.provider === 'baidu') {
-				translator(translate, {from: `${langFrom}`, to: `${langTo}`}).then(translated => {
-					if (translate === `${translated.trans_result.dst}`) return;
-					translationsDone.inc("number");
 	
-					const embed = new RichEmbed()
-					.setAuthor(`${msg.author.username} (${langFrom}-${langTo})`, msg.author.displayAvatarURL)
-					.setDescription(`**${translated.trans_result.dst}**`)
-					.setFooter('Translations from Baidu Translate. (http://cust.pw/baidu)')
-					.setColor(0x2F5EA3);
-					return msg.channel.send(embed);
-				}).catch(function (error) {return msg.reply('you entered an invalid language! Go to http://cust.pw/baidulang to see availible languages!')});
+			if (translate === "") return;
+			
+			// Ratelimiting
+			const monthBucket = new TokenBucket('10000000', 'month', null);
+			if (!monthBucket.tryRemoveTokens(msg.length)) return;
+			const dayBucket = new TokenBucket('322580', 'day', null);
+			if (!dayBucket.tryRemoveTokens(msg.length)) return;
+			
+			// Translate the message
+			if (config.provider === 'yandex') {
+				translator.translate(translate, {from: `${langFrom}`, to: `${langTo}`}, (err, translated) => {
+					if (!translated.text) return msg.reply('you entered an invalid language! Go to http://cust.pw/yandexlang to see availible languages!');
+					translatedEmbed(translated.text, translated.lang, "", "Yandex.Translate", "yandex");
+				}).catch(function () {const hide = 1});
+			} else if (config.provider === 'google') {
+				translator.translate(translate, `${langFrom}`, `${langTo}`, (err, translated) => {
+					if (!translated.translatedText) return msg.reply('you entered an invalid language! Go to http://cust.pw/googlelang to see availible languages!');
+					translatedEmbed(translated.translatedText, translated.detectedSourceLanguage, "-en", "Google Translate", "google");
+				}).catch(function () {const hide = 1});
+			} else if (config.provider === 'baidu') {
+				translator(translate, {from: `${langFrom}`, to: `${langTo}`}).then(translated =>
+					translatedEmbed(translated.trans_result.dst, translated.from, "-en", "Baidu Translate", "baidu")
+				).catch(function () {return msg.reply('you entered an invalid language! Go to http://cust.pw/baidulang to see availible languages!')});
+			}
+			
+			function translatedEmbed(translatedText, translatedFrom, translatedTo, provider, link) {
+				if (translate === `${translatedText}`) return;
+				translationsDone.inc("number");
+		
+				const embed = new RichEmbed()
+				.setAuthor(`${msg.author.username} (${translatedFrom}${translatedTo})`, msg.author.displayAvatarURL)
+				.setDescription(`**${translatedText}**`)
+				.setFooter(`Translations from ${provider}. (http://cust.pw/${link})`)
+				.setColor(0x2F5EA3);
+				return msg.channel.send(embed);
 			}
 		} else return;
 	}
