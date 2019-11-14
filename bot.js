@@ -303,19 +303,25 @@ client.on("message", async (message) => {
 
 		// Ignore s p a c e d messages
 		if (Math.round(translate.length / 2) === translate.split(" ").length) return;
+		if (translate === "") return;
 
 		// Detect language
+		var validLang = true;
 		const LanguageDetect = require('languagedetect');
 		const lngDetector = new LanguageDetect();
-		const language = lngDetector.detect(translate)[0];
+		const language = lngDetector.detect(translate, 5);
 		
-		if (!language || language[0] === "english") return;
-		if (language[1] <= 0.30) return;
+		if (!language || language[0][0] === "english") return;
+		language.forEach(lang => {if (lang[0] === "english" && lang[1] > 0.20) return validLang = false});
+		if (language[0][1] <= 0.25) return;
+		if (!validLang) return;
 		
 		// Ratelimiting
 		const monthBucket = new TokenBucket('10000000', 'month', null);
 		if (!monthBucket.tryRemoveTokens(msg.length)) return;
 		const dayBucket = new TokenBucket('322580', 'day', null);
+		if (!dayBucket.tryRemoveTokens(msg.length)) return;
+		const secondBucket = new TokenBucket('1', 'second', null);
 		if (!dayBucket.tryRemoveTokens(msg.length)) return;
 
 		// Translate the message
@@ -360,7 +366,7 @@ client.on("message", async (message) => {
 				.setFooter('Translations from Baidu Translate. (http://cust.pw/baidu)')
 				.setColor(0x2F5EA3);
 				return message.channel.send(embed);
-			});
+			}).catch(function () {const hide = 1;});
 		}
 	}
 	
