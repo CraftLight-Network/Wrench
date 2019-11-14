@@ -283,6 +283,11 @@ client.on("message", async (message) => {
 
 	// Auto translate message
 	let translate = msg;
+	let translatedText;
+	let translatedFrom;
+	let translatedTo;
+	let provider;
+	let link;
 	if (config.translator === 'enabled' && msg.charAt(0) !== config.prefix) translateMessage();
 
 	async function translateMessage() {
@@ -326,47 +331,33 @@ client.on("message", async (message) => {
 
 		// Translate the message
 		if (config.provider === 'yandex') {
-			translator.translate(translate, {to: 'en'}, (err, translated) => {
-				if (similar.compareTwoStrings(translate, `${translated.text}`) >= 0.75) return;
-				if (translate === `${translated.text}`) return;
-				translationsDone.inc("number");
-				log.TRAN(`${message.author}: ${translate} -> ${translated.text} (${translated.lang})`);
-
-				const embed = new RichEmbed()
-				.setAuthor(`${message.author.username} (${translated.lang})`, message.author.displayAvatarURL)
-				.setDescription(`**${translated.text}**`)
-				.setFooter('Translations from Yandex.Translate. (http://cust.pw/yandex)')
-				.setColor(0x2F5EA3);
-				return message.channel.send(embed);
-			});
+			translator.translate(translate, {to: 'en'}, (err, translated) =>
+				translatedEmbed(translated.text, translated.lang, "", "Yandex.Translate", "yandex")
+			);
 		} else if (config.provider === 'google') {
-			translator.translate(translate, 'en', (err, translated) => {
-				if (similar.compareTwoStrings(translate, `${translated.translatedText}`) >= 0.75) return;
-				if (translate === `${translated.translatedText}`) return;
-				translationsDone.inc("number");
-				log.TRAN(`${message.author}: ${translate} -> ${translated.translatedText} (${translated.detectedSourceLanguage}-en)`);
-
-				const embed = new RichEmbed()
-				.setAuthor(`${message.author.username} (${translated.detectedSourceLanguage}-en)`, message.author.displayAvatarURL)
-				.setDescription(`**${translated.translatedText}**`)
-				.setFooter('Translations from Google Translate. (http://cust.pw/google)')
-				.setColor(0x2F5EA3);
-				return message.channel.send(embed);
-			});
+			translator.translate(translate, 'en', (err, translated) =>
+				translatedEmbed(translated.translatedText, translated.detectedSourceLanguage, "-en", "Google Translate", "google")
+			);
 		} else if (config.provider === 'baidu') {
-			translator(translate).then(translated => {
-				if (similar.compareTwoStrings(translate, `${translated.trans_result.dst}`) >= 0.75) return;
-				if (translate === `${translated.trans_result.dst}`) return;
-				translationsDone.inc("number");
-				log.TRAN(`${message.author}: ${translate} -> ${translated.trans_result.dst} (${translated.from}-en)`);
-
-				const embed = new RichEmbed()
-				.setAuthor(`${message.author.username} (${translated.from}-en)`, message.author.displayAvatarURL)
-				.setDescription(`**${translated.trans_result.dst}**`)
-				.setFooter('Translations from Baidu Translate. (http://cust.pw/baidu)')
-				.setColor(0x2F5EA3);
-				return message.channel.send(embed);
-			}).catch(function () {const hide = 1;});
+			translator(translate).then(translated => 
+				translatedEmbed(translated.trans_result.dst, translated.from, "-en", "Baidu Translate", "baidu")
+			).catch(function () {const hide = 1});
+		}
+		
+		function translatedEmbed(translatedText, translatedFrom, translatedTo, provider, link) {
+			console.log(similar.compareTwoStrings(translate, `${translatedText}`) >= 0.75)
+			
+			if (similar.compareTwoStrings(translate, `${translatedText}`) >= 0.75) return;
+			if (translate === `${translatedText}`) return;
+			translationsDone.inc("number");
+			log.TRAN(`${message.author}: ${translate} -> ${translatedText} (${translatedFrom}${translatedTo})`);
+	
+			const embed = new RichEmbed()
+			.setAuthor(`${message.author.username} (${translatedFrom}${translatedTo})`, message.author.displayAvatarURL)
+			.setDescription(`**${translatedText}**`)
+			.setFooter(`Translations from ${provider}. (http://cust.pw/${link})`)
+			.setColor(0x2F5EA3);
+			return message.channel.send(embed);
 		}
 	}
 	
