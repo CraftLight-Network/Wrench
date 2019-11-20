@@ -5,13 +5,13 @@
 # WrenchBot
 ## About
 This bot is used mainly for the CustomCraft Network.<br/>
-If you would like to see this bot in action, go to [the Discord server](https://discord.gg/sAxRWVb).<br/><br/>
+If you would like to see this bot in action, go to [the CustomCraft Discord server](https://discord.gg/sAxRWVb).<br/><br/>
 
 WrenchBot is an advanced bot.<br/>
 It has per-server config, logging,<br/>
 and a ton of helpful and fun commands.
 
-**NOTE**: _You will receive little support. This is meant to be used in specific servers._<br/>
+**NOTE**: _For support, join [this Discord server](https://edude42.dev/support)._<br/>
 **DISCLAIMER**: _This bot logs the commands that are used for security reasons. They are not added to steal/sell information. They are added to monitor any exploits and/or bugs that come with the bot._<br/>
 
 ## Setup
