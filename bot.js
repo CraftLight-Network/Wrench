@@ -316,7 +316,8 @@ client.on("message", async (message) => {
 		const lngDetector = new LanguageDetect();
 		const language = lngDetector.detect(translate, 5);
 		
-		if (!language || language[0][0] === "english") return;
+		if (!language) return;
+		if (language[0][0] === "english") return;
 		language.forEach(lang => {if (lang[0] === "english" && lang[1] > 0.20) return validLang = false});
 		if (language[0][1] <= 0.25) return;
 		if (!validLang) return;
@@ -331,11 +332,11 @@ client.on("message", async (message) => {
 		if (config.provider === 'yandex') {
 			translator.translate(translate, {to: 'en'}, (err, translated) =>
 				translatedEmbed(translated.text, translated.lang, "", "Yandex.Translate", "yandex")
-			).catch(function () {const hide = 1});
+			).catch(function () {const hide = 1});;
 		} else if (config.provider === 'google') {
 			translator.translate(translate, 'en', (err, translated) =>
 				translatedEmbed(translated.translatedText, translated.detectedSourceLanguage, "-en", "Google Translate", "google")
-			).catch(function () {const hide = 1});
+			).catch(function () {const hide = 1});;
 		} else if (config.provider === 'baidu') {
 			translator(translate).then(translated => 
 				translatedEmbed(translated.trans_result.dst, translated.from, "-en", "Baidu Translate", "baidu")
@@ -343,7 +344,7 @@ client.on("message", async (message) => {
 		}
 		
 		function translatedEmbed(translatedText, translatedFrom, translatedTo, provider, link) {
-			if (similar.compareTwoStrings(translate, `${translatedText}`) >= 0.75) return;
+			if (similar.compareTwoStrings(translate.replace(/[^\p{L}1-9\s]/giu, '').toLowerCase(), `${translatedText}`.replace(/[^\p{L}1-9\s]/giu, '').toLowerCase()) >= 0.70) return;
 			if (translate === `${translatedText}`) return;
 			translationsDone.inc("number");
 			log.TRAN(`${message.author}: ${translate} -> ${translatedText} (${translatedFrom}${translatedTo})`);
