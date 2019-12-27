@@ -67,13 +67,21 @@ logger("all", client, date, guildConfig, defaultConfig);
 // Start Automod
 const { automod } = require("./data/js/automod.js");
 
-client.on("ready", async() => {
+client.on("ready", () => {
 	commands.ensure("number", 0);
 	messages.ensure("number", 0);
 	translations.ensure("number", 0);
+	log.ok("------------------------------------------");
+	log.ok(` WrenchBot START ON: ${date}`);
+	log.ok("------------------------------------------");
+	log.info(`Name: ${client.user.tag} | ID: ${client.user.id} | ${client.guilds.size} servers`);
+	log.info(`${commands.get("number")} commands used | ${messages.get("number")} messages read | ${translations.get("number")} translations done`);
 });
 
 client.on("message", async message => {
+	// Shorter message content
+	const content = message.content;
+
 	// Make sure enmap exists
 	guildConfig.ensure(message.guild.id, defaultConfig);
 
@@ -83,7 +91,13 @@ client.on("message", async message => {
 		if (guildConfig.get(message.guild.id, "automod.modules.badLinks")) {automod("badLinks", message)}
 	}
 
-	if (message.content === "WrenchBotTest") {message.reply("test")}
+	if (content === "WrenchBotTest") {message.reply("test")}
+
+	messages.inc("number");
+	if (content.charAt(0) === config.prefix) {
+		log.command(`${message.author.tag}: ${message}`);
+		commands.inc("number");
+	}
 });
 
 // Log the bot in
