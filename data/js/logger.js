@@ -1,6 +1,6 @@
 // Define and require modules
 const moment = require("moment");
-const date = moment().format("M/D/YY h:m:s A");
+const date = moment().format("M/D/YY h:mm:ss A");
 
 // Winston logger
 const winston = require("winston");
@@ -35,7 +35,7 @@ const log = new (winston.Logger)({
 		new (winston.transports.DailyRotateFile)({ // File logging
 			"name": "file",
 			"json": false,
-			"datePattern": "M-D-YY_h.m.s_A",
+			"datePattern": "M-D-YY_h.mm.ss_A",
 			"timestamp": function() {return date},
 			"filename": "data/private/logs/log-%DATE%.log",
 			"zippedArchive": true,
