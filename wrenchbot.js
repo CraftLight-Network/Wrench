@@ -90,6 +90,7 @@ client.on("message", async message => {
 	if (guildConfig.get(message.guild.id, "automod.enabled")) {
 		if (guildConfig.get(message.guild.id, "automod.modules.badLinks")) {automod("badLinks", message)}
 		if (guildConfig.get(message.guild.id, "automod.modules.invites")) {automod("invites", message)}
+		if (guildConfig.get(message.guild.id, "automod.modules.spam")) {automod("spam", message)}
 	}
 
 	if (content === "WrenchBotTest") {message.reply("test")}

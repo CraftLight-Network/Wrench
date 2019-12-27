@@ -2,13 +2,11 @@
 const { log } = require("./logger.js");
 
 // Required modules
+const AntiSpam = require("discord-anti-spam");
 const request = require("async-request");
 const fs = require("fs");
 
-// Create the bad links file
-fs.writeFile("data/private/badLinks.txt", "", createBadLinks);
-
-// Format + update bad links file
+// Format + update bad links
 let badLinks = [];
 async function createBadLinks() {
 	// Grab the latest Unified HOSTS (Unified + Gambling + Fakenews + Porn)
@@ -25,6 +23,20 @@ async function createBadLinks() {
 	log.info("Bad links array is ready!");
 	hosts = "";
 }
+
+const antiSpam = new AntiSpam({
+	"warnThreshold": 5,
+	"kickThreshold": 8,
+	"banThreshold": 12,
+	"maxInterval": 5000,
+	"maxDuplicatesWarning": 5,
+	"maxDuplicatesKick": 8,
+	"maxDuplicatesBan": 12,
+	"errorMessages": false,
+	"warnMessage": "{@user}, stop spamming! Change your message or slow down.",
+	"kickMessage": "**{user_tag}** has been kicked for spamming.",
+	"banMessage": "**{user_tag}** has been banned for spamming."
+});
 
 module.exports.automod = async function automod(mode, message) {
 	// Shorter message content
@@ -48,5 +60,13 @@ module.exports.automod = async function automod(mode, message) {
 		// Delete and warn
 		await message.delete();
 		message.reply("do not send invite links!").then(msg => {msg.delete(3000)});
+	}
+
+	// Check for spam
+	if (mode === "spam") {
+		if (message.guild !== null && content.split("").size !== 0) antiSpam.message(message);
+		if (content.split(" ").length / 4 < [...new Set(content.split(" "))].length) return;
+		await message.delete();
+		message.reply("stop spamming! Change your message or slow down.").then(msg => {msg.delete(3000)});
 	}
 };

@@ -30,6 +30,7 @@
         "no-unused-vars": "off",
         "no-undef": "warn",
         "handle-callback-err": "off",
-        "no-self-assign": "off"
+        "no-self-assign": "off",
+        "no-unused-expressions": "warn"
     }
 }
