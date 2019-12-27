@@ -21,8 +21,10 @@
 \____/
 */
 
-// REQUIRES PYTHON 2.7 + C++
-// npm i -g --add-python-to-path --vs2015 --production windows-build-tools
+// REQUIRES PYTHON 2.7, NODE 10+, and C++
+
+// PYTHON AND C++ FROM NPM:
+// WINDOWS: npm i -g --add-python-to-path --vs2015 --production windows-build-tools
 
 // Define and require modules
 const { CommandoClient } = require("discord.js-commando");
