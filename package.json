@@ -19,6 +19,7 @@
   },
   "homepage": "https://edude42.dev/wrenchbot",
   "dependencies": {
+    "async-request": "^1.2.0",
     "better-sqlite-pool": "^0.2.2",
     "discord-anti-spam": "^2.3.1",
     "discord.js": "^11.5.1",

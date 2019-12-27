@@ -30,7 +30,7 @@ const config = require("./config.json");
 const moment = require("moment");
 const path = require("path");
 
-// Commando
+// Register + create command instance
 const client = new CommandoClient({
 	"commandPrefix": config.prefix,
 	"owner": config.owners,
@@ -54,7 +54,7 @@ client.registry
 // Sleep function
 const sleep = require("discord.js").Util;
 
-// Enmap
+// Get Enmap
 const Enmap = require("enmap");
 const { guildConfig, tempBans, commands, messages, translations } = require("./data/js/enmap.js");
 const defaultConfig = require("./data/json/default.json");
@@ -62,4 +62,30 @@ const defaultConfig = require("./data/json/default.json");
 // Logger
 const date = moment().format("M/D/YY h:m:s A");
 const { log, logger } = require("./data/js/logger.js");
-logger(client, date, guildConfig, defaultConfig);
+logger("all", client, date, guildConfig, defaultConfig);
+
+// Start Automod
+const { automod } = require("./data/js/automod.js");
+
+client.on("ready", async() => {
+	commands.ensure("number", 0);
+	messages.ensure("number", 0);
+	translations.ensure("number", 0);
+});
+
+client.on("message", async message => {
+	// Make sure enmap exists
+	guildConfig.ensure(message.guild.id, defaultConfig);
+
+	// Automod
+	// Bad links filter
+	if (guildConfig.get(message.guild.id, "automod.enabled")) {
+		if (guildConfig.get(message.guild.id, "automod.modules.badLinks")) {automod("badLinks", message)}
+	}
+
+	if (message.content === "WrenchBotTest") {message.reply("test")}
+});
+
+// Log the bot in
+const auth = require("./auth.json");
+client.login(auth.token);

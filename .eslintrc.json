@@ -29,6 +29,7 @@
         "no-tabs": ["error", {"allowIndentationTabs": true}],
         "no-unused-vars": "off",
         "no-undef": "warn",
-        "handle-callback-err": "off"
+        "handle-callback-err": "off",
+        "no-self-assign": "off"
     }
 }

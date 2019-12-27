@@ -12,7 +12,8 @@ const guildConfig = new Enmap({
 const tempBans = new Enmap({
 	"name": "tempBans",
 	"autoFetch": true,
-	"fetchAll": false
+	"fetchAll": false,
+	"dataDir": "./data/private"
 });
 // Command counter
 const commands = new Enmap({
