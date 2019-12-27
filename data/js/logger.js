@@ -35,7 +35,7 @@ const log = new (winston.Logger)({
 		new (winston.transports.DailyRotateFile)({ // File logging
 			"name": "file",
 			"json": false,
-			"datePattern": "M-D-YY_h.mm.ss_A",
+			"datePattern": "M-D-YY",
 			"timestamp": function() {return date},
 			"filename": "data/private/logs/log-%DATE%.log",
 			"zippedArchive": true,
