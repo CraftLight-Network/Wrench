@@ -71,9 +71,9 @@ client.on("ready", () => {
 	commands.ensure("number", 0);
 	messages.ensure("number", 0);
 	translations.ensure("number", 0);
-	log.ok("------------------------------------------");
-	log.ok(` WrenchBot START ON: ${date}`);
-	log.ok("------------------------------------------");
+	log.ok("--------------------------------------------");
+	log.ok(`  WrenchBot START ON: ${date}`);
+	log.ok("--------------------------------------------");
 	log.info(`Name: ${client.user.tag} | ID: ${client.user.id} | ${client.guilds.size} servers`);
 	log.info(`${commands.get("number")} commands used | ${messages.get("number")} messages read | ${translations.get("number")} translations done`);
 });
