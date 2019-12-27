@@ -4,6 +4,8 @@
   "description": "Fun and Helpful Discord Bot",
   "main": "wrenchbot.js",
   "scripts": {
+    "start": "node .",
+    "lint": "eslint . --fix",
     "test": "echo \\\"Error: No test specified.\\\" && exit 1"
   },
   "repository": {
@@ -15,7 +17,7 @@
   "bugs": {
     "url": "https://github.com/Edude42/WrenchBot/issues"
   },
-  "homepage": "https://github.com/Edude42/WrenchBot#readme",
+  "homepage": "https://edude42.dev/wrenchbot",
   "dependencies": {
     "better-sqlite-pool": "^0.2.2",
     "discord-anti-spam": "^2.3.1",
@@ -36,5 +38,5 @@
     "eslint-plugin-node": "^11.0.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1"
-  }
+  },
 }

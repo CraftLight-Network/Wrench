@@ -1,4 +1,4 @@
-module.exports.logger = function logger(client, date, config, defaultConfig) {
+module.exports.logger = function logger(client, date, guildConfig, defaultConfig) {
 	// Winston logger
 	const winston = require("winston");
 	require("winston-daily-rotate-file");
@@ -54,13 +54,13 @@ module.exports.logger = function logger(client, date, config, defaultConfig) {
 	// Bot added to server
 	client.on("guildCreate", guild => {
 		log.INFO(`Added to ${guild.name} (ID: ${guild.id})`);
-		settings.ensure(guild.id);
+		guildConfig.ensure(guild.id);
 	});
 
 	// Bot removed from server
 	client.on("guildDelete", guild => {
 		log.INFO(`Removed from ${guild.name} (ID: ${guild.id})`);
-		settings.delete(guild.id);
+		guildConfig.delete(guild.id);
 	});
 
 	// TODO: MODERATION AND OTHER LOG EVENTS

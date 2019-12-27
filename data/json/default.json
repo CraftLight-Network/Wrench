@@ -1,0 +1,58 @@
+{
+    "join": {
+        "message": {
+            "enabled": false,
+            "channelID": "",
+            "message": "%member% has joined %server%!"
+        },
+        "role": {
+            "enabled": false,
+            "roleID": ""
+        }
+    },
+    "leave": {
+        "message": {
+            "enabled": false,
+            "channelID": "",
+            "message": "%member%#%ID% has left %server%."
+        }
+    },
+    "botChannel": {
+        "enabled": false,
+        "channelIDs": []
+    },
+    "log": {
+        "enabled": false,
+        "channelID": "",
+        "modules": {
+            "moderation": true,
+            "server": true,
+            "member": true,
+            "channel": true,
+            "emoji": false
+        }
+    },
+    "automod": {
+        "enabled": true,
+        "modRoleIDs": [],
+        "modules": {
+            "spam": true,
+            "invites": true,
+            "badLinks": true,
+            "caps": false,
+            "emoji": true
+        }
+    },
+    "misc": {
+        "translator": true,
+        "advert": {
+            "enabled": false,
+            "channelIDs": []
+        },
+        "spam": {
+            "enabled": false,
+            "channelIDs": []
+        },
+        "greetings": true
+    }
+}

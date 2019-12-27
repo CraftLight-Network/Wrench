@@ -1,6 +1,8 @@
 {
 	"owners": [ "272466470510788608" ],
 	"prefix": "]",
-	"translator": "enabled",
-	"provider": "baidu"
+	"translator": {
+        "enabled": true,
+        "provider": "baidu"
+    }
 }

@@ -1,8 +1,8 @@
 const Enmap = require("enmap");
 
 // Per-server settings
-const config = new Enmap({
-	"name": "config",
+const guildConfig = new Enmap({
+	"name": "guildConfig",
 	"fetchAll": false,
 	"autoFetch": true,
 	"cloneLevel": "deep",
@@ -37,7 +37,7 @@ const translations = new Enmap({
 });
 
 module.exports = {
-	config,
+	guildConfig,
 	tempBans,
 	commands,
 	messages,

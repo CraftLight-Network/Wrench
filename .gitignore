@@ -1,18 +1,13 @@
 # Node stuff
 .npm
 .node_repl_history
-node_modules/
+node_modules/*
 
-# General files
-.env
+# OS Files
 .DS_Store
 Thumbs.db
 desktop.ini
-HOSTS.txt
 
 # Private files
-data/private
 auth.json
-
-# Owner commands
-commands/staff/cc-rules.js
+v1/
