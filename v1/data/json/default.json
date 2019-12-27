@@ -1,9 +1,0 @@
-{
-	"bot": ["none"],
-	"joinRole": "none",
-	"log": "none",
-	"leave": "none",
-	"leaveMessage": "[Image] {{user}} just left. That's sad.",
-	"welcome": "none",
-	"welcomeMessage": "[Image] Welcome {{user}}! Make sure to follow the rules!"
-}

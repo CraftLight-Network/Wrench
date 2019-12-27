@@ -10,4 +10,4 @@ desktop.ini
 
 # Private files
 auth.json
-v1
+/v1/
