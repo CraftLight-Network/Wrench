@@ -1,0 +1,34 @@
+{
+    "env": {
+        "commonjs": true,
+        "es6": true,
+        "node": true
+    },
+    "extends": [
+        "standard"
+    ],
+    "globals": {
+        "Atomics": "readonly",
+        "SharedArrayBuffer": "readonly"
+    },
+    "parserOptions": {
+        "ecmaVersion": 2018
+    },
+    "rules": {
+        "semi": ["error", "always", {"omitLastInOneLineBlock": true}],
+        "semi-style": ["error", "last"],
+        "semi-spacing": ["error", {"before": false, "after": true}],
+        "indent": ["error", "tab"],
+        "no-mixed-spaces-and-tabs": ["error", "smart-tabs"],
+        "quote-props": ["error", "always"],
+        "func-call-spacing": ["error", "never"],
+        "space-before-function-paren": ["off"],
+        "block-spacing": ["error", "never"],
+        "eol-last": ["error", "never"],
+        "quotes": ["error", "double", {"allowTemplateLiterals": true}],
+        "no-tabs": ["error", {"allowIndentationTabs": true}],
+        "no-unused-vars": "off",
+        "no-undef": "warn",
+        "handle-callback-err": "off"
+    }
+}
