@@ -79,6 +79,9 @@ client.on("ready", () => {
 });
 
 client.on("message", async message => {
+	// Ignore bots
+	if (message.author.bot) return;
+
 	// Shorter message content
 	const content = message.content;
 
@@ -86,7 +89,6 @@ client.on("message", async message => {
 	guildConfig.ensure(message.guild.id, defaultConfig);
 
 	// Automod
-	// Bad links filter
 	if (guildConfig.get(message.guild.id, "automod.enabled")) {
 		if (guildConfig.get(message.guild.id, "automod.modules.badLinks")) {automod("badLinks", message)}
 		if (guildConfig.get(message.guild.id, "automod.modules.invites")) {automod("invites", message)}
