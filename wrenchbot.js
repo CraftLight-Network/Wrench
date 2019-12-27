@@ -25,6 +25,7 @@
 
 // PYTHON AND C++ FROM NPM:
 // WINDOWS: npm i -g --add-python-to-path --vs2015 --production windows-build-tools
+// LINUX: apt install build-essential python2.7
 
 // Define and require modules
 const { CommandoClient } = require("discord.js-commando");
