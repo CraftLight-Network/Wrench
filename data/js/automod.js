@@ -34,10 +34,19 @@ module.exports.automod = async function automod(mode, message) {
 	if (mode === "badLinks") {
 		// Make sure there are bad links
 		if (!badLinks.some(l => content.split(" ").includes(l))) return;
-		if (content.includes("https://discordapp.com/channels/") || content.includes("https://cdn.discordapp.com/") || content.length <= 1) return;
 
 		// Delete and warn
 		await message.delete();
 		message.reply("do not send that link!").then(msg => {msg.delete(3000)});
+	}
+
+	// Remove invite links
+	if (mode === "invites") {
+		// Make sure there are bad links
+		if (!new RegExp(".*://discord.gg|.*://discordapp.com").test(content)) return;
+
+		// Delete and warn
+		await message.delete();
+		message.reply("do not send invite links!").then(msg => {msg.delete(3000)});
 	}
 };
