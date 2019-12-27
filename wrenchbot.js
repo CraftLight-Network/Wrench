@@ -69,6 +69,9 @@ logger("all", client, date, guildConfig, defaultConfig);
 // Start Automod
 const { automod } = require("./data/js/automod.js");
 
+// Start translator
+const { translate } = require("./data/js/translate.js");
+
 client.on("ready", () => {
 	commands.ensure("number", 0);
 	messages.ensure("number", 0);
@@ -106,8 +109,26 @@ client.on("message", async message => {
 		if (guildConfig.get(message.guild.id, "automod.modules.badLinks")) {automod("badLinks", message)}
 		if (guildConfig.get(message.guild.id, "automod.modules.caps")) {automod("caps", message)}
 	}
+	translate(message, translator);
 });
 
 // Log the bot in
 const auth = require("./auth.json");
 client.login(auth.token);
+
+// Login to the right translator
+let translator;
+if (config.translator.enabled) {
+	if (config.translator.provider === "yandex") {
+		log.info("Using Yandex.Translate");
+		translator = require("yandex-translate")(auth.yandex); // Get Yandex API key
+	}
+	if (config.translator.provider === "google") {
+		log.info("Using Google Translate !! THIS COSTS !!");
+		translator = require("google-translate")(auth.google); // Get Google API key
+	}
+	if (config.translator.provider === "baidu") {
+		log.info("Using Baidu");
+		translator = require("baidu-translate-api"); // Get Baidu Translator
+	}
+}

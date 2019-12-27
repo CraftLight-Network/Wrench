@@ -1,7 +1,7 @@
 // Get logger
 const { log } = require("./logger.js");
 
-// Required modules
+// Define and require modules
 const AntiSpam = require("discord-anti-spam");
 const request = require("async-request");
 const fs = require("fs");
@@ -23,6 +23,7 @@ async function createBadLinks() {
 	log.info("Bad links array is ready!");
 	hosts = "";
 }
+createBadLinks();
 
 const antiSpam = new AntiSpam({
 	"warnThreshold": 5,
@@ -81,7 +82,7 @@ module.exports.automod = async function automod(mode, message) {
 		const noEmotes = content.replace(/[\u1000-\uFFFF]+/gu, "");
 
 		// Detect if there are just more than 5 emojis
-		if (noEmotes.length === 0 || noEmotes.replace(/[ A-Z]/g, "").length >= noEmotes.replace(/[ a-z]/g, "").length) return;
+		if (noEmotes === "" || noEmotes.replace(/[ A-Z]/g, "").length >= noEmotes.replace(/[ a-z]/g, "").length) return;
 
 		// Delete and warn
 		await message.delete();

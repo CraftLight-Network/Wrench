@@ -1,3 +1,4 @@
+// Define and require modules
 const Enmap = require("enmap");
 
 // Per-server settings
