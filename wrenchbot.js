@@ -60,7 +60,7 @@ const { guildConfig, tempBans, commands, messages, translations } = require("./d
 const defaultConfig = require("./data/json/default.json");
 
 // Logger
-const date = moment().format("M/D/YY h:mm:ss A");
+const date = moment().format("M/D/YY hh:mm:ss A");
 const { log, logger } = require("./data/js/logger.js");
 logger("all", client, date, guildConfig, defaultConfig);
 
@@ -88,20 +88,21 @@ client.on("message", async message => {
 	// Make sure enmap exists
 	guildConfig.ensure(message.guild.id, defaultConfig);
 
-	// Automod
-	if (guildConfig.get(message.guild.id, "automod.enabled")) {
-		if (guildConfig.get(message.guild.id, "automod.modules.spam")) {automod("spam", message)}
-		if (guildConfig.get(message.guild.id, "automod.modules.invites")) {automod("invites", message)}
-		if (guildConfig.get(message.guild.id, "automod.modules.badLinks")) {automod("badLinks", message)}
-		if (guildConfig.get(message.guild.id, "automod.modules.caps")) {automod("caps", message)}
-	}
-
 	if (content === "WrenchBotTest") {message.reply("test")}
 
 	messages.inc("number");
 	if (content.charAt(0) === config.prefix) {
 		log.command(`${message.author.tag}: ${message}`);
 		commands.inc("number");
+	}
+
+	// Automod
+	if (message.guild === null) return;
+	if (guildConfig.get(message.guild.id, "automod.enabled")) {
+		if (guildConfig.get(message.guild.id, "automod.modules.spam")) {automod("spam", message)}
+		if (guildConfig.get(message.guild.id, "automod.modules.invites")) {automod("invites", message)}
+		if (guildConfig.get(message.guild.id, "automod.modules.badLinks")) {automod("badLinks", message)}
+		if (guildConfig.get(message.guild.id, "automod.modules.caps")) {automod("caps", message)}
 	}
 });
 

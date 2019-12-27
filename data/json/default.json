@@ -39,8 +39,7 @@
             "spam": true,
             "invites": true,
             "badLinks": true,
-            "caps": false,
-            "emoji": true
+            "caps": false
         }
     },
     "misc": {

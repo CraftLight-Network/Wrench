@@ -42,6 +42,29 @@ module.exports.automod = async function automod(mode, message) {
 	// Shorter message content
 	const content = message.content;
 
+	// Check for spam
+	if (mode === "spam") {
+		// Make sure there's a message
+		if (content.split("").size !== 0) antiSpam.message(message);
+
+		// Check for unique words
+		if (content.split(" ").length / 4 < [...new Set(content.split(" "))].length) return;
+
+		// Delete and warn
+		await message.delete();
+		message.reply("stop spamming! Change your message or slow down.").then(msg => {msg.delete(3000)});
+	}
+
+	// Check for invites
+	if (mode === "invites") {
+		// Make sure there are invites
+		if (!new RegExp(".*://discord.gg|.*://discordapp.com").test(content)) return;
+
+		// Delete and warn
+		await message.delete();
+		message.reply("do not send invite links!").then(msg => {msg.delete(3000)});
+	}
+
 	// Check for bad links
 	if (mode === "badLinks") {
 		// Make sure there are bad links
@@ -52,21 +75,16 @@ module.exports.automod = async function automod(mode, message) {
 		message.reply("do not send that link!").then(msg => {msg.delete(3000)});
 	}
 
-	// Remove invite links
-	if (mode === "invites") {
-		// Make sure there are bad links
-		if (!new RegExp(".*://discord.gg|.*://discordapp.com").test(content)) return;
+	// Check for caps
+	if (mode === "caps") {
+		// Filter out emotes
+		const noEmotes = content.replace(/[\u1000-\uFFFF]+/gu, "");
+
+		// Detect if there are just more than 5 emojis
+		if (noEmotes.length === 0 || noEmotes.replace(/[ A-Z]/g, "").length >= noEmotes.replace(/[ a-z]/g, "").length) return;
 
 		// Delete and warn
 		await message.delete();
-		message.reply("do not send invite links!").then(msg => {msg.delete(3000)});
-	}
-
-	// Check for spam
-	if (mode === "spam") {
-		if (message.guild !== null && content.split("").size !== 0) antiSpam.message(message);
-		if (content.split(" ").length / 4 < [...new Set(content.split(" "))].length) return;
-		await message.delete();
-		message.reply("stop spamming! Change your message or slow down.").then(msg => {msg.delete(3000)});
+		message.reply("do not send all caps!").then(msg => {msg.delete(3000)});
 	}
 };
