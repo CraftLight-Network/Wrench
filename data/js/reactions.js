@@ -1,7 +1,12 @@
-module.exports.reactions = function reactions(mode, message) {
+// Define and require modules
+const { guildConfig } = require("./enmap.js");
+const Enmap = require("enmap");
+
+module.exports.reactions = function reactions(message) {
 	const content = message.content;
 
-	if (mode === "greetings") {
+	if (guildConfig.get(message.guild.id, "misc.reactions.greetings")) checkGreetings();
+	function checkGreetings() {
 		const greeting = ["hello", "hi", "hey", "howdy", "sup", "yo", "hola", "hallo", "bonjour", "salut", "ciao", "konnichiwa"];
 		const farewell = ["goodbye", "bye", "cya", "gtg"];
 
@@ -15,7 +20,8 @@ module.exports.reactions = function reactions(mode, message) {
 			message.react("👋").then(async function() {await message.react("🇧"); await message.react("🇾"); message.react("🇪")});
 		});
 	}
-	if (mode === "emotes") {
+	if (guildConfig.get(message.guild.id, "misc.reactions.emotes")) checkEmotes();
+	function checkEmotes() {
 		if (content.match(/lenny/gi)) message.channel.send("<:lenny1:660202649425018896><:lenny2:660202659524902912>");
 		if (content.match(/pog|pogchamp/gi)) message.react("660203799377608704");
 		if (content.match(/lul/gi)) message.react("660205635777986571");

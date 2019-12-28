@@ -42,6 +42,8 @@ const antiSpam = new AntiSpam({
 });
 
 module.exports.automod = function automod(message) {
+	if (!(guildConfig.get(message.guild.id, "automod.enabled") || message.guild)) return;
+
 	// Shorter message content
 	const content = message.content;
 

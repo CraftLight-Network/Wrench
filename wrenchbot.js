@@ -93,9 +93,10 @@ client.on("message", async message => {
 	// Make sure enmap exists
 	guildConfig.ensure(message.guild.id, defaultConfig);
 
-	// Message reactions/responses
-	if (guildConfig.get(message.guild.id, "misc.reactions.greetings")) {reactions("greetings", message)}
-	if (guildConfig.get(message.guild.id, "misc.reactions.emotes")) {reactions("emotes", message)}
+	// Run the automod, reactions, and translator
+	automod(message);
+	reactions(message);
+	translate(message, translator);
 
 	// Increase read/ran values
 	messages.inc("number");
@@ -103,12 +104,6 @@ client.on("message", async message => {
 		log.command(`${message.author.tag}: ${message}`);
 		commands.inc("number");
 	}
-
-	// Automod
-	if (message.guild === null) return;
-	if (guildConfig.get(message.guild.id, "automod.enabled")) automod(message);
-
-	translate(message, translator);
 });
 
 // Log the bot in
