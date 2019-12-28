@@ -3,7 +3,9 @@ const { log } = require("./logger.js");
 
 // Define and require modules
 const AntiSpam = require("discord-anti-spam");
+const { guildConfig } = require("./enmap.js");
 const request = require("async-request");
+const Enmap = require("enmap");
 const fs = require("fs");
 
 // Format + update bad links
@@ -39,12 +41,13 @@ const antiSpam = new AntiSpam({
 	"banMessage": "**{user_tag}** has been banned for spamming."
 });
 
-module.exports.automod = async function automod(mode, message) {
+module.exports.automod = function automod(message) {
 	// Shorter message content
 	const content = message.content;
 
 	// Check for spam
-	if (mode === "spam") {
+	if (guildConfig.get(message.guild.id, "automod.modules.spam")) checkSpam();
+	async function checkSpam() {
 		// Make sure there's a message
 		if (content.split("").size !== 0) antiSpam.message(message);
 
@@ -57,7 +60,8 @@ module.exports.automod = async function automod(mode, message) {
 	}
 
 	// Check for invites
-	if (mode === "invites") {
+	if (guildConfig.get(message.guild.id, "automod.modules.invites")) checkInvites();
+	async function checkInvites() {
 		// Make sure there are invites
 		if (!new RegExp(".*://discord.gg|.*://discordapp.com").test(content)) return;
 
@@ -67,7 +71,8 @@ module.exports.automod = async function automod(mode, message) {
 	}
 
 	// Check for bad links
-	if (mode === "badLinks") {
+	if (guildConfig.get(message.guild.id, "automod.modules.badLinks")) checkBadLinks();
+	async function checkBadLinks() {
 		// Make sure there are bad links
 		if (!badLinks.some(l => content.split(" ").includes(l))) return;
 
@@ -77,7 +82,8 @@ module.exports.automod = async function automod(mode, message) {
 	}
 
 	// Check for caps
-	if (mode === "caps") {
+	if (guildConfig.get(message.guild.id, "automod.modules.caps")) checkCaps();
+	async function checkCaps() {
 		// Filter out emotes
 		const noEmotes = content.replace(/[\u1000-\uFFFF]+/gu, "");
 

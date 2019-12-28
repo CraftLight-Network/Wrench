@@ -46,7 +46,7 @@ The bot has a lot of config. Here you'll find server-side and Discord-side value
 ### Discord-side: (none = disabled)
 bot: If set, the bot can only be used in these channels. [channel name]<br/>
 joinRole: Name of role a user gets upon joining. [role name]<br/>
-log: Channal name to send logs to. [channel name]<br/>
+log: Channel name to send logs to. [channel name]<br/>
 leave: Channel that leave messages are sent to. [channel name]<br/>
 leaveMessage: What the bot sends to the leave channel.<br/>
 welcome: Channel that welcome messages are sent to. [channel name]<br/>
