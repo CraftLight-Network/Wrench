@@ -1,0 +1,25 @@
+module.exports.reactions = function reactions(mode, message) {
+	const content = message.content;
+
+	if (mode === "greetings") {
+		const greeting = ["hello", "hi", "hey", "howdy", "sup", "yo", "hola", "hallo", "bonjour", "salut", "ciao", "konnichiwa"];
+		const farewell = ["goodbye", "bye", "cya", "gtg"];
+
+		greeting.forEach(g => {
+			if (!content.match(new RegExp(`\\b${g}\\b`, "gi"))) return;
+			message.react("👋").then(async function() {await message.react("🇭"); message.react("🇮")});
+		});
+
+		farewell.forEach(f => {
+			if (!content.match(new RegExp(`\\b${f}\\b`, "gi"))) return;
+			message.react("👋").then(async function() {await message.react("🇧"); await message.react("🇾"); message.react("🇪")});
+		});
+	}
+	if (mode === "emotes") {
+		if (content.match(/lenny/gi)) message.channel.send("<:lenny1:660202649425018896><:lenny2:660202659524902912>");
+		if (content.match(/pog|pogchamp/gi)) message.react("660203799377608704");
+		if (content.match(/lul/gi)) message.react("660205635777986571");
+		if (content.match(/kappa/gi)) message.react("660205713708154890");
+		if (content.match(/residentsleeper/gi)) message.react("660205776744480789");
+	}
+};
