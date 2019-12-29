@@ -58,13 +58,13 @@ module.exports.logger = function logger(mode, client, date, guildConfig, default
 
 	// Bot added to server
 	client.on("guildCreate", guild => {
-		log.INFO(`Added to ${guild.name} (ID: ${guild.id})`);
+		log.info(`Added to ${guild.name} (ID: ${guild.id})`);
 		guildConfig.ensure(guild.id);
 	});
 
 	// Bot removed from server
 	client.on("guildDelete", guild => {
-		log.INFO(`Removed from ${guild.name} (ID: ${guild.id})`);
+		log.info(`Removed from ${guild.name} (ID: ${guild.id})`);
 		guildConfig.delete(guild.id);
 	});
 

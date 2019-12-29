@@ -76,7 +76,7 @@ module.exports.automod = function automod(message) {
 	if (guildConfig.get(message.guild.id, "automod.modules.badLinks")) checkBadLinks();
 	async function checkBadLinks() {
 		// Make sure there are bad links
-		if (!badLinks.some(l => content.split(" ").includes(l))) return;
+		if (!badLinks.some(l => content.split(" ").includes(l)) || content === "") return;
 
 		// Delete and warn
 		await message.delete();
