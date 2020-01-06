@@ -22,6 +22,7 @@
     "async-request": "^1.2.0",
     "baidu-translate-api": "^0.4.0",
     "better-sqlite-pool": "^0.2.2",
+    "common-tags": "^1.8.0",
     "discord-anti-spam": "^2.3.1",
     "discord.js": "^11.5.1",
     "discord.js-commando": "^0.10.0",
