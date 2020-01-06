@@ -84,7 +84,7 @@ module.exports.translate = async function translate(message, translator) {
 			.setAuthor(`${message.author.username} (${translatedFrom}${translatedTo})`, message.author.displayAvatarURL)
 			.setDescription(`**${translatedText}**`)
 			.setFooter(`Translations from ${provider}. (http://cust.pw/${link})`)
-			.setColor(0x2F5EA3);
+			.setColor(0xE3E3E3);
 		return message.channel.send(embed);
 	}
 };
