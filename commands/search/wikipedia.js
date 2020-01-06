@@ -14,6 +14,7 @@ module.exports = class wikipediaCommand extends Command {
 		super(client, {
 			"name": "wikipedia",
 			"memberName": "wikipedia",
+			"aliases": ["wiki"],
 			"group": "search",
 			"description": "Search Wikipedia.",
 			"details": stripIndents`
@@ -28,7 +29,11 @@ module.exports = class wikipediaCommand extends Command {
 					"prompt": "What would you like to search for?",
 					"type": "string"
 				}
-			]
+			],
+			"throttling": {
+				"usages": 2,
+				"duration": 5
+			}
 		});
 	}
 

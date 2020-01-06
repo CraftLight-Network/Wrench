@@ -26,7 +26,11 @@ module.exports = class sayCommand extends Command {
 						return "please use under 400 characters!";
 					}
 				}
-			]
+			],
+			"throttling": {
+				"usages": 2,
+				"duration": 5
+			}
 		});
 	}
 
