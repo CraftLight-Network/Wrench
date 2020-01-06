@@ -1,5 +1,5 @@
 const { Command } = require("discord.js-commando");
-const { stripIndents } = require('common-tags');
+const { stripIndents } = require("common-tags");
 const config = require("../../config.json");
 
 module.exports = class sayCommand extends Command {
