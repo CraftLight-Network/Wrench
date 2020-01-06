@@ -44,10 +44,12 @@ const client = new CommandoClient({
 client.registry
 	.registerDefaultTypes()
 	.registerGroups([
-		["fun", "Fun"],
-		["manipulation", "Manipulation"],
+		["search", "Search"],
+		["image", "Image"],
+		["games", "Games"],
 		["helpful", "Helpful"],
-		["staff", "Staff"]
+		["moderation", "Moderation"],
+		["misc", "Misc"]
 	])
 	.registerDefaultGroups()
 	.registerDefaultCommands({
@@ -59,8 +61,8 @@ client.registry
 const sleep = require("discord.js").Util;
 
 // Create private folders
-fs.mkdirSync("./data/private");
-fs.mkdirSync("./data/logs");
+!fs.existsSync("./data/private") && fs.mkdirSync("./data/private");
+!fs.existsSync("./data/private/logs") && fs.mkdirSync("./data/private/logs");
 
 // Get Enmap
 const Enmap = require("enmap");
@@ -95,12 +97,16 @@ client.on("message", async message => {
 	// Shorter message content
 	const content = message.content;
 
-	// Make sure enmap exists
-	guildConfig.ensure(message.guild.id, defaultConfig);
-	guildConfig.fetchEverything();
+	if (message.guild) {
+		// Make sure enmap exists
+		guildConfig.ensure(message.guild.id, defaultConfig);
+		guildConfig.fetchEverything();
+
+		// Run the automod
+		automod(message);
+	}
 
 	// Run the automod, reactions, and translator
-	automod(message);
 	reactions(message);
 	translate(message, translator);
 
