@@ -22,7 +22,7 @@ module.exports = class sayCommand extends Command {
 					"default": "",
 					"type": "string",
 					"validate": arg => {
-						if (arg.length < 400 && arg.trim().length > 0) return true;
+						if (arg.length < 400) return true;
 						return "please use under 400 characters!";
 					}
 				}
@@ -31,6 +31,8 @@ module.exports = class sayCommand extends Command {
 	}
 
 	run(message, { toSay }) {
+		if (toSay.length < 1) return;
+
 		if (message.guild) {message.delete()};
 		return message.say(toSay);
 	}
