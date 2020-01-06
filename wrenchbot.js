@@ -112,7 +112,7 @@ client.on("message", async message => {
 
 	// Increase read/ran values
 	messages.inc("number");
-	if (content.charAt(0) === config.prefix) {
+	if (content.charAt(0) === config.prefix || !message.guild) {
 		log.command(`${message.author.tag}: ${message}`);
 		commands.inc("number");
 	}
