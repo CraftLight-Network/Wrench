@@ -32,6 +32,7 @@ const { CommandoClient } = require("discord.js-commando");
 const config = require("./config.json");
 const moment = require("moment");
 const path = require("path");
+const fs = require("fs");
 
 // Register + create command instance
 const client = new CommandoClient({
@@ -56,6 +57,10 @@ client.registry
 
 // Sleep function
 const sleep = require("discord.js").Util;
+
+// Create private folders
+fs.mkdirSync("./data/private");
+fs.mkdirSync("./data/logs");
 
 // Get Enmap
 const Enmap = require("enmap");
@@ -92,6 +97,7 @@ client.on("message", async message => {
 
 	// Make sure enmap exists
 	guildConfig.ensure(message.guild.id, defaultConfig);
+	guildConfig.fetchEverything();
 
 	// Run the automod, reactions, and translator
 	automod(message);
