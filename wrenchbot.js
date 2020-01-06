@@ -106,7 +106,7 @@ client.on("message", async message => {
 		automod(message);
 	}
 
-	// Run the automod, reactions, and translator
+	// Run the reactions and translator
 	reactions(message);
 	translate(message, translator);
 
