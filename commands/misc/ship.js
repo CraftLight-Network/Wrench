@@ -18,7 +18,7 @@ module.exports = class shipCommand extends Command {
 				**Notes:**
                 [user1]: Required, first person to calculate.
                 [user2]: Required, second person to calculate.
-                Valid format: \`@User#0000\`, \`User#0000\`, \`User\`.
+                Valid format: \`@User#0000\`, \`User\`.
                 Arguments must be under 25 characters.
 			`,
 			"args": [
@@ -49,6 +49,17 @@ module.exports = class shipCommand extends Command {
 	}
 
 	run(message, { person1, person2 }) {
+		// Turn mentions into strings
+		if (person1.match(/<@![0-9]*>/)) {
+			if (!message.guild) return message.reply("Please do not use mentions in DM's!");
+			try {person1 = message.guild.member(person1.replace(/[<@!>]/g, "")).displayName} catch (error) {message.reply("I'm not sure who person 1 is.")};
+		}
+
+		if (person2.match(/<@![0-9]*>/)) {
+			if (!message.guild) return message.reply("Please do not use mentions in DM's!");
+			try {person2 = message.guild.member(person2.replace(/[<@!>]/g, "")).displayName} catch (error) {message.reply("I'm not sure who person 2 is.")};
+		}
+
 		// Calculate seed based on binary of persons
 		const seed = new Random(MersenneTwister19937.seed(binary(person1, { "in": "binary", "out": "hex" }).replace(/[^0-9]/g, ""))).engine.data[0] +
 		new Random(MersenneTwister19937.seed(binary(person2, { "in": "binary", "out": "hex" }).replace(/[^0-9]/g, ""))).engine.data[0];
