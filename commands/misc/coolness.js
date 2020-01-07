@@ -51,7 +51,7 @@ module.exports = class coolnessCommand extends Command {
 		if (coolness < 25) style =	{ "emote": "cross",		"color": "#FF0000" };
 
 		const embed = new RichEmbed()
-			.attachFiles([`data/img/${style.emote}.png`])
+			.attachFiles([`data/img/emotes/${style.emote}.png`])
 			.setAuthor(`${toCalculate.username} is ${coolness}% cool.`, `attachment://${style.emote}.png`)
 			.setFooter(`Requested by ${message.author.tag}`)
 			.setColor(style.color);
