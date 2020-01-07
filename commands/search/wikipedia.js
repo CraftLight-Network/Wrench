@@ -1,3 +1,4 @@
+// Define and require modules
 const { Command } = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
 const { RichEmbed } = require("discord.js");
@@ -46,7 +47,7 @@ module.exports = class wikipediaCommand extends Command {
 				.setTitle(result.raw.title)
 				.setDescription(" ")
 				.setFooter(`Requested by ${message.author.tag}`)
-				.setColor(0xE3E3E3);
+				.setColor("#E3E3E3");
 
 			const summary = await result.summary();
 			if (summary.match(/may refer to:/)) {

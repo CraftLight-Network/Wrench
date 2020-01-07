@@ -1,3 +1,4 @@
+// Define and require modules
 const { Command } = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
 const config = require("../../config.json");
@@ -27,6 +28,7 @@ module.exports = class sayCommand extends Command {
 					}
 				}
 			],
+			"clientPermissions": ["MANAGE_MESSAGES"],
 			"throttling": {
 				"usages": 2,
 				"duration": 5
