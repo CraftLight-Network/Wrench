@@ -61,8 +61,8 @@ module.exports = class shipCommand extends Command {
 		}
 
 		// Calculate seed based on binary of persons
-		const seed = new Random(MersenneTwister19937.seed(binary(person1, { "in": "binary", "out": "hex" }).replace(/[^0-9]/g, ""))).engine.data[0] +
-		new Random(MersenneTwister19937.seed(binary(person2, { "in": "binary", "out": "hex" }).replace(/[^0-9]/g, ""))).engine.data[0];
+		const seed = new Random(MersenneTwister19937.seed(binary(person1, { "out": "hex" }).replace(/[^0-9]/g, ""))).engine.data[0] +
+		new Random(MersenneTwister19937.seed(binary(person2, { "out": "hex" }).replace(/[^0-9]/g, ""))).engine.data[0];
 
 		// Calculate number from 0 to 100 based on seed
 		const ship = new Random(MersenneTwister19937.seed(seed)).integer(0, 100);
