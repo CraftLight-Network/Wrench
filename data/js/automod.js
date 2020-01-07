@@ -58,7 +58,7 @@ module.exports.automod = function automod(message) {
 
 		// Delete and warn
 		await message.delete();
-		message.reply("stop spamming! Change your message or slow down.").then(msg => {msg.delete(3000)});
+		message.reply("Stop spamming! Change your message or slow down.").then(msg => {msg.delete(3000)});
 	}
 
 	// Check for invites
@@ -69,7 +69,7 @@ module.exports.automod = function automod(message) {
 
 		// Delete and warn
 		await message.delete();
-		message.reply("do not send invite links!").then(msg => {msg.delete(3000)});
+		message.reply("Do not send invite links!").then(msg => {msg.delete(3000)});
 	}
 
 	// Check for bad links
@@ -80,7 +80,7 @@ module.exports.automod = function automod(message) {
 
 		// Delete and warn
 		await message.delete();
-		message.reply("do not send that link!").then(msg => {msg.delete(3000)});
+		message.reply("Do not send that link!").then(msg => {msg.delete(3000)});
 	}
 
 	// Check for caps
@@ -94,6 +94,6 @@ module.exports.automod = function automod(message) {
 
 		// Delete and warn
 		await message.delete();
-		message.reply("do not send all caps!").then(msg => {msg.delete(3000)});
+		message.reply("Do not send all caps!").then(msg => {msg.delete(3000)});
 	}
 };

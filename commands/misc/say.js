@@ -24,7 +24,7 @@ module.exports = class sayCommand extends Command {
 					"type": "string",
 					"validate": arg => {
 						if (arg.length < 400) return true;
-						return "please use under 400 characters!";
+						return "Please use under 400 characters!";
 					}
 				}
 			],

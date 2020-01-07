@@ -37,7 +37,7 @@ module.exports = class shipCommand extends Command {
 					"type": "string",
 					"validate": arg => {
 						if (arg.length < 25) return true;
-						return "please use under 25 characters!";
+						return "Please use under 25 characters!";
 					}
 				}
 			],
@@ -51,12 +51,12 @@ module.exports = class shipCommand extends Command {
 	run(message, { person1, person2 }) {
 		// Turn mentions into strings
 		if (person1.match(/<@![0-9]*>/)) {
-			if (!message.guild) return message.reply("Please do not use mentions in DM's!");
+			if (!message.guild) return message.reply("Do not use mentions in DM's!");
 			try {person1 = message.guild.member(person1.replace(/[<@!>]/g, "")).displayName} catch (error) {message.reply("I'm not sure who person 1 is.")};
 		}
 
 		if (person2.match(/<@![0-9]*>/)) {
-			if (!message.guild) return message.reply("Please do not use mentions in DM's!");
+			if (!message.guild) return message.reply("Do not use mentions in DM's!");
 			try {person2 = message.guild.member(person2.replace(/[<@!>]/g, "")).displayName} catch (error) {message.reply("I'm not sure who person 2 is.")};
 		}
 
