@@ -22,10 +22,10 @@ module.exports.reactions = function reactions(message) {
 	}
 	if (!message.guild || guildConfig.get(message.guild.id, "misc.reactions.emotes")) checkEmotes();
 	function checkEmotes() {
-		if (content.match(/lenny/gi)) message.channel.send("<:lenny1:660202649425018896><:lenny2:660202659524902912>");
-		if (content.match(/pog|pogchamp/gi)) message.react("660203799377608704");
-		if (content.match(/lul/gi)) message.react("660205635777986571");
-		if (content.match(/kappa/gi)) message.react("660205713708154890");
-		if (content.match(/residentsleeper/gi)) message.react("660205776744480789");
+		if (content.match(/lenny/gi))			message.channel.send("<:lenny1:660202649425018896><:lenny2:660202659524902912>");
+		if (content.match(/pog|pogchamp/gi))	message.react("660203799377608704");
+		if (content.match(/lul/gi))				message.react("660205635777986571");
+		if (content.match(/kappa/gi))			message.react("660205713708154890");
+		if (content.match(/sleeper/gi))	message.react("660205776744480789");
 	}
 };
