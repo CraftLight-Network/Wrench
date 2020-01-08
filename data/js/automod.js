@@ -16,12 +16,12 @@ async function createBadLinks() {
 
 	// Format the bad links file
 	badLinks = await hosts.body
-		.replace(/#.*|[0-9].[0-9].[0-9].[0-9]\s/gmi, "")
+		.replace(/#.*|[0-9].[0-9].[0-9].[0-9]\s|^((?!.*\..*).)*$/gmi, "")
 		.trim()
 		.split("\n")
-		.filter(Boolean)
 		.slice(14)
-		.map(file => file.trim());
+		.map(file => file.trim().replace(/\s/g, ""))
+		.filter(Boolean);
 	log.info("Bad links array is ready!");
 	hosts = "";
 }
@@ -54,7 +54,8 @@ module.exports.automod = function automod(message) {
 		if (content.split("").size !== 0) antiSpam.message(message);
 
 		// Check for unique words
-		if (content.split(" ").length / 4 < [...new Set(content.split(" "))].length) return;
+		const spaceFix = content.split(" ").map(s => s.trim().replace(/[ ]/g, ""));
+		if (spaceFix.length / 4 < [...new Set(spaceFix)].length) return;
 
 		// Delete and warn
 		await message.delete();
