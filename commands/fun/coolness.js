@@ -11,7 +11,7 @@ module.exports = class coolnessCommand extends Command {
 		super(client, {
 			"name": "coolness",
 			"memberName": "coolness",
-			"group": "misc",
+			"group": "fun",
 			"description": "Calculate the coolness of a user.",
 			"details": stripIndents`
 				Run \`${config.prefix}coolness [user]\` to calculate a user's coolness.

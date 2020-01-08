@@ -4,5 +4,6 @@
 	"translator": {
         "enabled": true,
         "provider": "baidu"
-    }
+    },
+    "reactions": true
 }

@@ -47,7 +47,7 @@ client.registry
 		["search", "Search"],
 		["image", "Image"],
 		["games", "Games"],
-		["helpful", "Helpful"],
+		["fun", "Fun"],
 		["moderation", "Moderation"],
 		["misc", "Misc"]
 	])

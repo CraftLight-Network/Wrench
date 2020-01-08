@@ -11,7 +11,7 @@ module.exports = class shipCommand extends Command {
 		super(client, {
 			"name": "ship",
 			"memberName": "ship",
-			"group": "misc",
+			"group": "fun",
 			"description": "Calculate the compatibility between two users.",
 			"details": stripIndents`
 				Run \`${config.prefix}ship [person1] [person2]\` to calculate compatibility.
