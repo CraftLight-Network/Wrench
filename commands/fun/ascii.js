@@ -28,7 +28,7 @@ module.exports = class asciiCommand extends Command {
 			"args": [
 				{
 					"key": "action",
-					"prompt": `What font would you like to use? (Run \`${config.prefix}ascii fonts\` for list)`,
+					"prompt": `What font would you like to use? (Run \`${config.prefix}ascii fonts\` for list.)`,
 					"type": "string",
 					"oneOf": fonts
 				},
