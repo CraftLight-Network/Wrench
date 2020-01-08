@@ -18,23 +18,23 @@ module.exports = class asciiCommand extends Command {
 			"group": "fun",
 			"description": "Turn text in to figlet art.",
 			"details": stripIndents`
-				Run \`${config.prefix}ascii [font] [args]\` to make figlet art.
+				Run \`${config.prefix}ascii [action] [args]\` to make figlet art.
 				**Notes:**
-				[arg1]: Required, what font the figlet will use, or use \`fonts\` to list all fonts.
-				[args]: Required, what the bot will make art of.
+				[action]: Required, \`fonts\` to list fonts, or \`<font>\`.
+				[args]: Required if font is specified, text the art will be made of.
 				Arguments must be under 100 characters.
 				Run \`${config.prefix}ascii fonts\` to list all fonts.
 			`,
 			"args": [
 				{
-					"key": "arg1",
+					"key": "action",
 					"prompt": `What font would you like to use? (Run \`${config.prefix}ascii fonts\` for list)`,
 					"type": "string",
 					"oneOf": fonts
 				},
 				{
-					"key": "arg2",
-					"prompt": "What would you like to make figlet art of?",
+					"key": "args",
+					"prompt": "What would you like to make ascii art of?",
 					"type": "string",
 					"default": "",
 					"validate": arg => {
@@ -50,9 +50,9 @@ module.exports = class asciiCommand extends Command {
 		});
 	}
 
-	async run(message, { arg1, arg2 }) {
+	async run(message, { action, args }) {
 		// Return link to fonts if specified
-		if (arg1 === "fonts") {
+		if (action === "fonts") {
 			const embed = new RichEmbed()
 				.setDescription(stripIndents`
 					**Available Fonts:**
@@ -68,7 +68,7 @@ module.exports = class asciiCommand extends Command {
 			let exit = true;
 
 			// Ask for toFiglet if not specified
-			while (arg2 === "" && exit) {
+			while (args === "" && exit) {
 				message.reply(stripIndents`
 					What would you like to make figlet art of?
 					Respond with \`cancel\` to cancel the command. The command will automatically be cancelled in 30 seconds.
@@ -79,19 +79,19 @@ module.exports = class asciiCommand extends Command {
 					const value = res.content.toLowerCase();
 					return res.author.id === message.author.id;
 				};
-				arg2 = await message.channel.awaitMessages(filter, {
+				args = await message.channel.awaitMessages(filter, {
 					"max": 1,
 					"time": 30000
-				}).catch(function() {exit = false; arg2 = " "});
+				}).catch(function() {exit = false; args = " "});
 
 				// Set toFiglet to inputted value
-				arg2.find(i => {toFiglet = i.content});
+				args.find(i => {toFiglet = i.content});
 			}
-			if (!toFiglet) toFiglet = arg2;
+			if (!toFiglet) toFiglet = args;
 			if (toFiglet === "cancel") return message.reply("Cancelled command.");
 
 			// Create and upload figlet to hastebin
-			hastebin.createPaste(figlet.textSync(toFiglet, arg1), {
+			hastebin.createPaste(figlet.textSync(toFiglet, action), {
 				"raw": true,
 				"contentType": "text/plain",
 				"server": "https://hastebin.com"
