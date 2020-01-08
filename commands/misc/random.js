@@ -14,7 +14,7 @@ module.exports = class randomCommand extends Command {
 			"group": "misc",
 			"description": "Choose a random number.",
 			"details": stripIndents`
-				Run \`${config.prefix}rng [args]\` to choose a random number.
+				Run \`${config.prefix}random [args]\` to choose a random number.
 				**Notes:**
 				[min]: Required, minimum number.
 				[max]: Required, maximum number.
@@ -31,7 +31,6 @@ module.exports = class randomCommand extends Command {
 					"type": "integer"
 				}
 			],
-			"clientPermissions": ["MANAGE_MESSAGES"],
 			"throttling": {
 				"usages": 2,
 				"duration": 5

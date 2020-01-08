@@ -43,7 +43,6 @@ module.exports = class asciiCommand extends Command {
 					}
 				}
 			],
-			"clientPermissions": ["MANAGE_MESSAGES"],
 			"throttling": {
 				"usages": 2,
 				"duration": 5
