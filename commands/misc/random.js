@@ -5,12 +5,12 @@ const { stripIndents } = require("common-tags");
 const { RichEmbed } = require("discord.js");
 const config = require("../../config.json");
 
-module.exports = class rngCommand extends Command {
+module.exports = class randomCommand extends Command {
 	constructor(client) {
 		super(client, {
-			"name": "rng",
-			"memberName": "rng",
-			"aliases": ["random"],
+			"name": "random",
+			"memberName": "random",
+			"aliases": ["rng"],
 			"group": "misc",
 			"description": "Choose a random number.",
 			"details": stripIndents`
