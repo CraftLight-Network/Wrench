@@ -247,7 +247,7 @@ module.exports = class minecraftCommand extends Command {
 					.setColor("#E3E3E3");
 
 				name.forEach(function(i, index) {
-					if (name.length === 1) {embed.description += `\*Purchased | ${i.name} (Current)`; return};
+					if (name.length === 1) {embed.description += `\n*Purchased | ${i.name} (Current)`; return};
 					if (index + 1 === name.length) {embed.description += `\nPurchased | ${i.name} (Original)`; return};
 
 					const changedAt = new Date(i.changedToAt).toLocaleDateString("en-US", { "month": "2-digit", "day": "2-digit", "year": "2-digit" });
