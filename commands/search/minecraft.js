@@ -7,6 +7,7 @@ const config = require("../../config.json");
 const request = require("async-request");
 
 // Actions array
+const actions	= ["skin", "info"];
 const skinTypes = ["raw", "face", "front", "2d", "bust", "head", "3d"];
 const dataTypes = ["names", "name", "uuid"];
 
@@ -29,7 +30,8 @@ module.exports = class minecraftCommand extends Command {
 				{
 					"key": "action",
 					"prompt": "What would you like to do? (Do `actions` for list.)",
-					"type": "string"
+					"type": "string",
+					"oneOf": actions
 				},
 				{
 					"key": "user",
@@ -94,8 +96,6 @@ module.exports = class minecraftCommand extends Command {
 		}
 		if (!player) player = user;
 		if (player === "cancel") return message.reply("Cancelled command.");
-
-		console.log(player)
 
 		// Get a random number to fix cache issues
 		const random = new Random(nativeMath);
