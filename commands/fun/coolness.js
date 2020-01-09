@@ -38,7 +38,8 @@ module.exports = class coolnessCommand extends Command {
 		// Calculate random numbers for coolness based on date and user ID
 		const seed = new Random(MersenneTwister19937.seed(toCalculate.id));
 		const random = new Random(MersenneTwister19937.seed(date.getDate() - date.getDay()));
-		let coolness = seed.integer(0, 100) - random.integer(-75, 75);
+		// Add or subtract
+		let coolness = seed.integer(0, 100) - random.integer(-100, 100);
 
 		// Make sure coolness is from 0 to 100
 		if (coolness > 100)	coolness = 100;
