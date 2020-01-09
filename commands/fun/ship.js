@@ -5,6 +5,7 @@ const { stripIndents } = require("common-tags");
 const { RichEmbed } = require("discord.js");
 const config = require("../../config.json");
 const binary = require("binstring");
+const Bar = require("progress");
 
 module.exports = class shipCommand extends Command {
 	constructor(client) {
@@ -68,14 +69,19 @@ module.exports = class shipCommand extends Command {
 		const ship = new Random(MersenneTwister19937.seed(seed)).integer(0, 100);
 
 		// Define the emote to be used
-		let style =				{ "emote": "two_hearts",		"color": "#9000FF" };
-		if (ship < 75) style =	{ "emote": "sparkling_heart",	"color": "#FF00FD" };
-		if (ship < 50) style =	{ "emote": "heart",				"color": "#FF007F" };
-		if (ship < 25) style =	{ "emote": "broken_heart",		"color": "#FF0000" };
+		let style =				{ "emote": "two_hearts",		"color": "#9000FF", "bar": "[===============   ]" };
+		if (ship < 75) style =	{ "emote": "sparkling_heart",	"color": "#FF00FD", "bar": "[===========       ]" };
+		if (ship < 50) style =	{ "emote": "heart",				"color": "#FF007F", "bar": "[=======           ]" };
+		if (ship < 25) style =	{ "emote": "broken_heart",		"color": "#FF0000", "bar": "[===               ]" };
+
+		// Max out/empty percent bar according to values
+		if (ship === 100) style.bar = "[==================]";
+		if (ship === 0) style.bar = "[                  ]";
 
 		const embed = new RichEmbed()
 			.attachFiles([`data/img/emotes/${style.emote}.png`])
 			.setAuthor(`${person1} and ${person2} are ${ship}% compatible.`, `attachment://${style.emote}.png`)
+			.setDescription(`\`${style.bar}\``)
 			.setFooter(`Requested by ${message.author.tag}`)
 			.setColor(style.color);
 		return message.channel.send(embed);

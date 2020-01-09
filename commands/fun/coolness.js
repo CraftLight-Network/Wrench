@@ -45,14 +45,19 @@ module.exports = class coolnessCommand extends Command {
 		if (coolness < 0)	coolness = 0;
 
 		// Define the emote to be used
-		let style =					{ "emote": "shades",	"color": "#00FF00" };
-		if (coolness < 75) style =	{ "emote": "check",		"color": "#FFFF00" };
-		if (coolness < 50) style =	{ "emote": "meh",		"color": "#FF7700" };
-		if (coolness < 25) style =	{ "emote": "cross",		"color": "#FF0000" };
+		let style =					{ "emote": "shades",	"color": "#00FF00", "bar": "[===============   ]" };
+		if (coolness < 75) style =	{ "emote": "check",		"color": "#FFFF00", "bar": "[===========       ]" };
+		if (coolness < 50) style =	{ "emote": "meh",		"color": "#FF7700", "bar": "[=======           ]" };
+		if (coolness < 25) style =	{ "emote": "cross",		"color": "#FF0000", "bar": "[===               ]" };
+
+		// Max out/empty percent bar according to values
+		if (coolness === 100) style.bar = "[==================]";
+		if (coolness === 0) style.bar = "[                  ]";
 
 		const embed = new RichEmbed()
 			.attachFiles([`data/img/emotes/${style.emote}.png`])
 			.setAuthor(`${toCalculate.username} is ${coolness}% cool.`, `attachment://${style.emote}.png`)
+			.setDescription(`\`${style.bar}\``)
 			.setFooter(`Requested by ${message.author.tag}`)
 			.setColor(style.color);
 		return message.channel.send(embed);
