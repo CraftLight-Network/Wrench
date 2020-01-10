@@ -6,18 +6,30 @@
         "provider": "baidu"
     },
 	"reactions": true,
-	"statuses": [
-		{
-			"type": "WATCHING",
-			"name": "you."
-		},
-		{
-			"type": "PLAYING",
-			"name": "a game."
-		},
-		{
-			"type": "STREAMING",
-			"name": "%prefix%help"
-		}
-	]
+	"status": {
+		"enabled": true,
+		"timeout": 30000,
+		"statuses": [
+			{
+				"type": "WATCHING",
+				"name": "you."
+			},
+			{
+				"type": "WATCHING",
+				"name": "%servers% servers."
+			},
+			{
+				"type": "PLAYING",
+				"name": "a game."
+			},
+			{
+				"type": "STREAMING",
+				"name": "%prefix%help"
+			},
+			{
+				"type": "LISTENING",
+				"name": "everyone."
+			}
+		]
+	}
 }

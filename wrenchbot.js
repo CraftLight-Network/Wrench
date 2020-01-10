@@ -88,14 +88,21 @@ client.on("ready", () => {
 	log.ok("---------------------------------------------");
 	log.info(`Name: ${client.user.tag} | ID: ${client.user.id} | ${client.guilds.size} servers`);
 	log.info(`${commands.get("number")} commands used | ${messages.get("number")} messages read | ${translations.get("number")} translations done`);
+	log.info(`Currently in ${client.guilds.size} servers.`);
 
-	setTimeout(function() {
-		const random = Math.floor(Math.random() * config.statuses.length);
-		const name = config.statuses[random].name
-			.replace(/%prefix%/g, config.prefix);
+	if (config.status.enabled) {status(); setTimeout(status, config.status.timeout)};
 
-		client.user.setPresence({ "game": { "type": config.statuses[random].type, "name": name } });
-	}, 30000);
+	function status() {
+		const random = Math.floor(Math.random() * config.status.statuses.length);
+		const name = config.status.statuses[random].name
+			.replace(/%prefix%/g, config.prefix)
+			.replace(/%servers%/g, client.guilds.size)
+			.replace(/%commands%/g, commands.get("number"))
+			.replace(/%messages%/g, messages.get("number"))
+			.replace(/%translations%/g, translations.get("number"));
+
+		client.user.setPresence({ "game": { "type": config.status.statuses[random].type, "name": name } });
+	}
 });
 
 client.on("message", async message => {
