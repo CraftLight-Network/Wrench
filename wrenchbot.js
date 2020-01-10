@@ -88,6 +88,14 @@ client.on("ready", () => {
 	log.ok("---------------------------------------------");
 	log.info(`Name: ${client.user.tag} | ID: ${client.user.id} | ${client.guilds.size} servers`);
 	log.info(`${commands.get("number")} commands used | ${messages.get("number")} messages read | ${translations.get("number")} translations done`);
+
+	setTimeout(function() {
+		const random = Math.floor(Math.random() * config.statuses.length);
+		const name = config.statuses[random].name
+			.replace(/%prefix%/g, config.prefix);
+
+		client.user.setPresence({ "game": { "type": config.statuses[random].type, "name": name } });
+	}, 30000);
 });
 
 client.on("message", async message => {

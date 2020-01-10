@@ -5,5 +5,19 @@
         "enabled": true,
         "provider": "baidu"
     },
-    "reactions": true
+	"reactions": true,
+	"statuses": [
+		{
+			"type": "WATCHING",
+			"name": "you."
+		},
+		{
+			"type": "PLAYING",
+			"name": "a game."
+		},
+		{
+			"type": "STREAMING",
+			"name": "%prefix%help"
+		}
+	]
 }
