@@ -38,12 +38,10 @@ module.exports = class coolnessCommand extends Command {
 		// Calculate random numbers for coolness based on date and user ID
 		const seed = new Random(MersenneTwister19937.seed(toCalculate.id));
 		const random = new Random(MersenneTwister19937.seed(date.getDate() - date.getDay()));
-		// Add or subtract
-		let coolness = seed.integer(0, 100) - random.integer(-100, 100);
-
-		// Make sure coolness is from 0 to 100
-		if (coolness > 100)	coolness = 100;
-		if (coolness < 0)	coolness = 0;
+		// Daily RNG
+		const difference100 = seed.integer(0, 100) - 100;
+		const differenceRest = 100 - seed.integer(0, 100);
+		const coolness = seed.integer(0, 100) - random.integer(difference100, differenceRest);
 
 		// Define the emote to be used
 		let style =					{ "emote": "shades",	"color": "#00FF00", "bar": "[===============   ]" };
