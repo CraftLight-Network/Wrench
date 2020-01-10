@@ -90,10 +90,14 @@ client.on("ready", () => {
 	log.info(`${commands.get("number")} commands used | ${messages.get("number")} messages read | ${translations.get("number")} translations done`);
 	log.info(`Currently in ${client.guilds.size} servers.`);
 
+	// Set the bots status
 	if (config.status.enabled) {status(); setTimeout(status, config.status.timeout)};
 
 	function status() {
+		// Get a random status from the list
 		const random = Math.floor(Math.random() * config.status.statuses.length);
+
+		// Replace placeholders
 		const name = config.status.statuses[random].name
 			.replace(/%prefix%/g, config.prefix)
 			.replace(/%servers%/g, client.guilds.size)
@@ -101,6 +105,7 @@ client.on("ready", () => {
 			.replace(/%messages%/g, messages.get("number"))
 			.replace(/%translations%/g, translations.get("number"));
 
+		// Set the status
 		client.user.setPresence({ "game": { "type": config.status.statuses[random].type, "name": name } });
 	}
 });
