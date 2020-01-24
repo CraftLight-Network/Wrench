@@ -7,7 +7,7 @@ const config = require("../../config.json");
 const request = require("async-request");
 
 // Actions array
-const actions	= ["skin", "info"];
+const actions	= ["skin", "info", "actions"];
 const skinTypes = ["raw", "face", "front", "2d", "bust", "head", "3d"];
 const dataTypes = ["names", "name", "uuid"];
 
@@ -214,7 +214,7 @@ module.exports = class minecraftCommand extends Command {
 			let info;
 
 			// Make sure info type if valid
-			if (!args || !dataTypes.some(l => info.includes(l))) {args = ""; message.say("Invalid data type.")};
+			if (!args || !dataTypes.some(l => args.includes(l))) {args = ""; message.say("Invalid data type.")};
 
 			// Undefined data action
 			while (args === "" && exit) {
