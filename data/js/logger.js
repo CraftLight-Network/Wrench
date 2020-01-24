@@ -1,11 +1,12 @@
 // Define and require modules
-const moment = require("moment");
-const date = moment().format("M/D/YY h:mm:ss A");
-
-// Winston logger
 const winston = require("winston");
 require("winston-daily-rotate-file");
 
+// Set the Moment format
+const moment = require("moment");
+const date = moment().format("M/D/YY h:mm:ss A");
+
+// Make the Winston logger
 const log = new (winston.Logger)({
 	"levels": {
 		"ok": 0,
@@ -32,7 +33,9 @@ const log = new (winston.Logger)({
 			"colorize": true,
 			"level": "error"
 		}),
-		new (winston.transports.DailyRotateFile)({ // File logging
+
+		// File logging
+		new (winston.transports.DailyRotateFile)({
 			"name": "file",
 			"json": false,
 			"datePattern": "M-D-YY",
@@ -40,7 +43,7 @@ const log = new (winston.Logger)({
 			"filename": "data/private/logs/log-%DATE%.log",
 			"zippedArchive": true,
 			"maxSize": "128m",
-			"maxFiles": "14d",
+			"maxFiles": "30d",
 			"level": "error"
 		})
 	]
@@ -50,23 +53,21 @@ module.exports.log = log;
 module.exports.logger = function logger(mode, client, date, guildConfig, defaultConfig) {
 	// Logger events
 
-	// Disconnect events
-	client.on("disconnect", event => {
-		log.error(`DISCONNECT: ${event.code}`);
-		process.exit(0);
-	});
+	// Connection events
+	client.on("disconnect", () => log.warn("Bot disconnected from Discord."))
+		.on("reconnecting", () => log.info("Bot is reconnecting to Discord."))
 
-	// Bot added to server
-	client.on("guildCreate", guild => {
-		log.info(`Added to ${guild.name} (ID: ${guild.id})`);
-		guildConfig.ensure(guild.id);
-	});
+	// Guild events
+		.on("guildCreate", guild => {
+			log.info(`Added to ${guild.name} (ID: ${guild.id})`);
+			guildConfig.ensure(guild.id);
+		})
+		.on("guildDelete", guild => {
+			log.info(`Removed from ${guild.name} (ID: ${guild.id})`);
+			guildConfig.delete(guild.id);
+		});
 
-	// Bot removed from server
-	client.on("guildDelete", guild => {
-		log.info(`Removed from ${guild.name} (ID: ${guild.id})`);
-		guildConfig.delete(guild.id);
-	});
+	process.on("unhandledRejection", (err) => log.error(err));
 
 	// TODO: MODERATION AND OTHER LOG EVENTS
 };
