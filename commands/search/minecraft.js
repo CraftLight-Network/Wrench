@@ -70,15 +70,12 @@ module.exports = class minecraftCommand extends Command {
 		}
 
 		// Get filter for user input
-		const filter = res => {
-			const value = res.content.toLowerCase();
-			return res.author.id === message.author.id;
-		};
+		const filter = res => {return res.author.id === message.author.id};
 
 		// Undefined player action
-		let exit = true;
+		let exit = false;
 		let player;
-		while (user === "" && exit) {
+		while (!user && !exit) {
 			message.reply(stripIndents`
 				What is the in-game name of the player?
 				Respond with \`cancel\` to cancel the command. The command will automatically be cancelled in 30 seconds.
@@ -88,7 +85,7 @@ module.exports = class minecraftCommand extends Command {
 			user = await message.channel.awaitMessages(filter, {
 				"max": 1,
 				"time": 30000
-			}).catch(function() {exit = false; user = "cancel"});
+			}).catch(function() {exit = true; user = "cancel"});
 
 			// Set args to inputted value
 			user.find(i => {player = i.content.split(" ")[0]});
@@ -107,7 +104,7 @@ module.exports = class minecraftCommand extends Command {
 			const playerRequest = await request(`https://api.mojang.com/users/profiles/minecraft/${player}`);
 			player = JSON.parse(playerRequest.body);
 
-			if (player === undefined) return message.reply("That player does not exist. Please use a Minecraft in-game name.");
+			if (!player) return message.reply("That player does not exist. Please use a Minecraft in-game name.");
 			uuid = player.id;
 		} else uuid = player;
 
@@ -123,9 +120,9 @@ module.exports = class minecraftCommand extends Command {
 			if (!args || !skinTypes.some(l => args.includes(l))) {args = ""; message.say("Invalid skin type.")};
 
 			// Undefined skin action
-			while (args === "" && exit) {
+			while (!args && !exit) {
 				message.reply(stripIndents`
-					How would you like the skin? (Run \`${config.prefix}minecraft actions\` for list.)
+					How would you like the skin? (${skinTypes.join(", ")})
 					Respond with \`cancel\` to cancel the command. The command will automatically be cancelled in 30 seconds.
 				`);
 
@@ -140,7 +137,7 @@ module.exports = class minecraftCommand extends Command {
 				if (skin === "cancel") break;
 
 				// Make sure skin type is valid
-				if (!skinTypes.some(l => skin.includes(l))) {args = ""; message.say("Invalid skin type.")};
+				if (!skinTypes.some(l => skin.includes(l))) {args = undefined; message.say("Invalid skin type.")};
 			}
 			if (!skin) skin = args;
 			if (skin === "cancel") return message.reply("Cancelled command.");
@@ -219,7 +216,7 @@ module.exports = class minecraftCommand extends Command {
 			// Undefined data action
 			while (args === "" && exit) {
 				message.reply(stripIndents`
-					What info would you like to grab? (Run \`${config.prefix}minecraft actions\` for list.)
+					What info would you like to grab? (${dataTypes.join(", ")})
 					Respond with \`cancel\` to cancel the command. The command will automatically be cancelled in 30 seconds.
 				`);
 
