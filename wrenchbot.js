@@ -15,15 +15,14 @@
      /   / /            WrenchBot
     /   / /    Fun and Helpful Discord Bot
    /   / /
-  /   / /                v2.0
- /   / /        Github: http://cust.pw/wb
-/  O  /        Issues: http://cust.pw/wbis
+  /   / /                  v2
+ /   / /           https://edude42.dev
+/  O  /
 \____/
 */
 
 // REQUIRES PYTHON 2.7, NODE 10+, and C++
 
-// PYTHON AND C++ FROM NPM:
 // WINDOWS: npm i -g --add-python-to-path --vs2015 --production windows-build-tools
 // LINUX: apt install build-essential python2.7
 
