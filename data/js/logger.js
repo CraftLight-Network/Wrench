@@ -53,6 +53,9 @@ module.exports.log = log;
 module.exports.logger = function logger(mode, client, date, guildConfig, defaultConfig) {
 	// Logger events
 
+	// Unhandled rejections
+	process.on("unhandledRejection", (err, p) => {log.error(`Rejected Promise: ${p} / Rejection: ${err}`)});
+
 	// Connection events
 	client.on("disconnect", () => log.warn("Bot disconnected from Discord."))
 		.on("reconnecting", () => log.info("Bot is reconnecting to Discord."))
