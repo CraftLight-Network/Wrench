@@ -15,7 +15,7 @@
      /   / /            WrenchBot
     /   / /    Fun and Helpful Discord Bot
    /   / /
-  /   / /                  v2
+  /   / /              Version 2.X
  /   / /           https://edude42.dev
 /  O  /
 \____/
