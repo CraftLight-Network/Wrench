@@ -7,8 +7,8 @@ const config = require("../../config.json");
 module.exports = class charactersCommand extends Command {
 	constructor(client) {
 		super(client, {
-			"name": "character",
-			"memberName": "character",
+			"name": "characters",
+			"memberName": "characters",
 			"aliases": ["chars"],
 			"group": "misc",
 			"description": "Count how many characters are in a message.",
