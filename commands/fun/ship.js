@@ -5,7 +5,6 @@ const { stripIndents } = require("common-tags");
 const { RichEmbed } = require("discord.js");
 const config = require("../../config.json");
 const binary = require("binstring");
-const Bar = require("progress");
 
 module.exports = class shipCommand extends Command {
 	constructor(client) {

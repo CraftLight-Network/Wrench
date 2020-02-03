@@ -75,10 +75,7 @@ module.exports = class asciiCommand extends Command {
 				`);
 
 				// Take user input
-				const filter = res => {
-					const value = res.content.toLowerCase();
-					return res.author.id === message.author.id;
-				};
+				const filter = res => {return res.author.id === message.author.id};
 				args = await message.channel.awaitMessages(filter, {
 					"max": 1,
 					"time": 30000

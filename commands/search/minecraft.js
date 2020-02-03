@@ -8,7 +8,7 @@ const request = require("async-request");
 
 // Actions array
 const actions	= ["skin", "info", "actions"];
-const skinTypes = ["raw", "face", "front", "2d", "bust", "head", "3d"];
+const skinTypes = ["skin", "face", "front", "frontfull", "head", "bust", "full"];
 const dataTypes = ["names", "name", "uuid"];
 
 module.exports = class minecraftCommand extends Command {
@@ -143,68 +143,11 @@ module.exports = class minecraftCommand extends Command {
 			if (!skin) skin = args;
 			if (skin === "cancel") return message.reply("Cancelled command.");
 
-			// Grab raw skin
-			if (skin === "raw") {
-				const embed = new RichEmbed()
-					.setAuthor(`${name[0].name}'s skin (Raw)`, `https://visage.surgeplay.com/face/${uuid}.png?${number}`)
-					.setImage(`https://visage.surgeplay.com/skin/${uuid}.png?${number}`)
-					.setColor("#E3E3E3");
-				return message.channel.send(embed);
-			}
-
-			// Grab face of player
-			if (skin === "face") {
-				const embed = new RichEmbed()
-					.setAuthor(`${name[0].name}'s skin (Face)`, `https://visage.surgeplay.com/face/${uuid}.png?${number}`)
-					.setImage(`https://visage.surgeplay.com/face/${uuid}.png?${number}`)
-					.setColor("#E3E3E3");
-				return message.channel.send(embed);
-			}
-
-			// Grab front of player
-			if (skin === "front") {
-				const embed = new RichEmbed()
-					.setAuthor(`${name[0].name}'s skin (Front)`, `https://visage.surgeplay.com/face/${uuid}.png?${number}`)
-					.setImage(`https://visage.surgeplay.com/front/${uuid}.png?${number}`)
-					.setColor("#E3E3E3");
-				return message.channel.send(embed);
-			}
-
-			// Grab 2D skin
-			if (skin === "2d") {
-				const embed = new RichEmbed()
-					.setAuthor(`${name[0].name}'s skin (2D)`, `https://visage.surgeplay.com/face/${uuid}.png?${number}`)
-					.setImage(`https://visage.surgeplay.com/frontfull/${uuid}.png?${number}`)
-					.setColor("#E3E3E3");
-				return message.channel.send(embed);
-			}
-
-			// Grab head of player
-			if (skin === "head") {
-				const embed = new RichEmbed()
-					.setAuthor(`${name[0].name}'s skin (Head)`, `https://visage.surgeplay.com/face/${uuid}.png?${number}`)
-					.setImage(`https://visage.surgeplay.com/head/${uuid}.png?${number}`)
-					.setColor("#E3E3E3");
-				return message.channel.send(embed);
-			}
-
-			// Grab player bust
-			if (skin === "bust") {
-				const embed = new RichEmbed()
-					.setAuthor(`${name[0].name}'s skin (Bust)`, `https://visage.surgeplay.com/face/${uuid}.png?${number}`)
-					.setImage(`https://visage.surgeplay.com/bust/${uuid}.png?${number}`)
-					.setColor("#E3E3E3");
-				return message.channel.send(embed);
-			}
-
-			// Grab 3D Skin
-			if (skin === "3d") {
-				const embed = new RichEmbed()
-					.setAuthor(`${name[0].name}'s skin (3D)`, `https://visage.surgeplay.com/face/${uuid}.png?${number}`)
-					.setImage(`https://visage.surgeplay.com/full/${uuid}.png?${number}`)
-					.setColor("#E3E3E3");
-				return message.channel.send(embed);
-			}
+			const embed = new RichEmbed()
+				.setAuthor(`${name[0].name}'s skin (${skin})`, `https://visage.surgeplay.com/face/${uuid}.png?${number}`)
+				.setImage(`https://visage.surgeplay.com/${skin}/${uuid}.png?${number}`)
+				.setColor("#E3E3E3");
+			return message.channel.send(embed);
 		}
 
 		// Data actions
