@@ -31,6 +31,7 @@ module.exports = class wikipediaCommand extends Command {
 					"type": "string"
 				}
 			],
+			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
 			"throttling": {
 				"usages": 2,
 				"duration": 5

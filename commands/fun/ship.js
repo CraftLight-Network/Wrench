@@ -42,6 +42,7 @@ module.exports = class shipCommand extends Command {
 					}
 				}
 			],
+			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
 			"throttling": {
 				"usages": 2,
 				"duration": 5

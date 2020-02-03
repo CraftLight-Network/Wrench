@@ -1,5 +1,4 @@
 // Define and require modules
-const { Random, MersenneTwister19937 } = require("random-js");
 const { Command } = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
 const { RichEmbed } = require("discord.js");
@@ -43,6 +42,7 @@ module.exports = class asciiCommand extends Command {
 					}
 				}
 			],
+			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
 			"throttling": {
 				"usages": 2,
 				"duration": 5

@@ -27,6 +27,7 @@ module.exports = class coolnessCommand extends Command {
 					"type": "user"
 				}
 			],
+			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
 			"throttling": {
 				"usages": 2,
 				"duration": 5

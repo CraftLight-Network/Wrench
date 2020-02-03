@@ -31,6 +31,7 @@ module.exports = class randomCommand extends Command {
 					"type": "integer"
 				}
 			],
+			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
 			"throttling": {
 				"usages": 2,
 				"duration": 5

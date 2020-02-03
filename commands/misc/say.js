@@ -28,7 +28,7 @@ module.exports = class sayCommand extends Command {
 					}
 				}
 			],
-			"clientPermissions": ["MANAGE_MESSAGES"],
+			"clientPermissions": ["MANAGE_MESSAGES", "SEND_MESSAGES"],
 			"throttling": {
 				"usages": 2,
 				"duration": 5
