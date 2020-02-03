@@ -87,8 +87,8 @@ module.exports = class serverInfoCommand extends Command {
 			embed.setThumbnail(iconURL);
 		} else icon = "None";
 		if (guild.splash) {
-			splash = `[Click](${iconURL})`;
-			embed.setImage(iconURL);
+			splash = `[Click](${splashURL})`;
+			embed.setImage(splashURL);
 		} else splash = "None";
 
 		if (actions.indexOf(action) > 0) {
