@@ -61,10 +61,10 @@ module.exports = class minecraftCommand extends Command {
 				.setAuthor(`${config.prefix}minecraft Actions`, message.author.displayAvatarURL)
 				.setDescription(stripIndents`
 					\`skin\`: Grab the skin of a player
-					Valid args: \`raw\`, \`face\`, \`front\`, \`2d\`, \`bust\`, \`3d\`.
+					Valid args: \`${skinTypes.join("`, `")}\`
 
 					\`info\`: Get the info of a player
-					Valid args: \`uuid\`, \`name\`, \`names\`.
+					Valid args: \`${dataTypes.join("`, `")}\`
 				`)
 				.setColor("#E3E3E3");
 			return message.channel.send(embed);
