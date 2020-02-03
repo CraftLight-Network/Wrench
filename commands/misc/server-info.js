@@ -76,7 +76,7 @@ module.exports = class serverInfoCommand extends Command {
 		const iconURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`;
 		const splashURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.splash}.png`;
 		const embed = new RichEmbed()
-			.setTitle(`${guild.name} Info`)
+			.setDescription(`**${guild.name} Info:**`)
 			.setFooter(`Requested by ${message.author.tag}`)
 			.setColor("#E3E3E3");
 
