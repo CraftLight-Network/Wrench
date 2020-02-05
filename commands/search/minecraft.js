@@ -1,4 +1,5 @@
 // Define and require modules
+const getUserInput = require("../../data/js/getUserInput.js");
 const { Random, nativeMath } = require("random-js");
 const { Command } = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
@@ -23,25 +24,25 @@ module.exports = class minecraftCommand extends Command {
 				Run \`${config.prefix}minecraft [action] [args]\` to use commands.
 				**Notes:**
 				[action]: Required, run \`${config.prefix}minecraft actions\` for actions.
-				[user]: Required, in-game name of the player.
+				[player]: Required, in-game name or UUID of the player.
 				[args] Required, data for specified action to use.
 			`,
 			"args": [
 				{
 					"key": "action",
-					"prompt": "What would you like to do? (Do `actions` for list.)",
+					"prompt": `What would you like to do? (${actions.join(", ")})`,
 					"type": "string",
 					"oneOf": actions
 				},
 				{
-					"key": "user",
-					"prompt": "What is the in-game name of the player?",
+					"key": "player",
+					"prompt": "",
 					"default": "",
 					"type": "string"
 				},
 				{
 					"key": "args",
-					"prompt": "What data would you like to use for the specified action?",
+					"prompt": "",
 					"default": "",
 					"type": "string"
 				}
@@ -54,7 +55,7 @@ module.exports = class minecraftCommand extends Command {
 		});
 	}
 
-	async run(message, { action, user, args }) {
+	async run(message, { action, player, args }) {
 		// List available actions
 		if (action === "actions") {
 			const embed = new RichEmbed()
@@ -70,29 +71,8 @@ module.exports = class minecraftCommand extends Command {
 			return message.channel.send(embed);
 		}
 
-		// Get filter for user input
-		const filter = res => {return res.author.id === message.author.id};
-
-		// Undefined player action
-		let exit = false;
-		let player;
-		while (!user && !exit) {
-			message.reply(stripIndents`
-				What is the in-game name of the player?
-				Respond with \`cancel\` to cancel the command. The command will automatically be cancelled in 30 seconds.
-			`);
-
-			// Take user input
-			user = await message.channel.awaitMessages(filter, {
-				"max": 1,
-				"time": 30000
-			}).catch(function() {exit = true; user = "cancel"});
-
-			// Set args to inputted value
-			user.find(i => {player = i.content.split(" ")[0]});
-			if (player === "cancel") break;
-		}
-		if (!player) player = user;
+		// Get player variable if not defined
+		if (!player) player = await getUserInput(message, { "question": "What is the in-game name or UUID of the player?" });
 		if (player === "cancel") return message.reply("Cancelled command.");
 
 		// Get a random number to fix cache issues
@@ -105,7 +85,7 @@ module.exports = class minecraftCommand extends Command {
 			const playerRequest = await request(`https://api.mojang.com/users/profiles/minecraft/${player}`);
 			player = JSON.parse(playerRequest.body);
 
-			if (!player) return message.reply("That player does not exist. Please use a Minecraft in-game name.");
+			if (!player) return message.reply("That player does not exist. Please enter a valid in-game name or UUID.");
 			uuid = player.id;
 		} else uuid = player;
 
@@ -115,73 +95,45 @@ module.exports = class minecraftCommand extends Command {
 
 		// Skin actions
 		if (action === "skin") {
-			let skin;
-
-			// Make sure skin type is valid
-			if (!args || !skinTypes.some(l => args.includes(l))) {args = ""; message.say("Invalid skin type.")};
-
-			// Undefined skin action
-			while (!args && !exit) {
-				message.reply(stripIndents`
-					How would you like the skin? (${skinTypes.join(", ")})
-					Respond with \`cancel\` to cancel the command. The command will automatically be cancelled in 30 seconds.
-				`);
-
-				// Take user input
-				args = await message.channel.awaitMessages(filter, {
-					"max": 1,
-					"time": 30000
-				}).catch(function() {exit = false; args = "cancel"});
-
-				// Set args to inputted value
-				args.find(i => {skin = i.content.split(" ")[0]});
-				if (skin === "cancel") break;
-
-				// Make sure skin type is valid
-				if (!skinTypes.some(l => skin.includes(l))) {args = undefined; message.say("Invalid skin type.")};
+			// Get skin variable if not defined
+			if (!args) {
+				args = await getUserInput(message, {
+					"question": `How would you like the skin? (${skinTypes.join(", ")})`,
+					"validate": {
+						"name": "skin type",
+						"array": skinTypes
+					}
+				});
 			}
-			if (!skin) skin = args;
-			if (skin === "cancel") return message.reply("Cancelled command.");
+			if (args === "cancel") return message.reply("Cancelled command.");
 
 			const embed = new RichEmbed()
-				.setAuthor(`${name[0].name}'s skin (${skin})`, `https://visage.surgeplay.com/face/${uuid}.png?${number}`)
-				.setImage(`https://visage.surgeplay.com/${skin}/${uuid}.png?${number}`)
+				.setAuthor(`${name[0].name}'s skin (${args})`, `https://visage.surgeplay.com/face/${uuid}.png?${number}`)
+				.setImage(`https://visage.surgeplay.com/${args}/${uuid}.png?${number}`)
 				.setColor("#E3E3E3");
+
 			return message.channel.send(embed);
 		}
 
 		// Data actions
 		if (action === "info") {
-			let info;
-
 			// Make sure info type if valid
 			if (!args || !dataTypes.some(l => args.includes(l))) {args = ""; message.say("Invalid data type.")};
 
 			// Undefined data action
-			while (args === "" && exit) {
-				message.reply(stripIndents`
-					What info would you like to grab? (${dataTypes.join(", ")})
-					Respond with \`cancel\` to cancel the command. The command will automatically be cancelled in 30 seconds.
-				`);
-
-				// Take user input
-				args = await message.channel.awaitMessages(filter, {
-					"max": 1,
-					"time": 30000
-				}).catch(function() {exit = false; args = "cancel"});
-
-				// Set args to inputted value
-				args.find(i => {info = i.content.split(" ")[0]});
-				if (info === "cancel") break;
-
-				// Make sure info type is valid
-				if (!dataTypes.some(l => info.includes(l))) {args = ""; message.say("Invalid data type.")};
+			if (!args) {
+				args = await getUserInput(message, {
+					"question": `What info would you like to grab? (${dataTypes.join(", ")})`,
+					"validate": {
+						"name": "data type",
+						"array": dataTypes
+					}
+				});
 			}
-			if (!info) info = args;
-			if (info === "cancel") return message.reply("Cancelled command.");
+			if (args === "cancel") return message.reply("Cancelled command.");
 
 			// Grab names
-			if (info === "names") {
+			if (args === "names") {
 				const embed = new RichEmbed()
 					.setAuthor(`${name[0].name}'s names`, `https://visage.surgeplay.com/face/${uuid}.png?${number}`)
 					.setDescription("```")
@@ -200,7 +152,7 @@ module.exports = class minecraftCommand extends Command {
 				return message.channel.send(embed);
 			}
 			// Grab UUID or name
-			if (info === "uuid" || info === "name") {
+			if (args === "uuid" || args === "name") {
 				const embed = new RichEmbed()
 					.setAuthor(`${name[0].name}'s name + UUID`, `https://visage.surgeplay.com/face/${uuid}.png?${number}`)
 					.setDescription(stripIndents`
