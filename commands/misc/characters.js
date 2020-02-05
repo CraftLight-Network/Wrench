@@ -15,7 +15,7 @@ module.exports = class charactersCommand extends Command {
 			"details": stripIndents`
 				Run \`${config.prefix}character [args]\` to count the characters in your message.
 				**Notes:**
-				[args]: Required, what the bot will say.
+				[args]: Required, what the bot will count.
 			`,
 			"args": [
 				{

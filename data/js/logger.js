@@ -58,9 +58,9 @@ module.exports.logger = function logger(mode, client, date, guildConfig, default
 
 	// Connection events
 	client.on("disconnect", () => log.warn("Bot disconnected from Discord."))
-		.on("reconnecting", () => log.info("Bot is reconnecting to Discord."))
+		.on("reconnecting", () => log.info("Reconnecting to Discord..."))
 
-	// Guild events
+		// Guild events
 		.on("guildCreate", guild => {
 			log.info(`Added to ${guild.name} (ID: ${guild.id})`);
 			guildConfig.ensure(guild.id);

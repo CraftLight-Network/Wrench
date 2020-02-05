@@ -20,7 +20,7 @@ module.exports = class minecraftCommand extends Command {
 			"group": "search",
 			"description": "Get information on a Minecraft player.",
 			"details": stripIndents`
-				Run \`${config.prefix}minecraft [action] [args]\` to choose a random number.
+				Run \`${config.prefix}minecraft [action] [args]\` to use commands.
 				**Notes:**
 				[action]: Required, run \`${config.prefix}minecraft actions\` for actions.
 				[user]: Required, in-game name of the player.
