@@ -137,6 +137,9 @@ client.on("message", async message => {
 	}
 });
 
+// Run automod and reactions on edited messages
+client.on("messageUpdate", (oldMessage, message) => {automod(message); reactions(message); translate(message, translator)});
+
 // Log the bot in
 const auth = require("./auth.json");
 client.login(auth.token);
