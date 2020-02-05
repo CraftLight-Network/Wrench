@@ -66,7 +66,7 @@ module.exports.automod = function automod(message) {
 	if (guildConfig.get(message.guild.id, "automod.modules.invites")) checkInvites();
 	async function checkInvites() {
 		// Make sure there are invites
-		if (!new RegExp(".*://discord.gg|.*://discordapp.com").test(content)) return;
+		if (!new RegExp(".*://discord.gg|.*://discordapp.com/invite").test(content)) return;
 
 		// Delete and warn
 		await message.delete();
