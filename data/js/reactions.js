@@ -1,9 +1,8 @@
 // Define and require modules
 const { guildConfig } = require("./enmap.js");
 const config = require("../../config.json");
-const Enmap = require("enmap");
 
-module.exports.reactions = function reactions(message) {
+module.exports = function reactions(message) {
 	const content = message.content;
 
 	if (!message.guild || guildConfig.get(message.guild.id, "misc.reactions.greetings")) checkGreetings();

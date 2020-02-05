@@ -5,8 +5,6 @@ const { log } = require("./logger.js");
 const AntiSpam = require("discord-anti-spam");
 const { guildConfig } = require("./enmap.js");
 const request = require("async-request");
-const Enmap = require("enmap");
-const fs = require("fs");
 
 // Format + update bad links
 let badLinks = [];
@@ -41,7 +39,7 @@ const antiSpam = new AntiSpam({
 	"banMessage": "**{user_tag}** has been banned for spamming."
 });
 
-module.exports.automod = function automod(message) {
+module.exports = function (message) {
 	if (!(guildConfig.get(message.guild.id, "automod.enabled") || message.guild)) return;
 
 	// Shorter message content

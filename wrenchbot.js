@@ -74,9 +74,9 @@ const { log, logger } = require("./data/js/logger.js");
 logger("all", client, date, guildConfig, defaultConfig);
 
 // Start modules
-const { automod } = require("./data/js/automod.js");
-const { translate } = require("./data/js/translate.js");
-const { reactions } = require("./data/js/reactions.js");
+const automod = require("./data/js/automod.js");
+const translate = require("./data/js/translate.js");
+const reactions = require("./data/js/reactions.js");
 
 client.on("ready", () => {
 	commands.ensure("number", 0);
