@@ -9,6 +9,7 @@ const guildConfig = new Enmap({
 	"cloneLevel": "deep",
 	"dataDir": "./data/private"
 });
+
 // Temp bans
 const tempBans = new Enmap({
 	"name": "tempBans",
@@ -16,6 +17,7 @@ const tempBans = new Enmap({
 	"fetchAll": false,
 	"dataDir": "./data/private"
 });
+
 // Command counter
 const commands = new Enmap({
 	"name": "commands",
@@ -23,6 +25,7 @@ const commands = new Enmap({
 	"fetchAll": false,
 	"dataDir": "./data/private"
 });
+
 // Message counter
 const messages = new Enmap({
 	"name": "messages-read",
@@ -30,6 +33,7 @@ const messages = new Enmap({
 	"fetchAll": false,
 	"dataDir": "./data/private"
 });
+
 // Translation counter
 const translations = new Enmap({
 	"name": "translations",
@@ -38,10 +42,20 @@ const translations = new Enmap({
 	"dataDir": "./data/private"
 });
 
+// Tags
+const tags = new Enmap({
+	"name": "tags",
+	"autoFetch": false,
+	"fetchAll": true,
+	"cloneLevel": "deep",
+	"dataDir": "./data/private"
+});
+
 module.exports = {
 	guildConfig,
 	tempBans,
 	commands,
 	messages,
-	translations
+	translations,
+	tags
 };

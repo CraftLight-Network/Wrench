@@ -26,11 +26,10 @@ module.exports = async function (message, options) {
 		if (result === "cancel") break;
 
 		// Validate input
-		if (options.validate) {
-			if (!options.validate.array.includes(result)) {
-				result = "";
-				return message.reply(`Invalid ${options.validate.name}.`);
-			}
+		if (!options.validate) return;
+		if (!options.validate.array.includes(result)) {
+			result = "";
+			return message.reply(`Invalid ${options.validate.name}.`);
 		}
 	}
 	return result;
