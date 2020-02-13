@@ -2,8 +2,10 @@
 const { log } = require("./logger.js");
 
 // Define and require modules
+const { stripIndents } = require("common-tags");
 const AntiSpam = require("discord-anti-spam");
 const { guildConfig } = require("./enmap.js");
+const { RichEmbed } = require("discord.js");
 const request = require("async-request");
 
 // Format + update bad links
@@ -34,12 +36,23 @@ const antiSpam = new AntiSpam({
 	"maxDuplicatesKick": 8,
 	"maxDuplicatesBan": 12,
 	"errorMessages": false,
-	"warnMessage": "{@user}, stop spamming! Change your message or slow down.",
+	"warnMessage": "",
 	"kickMessage": "**{user_tag}** has been kicked for spamming.",
 	"banMessage": "**{user_tag}** has been banned for spamming."
 });
 
-module.exports = function (message) {
+antiSpam.on("spamThresholdWarn", (member) => {
+	const embed = new RichEmbed()
+		.setAuthor("Warning", member.displayAvatarURL)
+		.addField(`Do not spam!`, stripIndents`
+			The server does not want you to spam there.
+			Please change your message or slow down.
+		`)
+		.setColor("#E3E3E3");
+	member.send(embed);
+});
+
+module.exports = function automod(message) {
 	if (!(guildConfig.get(message.guild.id, "automod.enabled") || message.guild)) return;
 
 	// Shorter message content
@@ -57,29 +70,29 @@ module.exports = function (message) {
 
 		// Delete and warn
 		await message.delete();
-		message.reply("Stop spamming! Change your message or slow down.").then(msg => {msg.delete(3000)});
+		reply("spam", "spam");
 	}
 
 	// Check for invites
 	if (guildConfig.get(message.guild.id, "automod.modules.invites")) checkInvites();
 	async function checkInvites() {
 		// Make sure there are invites
-		if (!new RegExp(".*://discord.gg|.*://discordapp.com/invite").test(content)) return;
+		if (!content.match("discord.gg|discordapp.com/invite")) return;
 
 		// Delete and warn
 		await message.delete();
-		message.reply("Do not send invite links!").then(msg => {msg.delete(3000)});
+		reply("send invite links", "invite");
 	}
 
 	// Check for bad links
 	if (guildConfig.get(message.guild.id, "automod.modules.badLinks")) checkBadLinks();
 	async function checkBadLinks() {
 		// Make sure there are bad links
-		if (!badLinks.some(l => content.split(" ").includes(l)) || content === "") return;
+		if (content === "" || !badLinks.some(l => content.includes(l))) return;
 
 		// Delete and warn
 		await message.delete();
-		message.reply("Do not send that link!").then(msg => {msg.delete(3000)});
+		reply("send bad links", "link");
 	}
 
 	// Check for caps
@@ -93,6 +106,20 @@ module.exports = function (message) {
 
 		// Delete and warn
 		await message.delete();
-		message.reply("Do not send all caps!").then(msg => {msg.delete(3000)});
+		reply("send all caps", "caps");
+	}
+
+	// Reply function
+	function reply(warning, warningCode) {
+		const embed = new RichEmbed()
+			.setAuthor("Warning", message.author.displayAvatarURL)
+			.addField(`Do not ${warning}!`, stripIndents`
+				The server ${message.guild.name} does not want you to ${warning} there.
+				If this was a mistake, you may edit your message without the ${warningCode}.
+			`)
+			.addField("Original Message", message)
+			.setFooter(`Action done by AutoMod`)
+			.setColor("#E3E3E3");
+		message.author.send(embed);
 	}
 };
