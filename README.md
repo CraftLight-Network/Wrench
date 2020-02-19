@@ -1,3 +1,6 @@
+## NOTE:
+This bot is being completely re-written. To view progress or test out the latest version, look at the [develop branch](https://github.com/Edude42/WrenchBot/tree/develop).
+
 <img src="https://repository-images.githubusercontent.com/160117136/8186cd80-63b0-11e9-88f6-fa3933300bc1" width="200">
 
 [![Discord](https://discordapp.com/api/guilds/525487377817534484/embed.png)](https://discord.gg/sAxRWVb)
