@@ -19,42 +19,39 @@ and a bunch of helpful and fun commands!
 
 ## Setup
 Setup is mostly specific to your OS.  
-This will not show you how to install Node.js, Python, and other global dependencies on your device. You must have [Node.js](https://nodejs.org/), [Python](https://www.python.org/), Build Tools _(AKA C++)_, and [Git](https://git-scm.com/).    
+This will not show you how to install Node.js, Python, and other global dependencies on your device. You must have [Node.js](https://nodejs.org/), [Python](https://www.python.org/), Build Tools _(C++, Python)_, and [Git](https://git-scm.com/).    
 
 1. Create a bot via the [Discord Application panel](https://discordapp.com/login?redirect_to=%2Fdevelopers%2Fapplications%2F). [Invite the bot to your guild](https://discordpy.readthedocs.io/en/latest/discord.html).
 1. Run `git clone https://github.com/Edude42/WrenchBot.git` in a folder of your choice.  
-<sub>_For Debian, run `apt install gcc g++`. For Windows, run `npm install -g windows-build-tools@latest --vs2015`_</sub>  
+&nbsp;<sub>_For Debian, run `apt install gcc g++`. For Windows, run `npm install -g windows-build-tools@latest --vs2015`_</sub>  
 3. Run `npm install`. This will install mostly everything the bot needs. _(Linux may need root/sudo)_
 4. Rename `auth-example.json` to `auth.json` and replace all tokens with your own. _(Translator tokens are optional)_
 6. Change the values in `config.json` to satisfy your wants.
-7. Run `node wrenchbot.js`  
-**That's it! The bot should be running now. Invite it to your server to use it.**
+7. Run `node wrenchbot.js`
 
 ## Config
-Many features of the bot can be configured server-side and guild-side.<br/>
-### Server-side:
-`owners:` Array of Discord user ID's. Put contributer's ID's in here.[Discord user ID]  
-<sub>  _Example: [ "272466470510788608", "194041725730160640", "207909015173332992" ]_</sub>  
-`prefix:` The character the bot uses as the command prefix. [any ASCII character]  
-`translator:` Whether or not the translator is enabled. [enabled, disabled]  
-`provider:` What translator provider the bot uses. [yandex, baidu, google]  
+Many features of the bot can be configured server-side and guild-side.  
 
-#### Providers:
-`yandex` - Fast and free, not the most accurate.<br/>
-`baidu` - Slow and free, very accurate.<br/>
-`google` - Fast but paid, very accurate.<br/>
+### Server-side:
+`owners`: Array of Discord user ID's. Put contributer's ID's in here. [Discord user ID]  
+`prefix`: The prefix the bot uses for commands. [Any character]  
+
+`translator.enabled`: Whether or not the translator will be enabled. [true / false]  
+`translator.provider`: What provider the translator will use. [yandex / baidu / google]  
+&nbsp;<sub>_Yandex is fast but mildly accurate. Baidu is slow but accurate. Google costs but is fast and accurate._</sub>  
+
+`reactions.enabled`: Whether or not the bot will react to messages. [true / false]  
+`reactions.ids.*`: ID's of the emojis the bot will react with according to the message. [Discord emoji ID]  
+&nbsp;<sub>_The bot must be in the guild that the emojis are from._</sub>  
+
+`status.enabled`: Whether or not the bot will change its status. [true / false]  
+`status.timeout`: How long the bot will wait before changing its status. [Any time above 15s in ms]  
+`status.statuses`: The statuses the bot will switch to.  
+`status.statuses.type`: Prefix of the status. [WATCHING / PLAYING / STREAMING / LISTENING]  
+`status.statuses.name`: What the status will be. [Any string]  
 
 ### Discord-side: (none = disabled)
-bot: If set, the bot can only be used in these channels. [channel name]<br/>
-joinRole: Name of role a user gets upon joining. [role name]<br/>
-log: Channel name to send logs to. [channel name]<br/>
-leave: Channel that leave messages are sent to. [channel name]<br/>
-leaveMessage: What the bot sends to the leave channel.<br/>
-welcome: Channel that welcome messages are sent to. [channel name]<br/>
-welcomeMessage: What the bot sends to the welcome channel.<br/><br/>
-**NOTE**: _The welcome and leave channels have special formatting._
-* `[Image]` at the beginning will make it an image-based message.<br/>
-* `{{user}}` mentions the user<br/>
-* `{{id}}` sends the ID of the user<br/>
-* `{{tag}}` sends the tag of the user<br/>
-* `{{name}}` sends just the name of the user<br/>
+`join.message.enabled`: Whether or not the bot will send a message on user join. [true / false]  
+`join.message.channelID`: ID of channel the welcome message will be sent to. [Discord channel ID]  
+`join.message.message`: What the welcome message will be. [Any string]  
+#### REST IS W.I.P.
