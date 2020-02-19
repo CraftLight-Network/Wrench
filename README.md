@@ -34,7 +34,7 @@ This will not show you how to install Node.js, Python, and other global dependen
 Many features of the bot can be configured server-side and guild-side.<br/>
 ### Server-side:
 `owners:` Array of Discord user ID's. Put contributer's ID's in here.[Discord user ID]  
-<sub>_Example: [ "272466470510788608", "194041725730160640", "207909015173332992" ]_</sub>  
+<sub>  _Example: [ "272466470510788608", "194041725730160640", "207909015173332992" ]_</sub>  
 `prefix:` The character the bot uses as the command prefix. [any ASCII character]  
 `translator:` Whether or not the translator is enabled. [enabled, disabled]  
 `provider:` What translator provider the bot uses. [yandex, baidu, google]  
