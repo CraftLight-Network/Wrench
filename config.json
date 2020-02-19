@@ -5,7 +5,15 @@
         "enabled": true,
         "provider": "baidu"
     },
-	"reactions": true,
+	"reactions": {
+		"enabled": true,
+		"ids": {
+			"pogchamp": "660203799377608704",
+			"lul": "660205635777986571",
+			"kappa": "660205713708154890",
+			"sleeper": "660205776744480789"
+		}
+	},
 	"status": {
 		"enabled": true,
 		"timeout": 30000,
