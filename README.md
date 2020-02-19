@@ -1,12 +1,9 @@
-## NOTE:
-This is the develop branch. Expect broken or non-functional code.
-
+# WrenchBot
 <img src="https://repository-images.githubusercontent.com/160117136/8186cd80-63b0-11e9-88f6-fa3933300bc1" width="200">
 
 **Support Server:** [![Discord](https://discordapp.com/api/guilds/646517284453613578/embed.png?42)](https://edude42.dev/support)  
 **CraftLight Network:** [![Discord](https://discordapp.com/api/guilds/525487377817534484/embed.png?18)](https://craftlight.org/discord)
 
-# WrenchBot
 ## About
 This bot is used mainly for the CraftLight Network.<br/>
 If you would like to see this bot in action, go to the [CraftLight Network Discord server](https://craftlight.org/discord).
