@@ -3,7 +3,8 @@ This is the develop branch. Expect broken or non-functional code.
 
 <img src="https://repository-images.githubusercontent.com/160117136/8186cd80-63b0-11e9-88f6-fa3933300bc1" width="200">
 
-[![Discord](https://discordapp.com/api/guilds/525487377817534484/embed.png)](https://discord.gg/sAxRWVb)
+**Support Server:** [![Discord](https://discordapp.com/api/guilds/646517284453613578/embed.png)](https://edude42.dev/support)  
+**CraftLight Network:** [![Discord](https://discordapp.com/api/guilds/525487377817534484/embed.png)](https://craftlight.org/discord)
 
 # WrenchBot
 ## About
@@ -50,7 +51,7 @@ Many features of the bot can be configured server-side and guild-side.
 `status.statuses.type`: Prefix of the status. [WATCHING / PLAYING / STREAMING / LISTENING]  
 `status.statuses.name`: What the status will be. [Any string]  
 
-### Discord-side: (none = disabled)
+### Discord-side:
 `join.message.enabled`: Whether or not the bot will send a message on user join. [true / false]  
 `join.message.channelID`: ID of channel the welcome message will be sent to. [Discord channel ID]  
 `join.message.message`: What the welcome message will be. [Any string]  
