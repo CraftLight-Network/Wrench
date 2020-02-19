@@ -3,8 +3,8 @@ This is the develop branch. Expect broken or non-functional code.
 
 <img src="https://repository-images.githubusercontent.com/160117136/8186cd80-63b0-11e9-88f6-fa3933300bc1" width="200">
 
-**Support Server:** [![Discord](https://discordapp.com/api/guilds/646517284453613578/embed.png)](https://edude42.dev/support)  
-**CraftLight Network:** [![Discord](https://discordapp.com/api/guilds/525487377817534484/embed.png)](https://craftlight.org/discord)
+**Support Server:** [![Discord](https://discordapp.com/api/guilds/646517284453613578/embed.png?42)](https://edude42.dev/support)  
+**CraftLight Network:** [![Discord](https://discordapp.com/api/guilds/525487377817534484/embed.png?18)](https://craftlight.org/discord)
 
 # WrenchBot
 ## About
