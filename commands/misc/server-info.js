@@ -5,7 +5,9 @@ const { RichEmbed } = require("discord.js");
 const config = require("../../config.json");
 const moment = require("moment");
 
-const actions = ["", "advanced", "all"];
+const actions = ["standard", "advanced", "all"];
+const verificationLevel = ["None", "Low", "Medium", "(╯°□°）╯︵ ┻━┻", "┻━┻ ﾐヽ(ಠ益ಠ)ノ彡┻━┻"];
+const explicitContentFilter = ["Off", "On (No Role)", "On (All)"];
 
 module.exports = class serverInfoCommand extends Command {
 	constructor(client) {
@@ -25,7 +27,7 @@ module.exports = class serverInfoCommand extends Command {
 					"key": "action",
 					"prompt": "What would you like to search for?",
 					"type": "string",
-					"default": "",
+					"default": "standard",
 					"oneOf": actions
 				}
 			],
@@ -40,38 +42,10 @@ module.exports = class serverInfoCommand extends Command {
 	run(message, { action }) {
 		const guild = message.guild;
 
-		// Format variables
-		let afkChannel, afkTimeout, verificationLevel, mfaLevel, explicitContentFilter, defaultMessageNotifications;
-
-		// AFK Channel
-		if (!guild.afkChannel) afkChannel = afkTimeout = "None";
-
-		// Verification Level
-		switch (guild.verificationLevel) {
-			case 0: verificationLevel = "None"; break;
-			case 1: verificationLevel = "Low"; break;
-			case 2: verificationLevel = "Medium"; break;
-			case 3: verificationLevel = "(╯°□°）╯︵ ┻━┻"; break;
-			case 4: verificationLevel = "┻━┻ ﾐヽ(ಠ益ಠ)ノ彡┻━┻"; break;
-		}
-
-		// Authentication
-		if (guild.mfaLevel === 0) mfaLevel = "Off";
-		else mfaLevel = "On";
-
-		// Content filter
-		switch (guild.explicitContentFilter) {
-			case 0: explicitContentFilter = "Off"; break;
-			case 1: explicitContentFilter = "On (No Role)"; break;
-			case 2: explicitContentFilter = "On (All)"; break;
-		}
-
 		// Notifications
+		let defaultMessageNotifications;
 		if (guild.defaultMessageNotifications === "MENTIONS") defaultMessageNotifications = "@mentions";
 		else defaultMessageNotifications = "All";
-
-		// System Channel
-		if (!guild.systemChannel) guild.systemChannel = "None";
 
 		const iconURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`;
 		const splashURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.splash}.png`;
@@ -96,19 +70,19 @@ module.exports = class serverInfoCommand extends Command {
 				.addField("ID", guild.id, true)
 				.addField("Owner", guild.owner, true)
 				.addField("Created on", moment(guild.createdTimestamp).format("M/D/YY h:mm:ss A"), true)
-				.addField("AFK Channel", afkChannel, true)
-				.addField("AFK Timeout", afkTimeout, true)
+				.addField("AFK Channel", guild.afkChannel ? guild.afkChannel : "None", true)
+				.addField("AFK Timeout", guild.afkChannel ? guild.afkTimeout : "None", true)
 				.addField("Region", guild.region, true)
 				.addField("Icon", icon, true)
 				.addField("Splash", splash, true);
 		}
 
 		if (actions.indexOf(action) > 1) {
-			embed.addField("Verification", verificationLevel, true)
-				.addField("2FA Requirement", mfaLevel, true)
-				.addField("Content Filter", explicitContentFilter, true)
+			embed.addField("Verification", verificationLevel[guild.verificationLevel], true)
+				.addField("2FA Requirement", guild.mfaLevel ? "On" : "Off", true)
+				.addField("Content Filter", explicitContentFilter[guild.explicitContentFilter], true)
 				.addField("Verified", guild.verified, true)
-				.addField("System Channel", guild.systemChannel, true)
+				.addField("System Channel", guild.systemChannel ? guild.systemChannel : "None", true)
 				.addField("Notifications", defaultMessageNotifications, true);
 		}
 
