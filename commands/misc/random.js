@@ -40,13 +40,16 @@ module.exports = class randomCommand extends Command {
 	}
 
 	run(message, { min, max }) {
+		// Make sure min is less than max
+		if (min > max) {[min, max] = [max, min]}
+
 		// Get the random number
 		const random = new Random(nativeMath);
 		const number = random.integer(min, max);
 
 		const embed = new RichEmbed()
 			.setDescription(stripIndents`
-				**Random Number:**
+				**Random Number ${min} - ${max}:**
 				${number}
 			`)
 			.setFooter(`Requested by ${message.author.tag}`)
