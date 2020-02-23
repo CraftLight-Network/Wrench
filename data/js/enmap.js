@@ -1,4 +1,5 @@
 // Define and require modules
+const dataDir = "./data/private/enmap";
 const Enmap = require("enmap");
 
 // Per-server settings
@@ -7,7 +8,7 @@ const guildConfig = new Enmap({
 	"fetchAll": false,
 	"autoFetch": true,
 	"cloneLevel": "deep",
-	"dataDir": "./data/private"
+	"dataDir": dataDir
 });
 
 // Temp bans
@@ -15,7 +16,7 @@ const tempBans = new Enmap({
 	"name": "tempBans",
 	"autoFetch": true,
 	"fetchAll": false,
-	"dataDir": "./data/private"
+	"dataDir": dataDir
 });
 
 // Command counter
@@ -23,7 +24,7 @@ const commands = new Enmap({
 	"name": "commands",
 	"autoFetch": true,
 	"fetchAll": false,
-	"dataDir": "./data/private"
+	"dataDir": dataDir
 });
 
 // Message counter
@@ -31,7 +32,7 @@ const messages = new Enmap({
 	"name": "messages-read",
 	"autoFetch": true,
 	"fetchAll": false,
-	"dataDir": "./data/private"
+	"dataDir": dataDir
 });
 
 // Translation counter
@@ -39,7 +40,7 @@ const translations = new Enmap({
 	"name": "translations",
 	"autoFetch": true,
 	"fetchAll": false,
-	"dataDir": "./data/private"
+	"dataDir": dataDir
 });
 
 // Tags
@@ -48,7 +49,7 @@ const tags = new Enmap({
 	"autoFetch": false,
 	"fetchAll": true,
 	"cloneLevel": "deep",
-	"dataDir": "./data/private"
+	"dataDir": dataDir
 });
 
 module.exports = {
