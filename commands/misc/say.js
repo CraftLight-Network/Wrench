@@ -20,10 +20,9 @@ module.exports = class sayCommand extends Command {
 				{
 					"key": "toSay",
 					"prompt": "What would you like me to say?",
-					"default": "",
 					"type": "string",
 					"validate": arg => {
-						if (arg.length < 400) return true;
+						if (arg.length < 400 || arg.length > 0) return true;
 						return "Please use under 400 characters!";
 					}
 				}

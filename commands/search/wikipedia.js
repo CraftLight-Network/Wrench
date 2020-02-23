@@ -1,14 +1,10 @@
 // Define and require modules
+const truncate = require("../../data/js/truncate.js");
 const { Command } = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
 const { RichEmbed } = require("discord.js");
 const config = require("../../config.json");
 const wikipedia = require("wikijs").default;
-
-// Truncate function
-function truncate(string, size) {
-	return string.length > size ? string.slice(0, size - 1) + "…" : string;
-}
 
 module.exports = class wikipediaCommand extends Command {
 	constructor(client) {
@@ -54,12 +50,11 @@ module.exports = class wikipediaCommand extends Command {
 			if (summary.match(/may refer to:/)) {
 				embed.description += stripIndents`
 					**Multiple results found:**
-					${truncate((await result.links()).join(", "), 200)}
+					${truncate((await result.links()).join(", "), 250)}
 				`;
 			} else {embed.description += truncate(summary, 250)}
+
 			return message.channel.send(embed);
-		}).catch(function() {
-			message.reply(`I cannot find any article related to ${toSearch}.`);
-		});
+		}).catch(function() {message.reply(`I cannot find any article related to ${toSearch}.`)});
 	}
 };
