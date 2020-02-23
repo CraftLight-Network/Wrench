@@ -41,25 +41,25 @@ module.exports = class serverInfoCommand extends Command {
 
 	run(message, { action }) {
 		const guild = message.guild;
+		let defaultMessageNotifications, icon, splash;
 
 		// Notifications
-		let defaultMessageNotifications;
 		if (guild.defaultMessageNotifications === "MENTIONS") defaultMessageNotifications = "@mentions";
 		else defaultMessageNotifications = "All";
 
-		const iconURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`;
-		const splashURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.splash}.png`;
 		const embed = new RichEmbed()
 			.setDescription(`**${guild.name} Info:**`)
 			.setFooter(`Requested by ${message.author.tag}`)
 			.setColor("#E3E3E3");
 
 		// Image links
-		let icon, splash;
+		const iconURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`;
 		if (guild.icon) {
 			icon = `[Click](${iconURL})`;
 			embed.setThumbnail(iconURL);
 		} else icon = "None";
+
+		const splashURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.splash}.png`;
 		if (guild.splash) {
 			splash = `[Click](${splashURL})`;
 			embed.setImage(splashURL);
@@ -81,7 +81,7 @@ module.exports = class serverInfoCommand extends Command {
 			embed.addField("Verification", verificationLevel[guild.verificationLevel], true)
 				.addField("2FA Requirement", guild.mfaLevel ? "On" : "Off", true)
 				.addField("Content Filter", explicitContentFilter[guild.explicitContentFilter], true)
-				.addField("Verified", guild.verified, true)
+				.addField("Verified", guild.verified ? "Yes" : "No", true)
 				.addField("System Channel", guild.systemChannel ? guild.systemChannel : "None", true)
 				.addField("Notifications", defaultMessageNotifications, true);
 		}
