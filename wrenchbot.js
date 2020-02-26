@@ -113,9 +113,6 @@ client.on("message", async message => {
 	// Ignore bots
 	if (message.author.bot) return;
 
-	// Shorter message content
-	const content = message.content;
-
 	if (message.guild) {
 		// Make sure enmap exists
 		guildConfig.ensure(message.guild.id, defaultConfig);
