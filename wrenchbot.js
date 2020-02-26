@@ -131,10 +131,11 @@ client.on("message", async message => {
 
 	// Increase read/ran values
 	messages.inc("number");
-	if (content.charAt(0) === config.prefix || !message.guild) {
-		log.command(`${message.author.tag}: ${message}`);
-		commands.inc("number");
-	}
+});
+
+client.on("commandRun", (command, promise, message) => {
+	log.command(`${(message.guild ? "" : "(DM) ") + message.author.tag} | ${message.content}`);
+	commands.inc("number");
 });
 
 // Run automod and reactions on edited messages
