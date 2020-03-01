@@ -7,11 +7,13 @@ const { translations } = require("./enmap.js");
 const similar = require("string-similarity");
 const { RichEmbed } = require("discord.js");
 const config = require("../../config.json");
+const average = require("array-average");
 
 // Translate function
 module.exports = async function translate(message, translator) {
 	// Define variables
 	let translate = message.content;
+	const averages = [];
 
 	// Check if message is translatable
 	if (!config.translator.enabled || translate.charAt(0) === config.prefix) return;
@@ -31,19 +33,17 @@ module.exports = async function translate(message, translator) {
 
 	// Ignore s p a c e d messages
 	if (Math.round(translate.length / 2) === translate.split(" ").length) return;
-	if (translate === "") return;
+	if (!translate) return;
 
 	// Detect language
-	var validLang = true;
 	const LanguageDetect = require("languagedetect");
 	const lngDetector = new LanguageDetect();
 	const language = lngDetector.detect(translate, 5);
 
 	if (!language || !language[0]) return;
 	if (language[0][0] === "english") return;
-	language.forEach(lang => {if (lang[0] === "english" && lang[1] > 0.20) validLang = false;});
-	if (language[0][1] <= 0.25) return;
-	if (!validLang) return;
+	language.some((e, i) => {averages[i] = e[1]});
+	if (average(averages) < average(averages, 3)) return;
 
 	// Ratelimiting
 	const monthBucket = new TokenBucket("10000000", "month", null);

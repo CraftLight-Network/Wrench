@@ -19,6 +19,7 @@
   },
   "homepage": "https://edude42.dev/wrenchbot",
   "dependencies": {
+    "array-average": "^0.1.2",
     "async-request": "^1.2.0",
     "baidu-translate-api": "^0.4.0",
     "better-sqlite-pool": "^0.2.2",
@@ -38,6 +39,7 @@
     "random-js": "^2.1.0",
     "request": "^2.88.0",
     "string-similarity": "^3.0.0",
+    "tictactoe-complex-ai": "^1.0.1",
     "uws": "^100.0.1",
     "wikijs": "^6.0.1",
     "winston": "^2.4.4",
