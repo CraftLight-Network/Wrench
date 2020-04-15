@@ -1,7 +1,7 @@
 // Define and require modules
+const { embed } = require("../../data/js/embed.js");
 const { Command } = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const { RichEmbed } = require("discord.js");
 const config = require("../../config.json");
 
 module.exports = class charactersCommand extends Command {
@@ -9,7 +9,7 @@ module.exports = class charactersCommand extends Command {
 		super(client, {
 			"name": "characters",
 			"memberName": "characters",
-			"aliases": ["chars"],
+			"aliases": ["chars", "count"],
 			"group": "misc",
 			"description": "Count how many characters are in a message.",
 			"details": stripIndents`
@@ -33,14 +33,7 @@ module.exports = class charactersCommand extends Command {
 	}
 
 	run(message, { toCount }) {
-		const embed = new RichEmbed()
-			.setDescription(stripIndents`
-				**Character count:**
-				${toCount.length}
-			`)
-			.setFooter(`Requested by ${message.author.tag}`)
-			.setColor("#E3E3E3");
-
-		return message.channel.send(embed);
+		const embedMessage = embed({ "message": message, "title": "Character Count:", "description": toCount.length });
+		return message.channel.send(embedMessage);
 	}
 };

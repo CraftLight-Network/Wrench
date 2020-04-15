@@ -51,8 +51,6 @@ const log = new (winston.Logger)({
 
 module.exports.log = log;
 module.exports.logger = function logger(mode, client, date, guildConfig, defaultConfig) {
-	// Logger events
-
 	// Unhandled rejections
 	process.on("unhandledRejection", (err, p) => {log.error(`Rejected Promise: ${p} / Rejection: ${err}`)});
 
@@ -65,10 +63,7 @@ module.exports.logger = function logger(mode, client, date, guildConfig, default
 			log.info(`Added to ${guild.name} (ID: ${guild.id})`);
 			guildConfig.ensure(guild.id);
 		})
-		.on("guildDelete", guild => {
-			log.info(`Removed from ${guild.name} (ID: ${guild.id})`);
-			guildConfig.delete(guild.id);
-		});
+		.on("guildDelete", guild => log.info(`Removed from ${guild.name} (ID: ${guild.id})`));
 
 	// TODO: MODERATION AND OTHER LOG EVENTS
 };

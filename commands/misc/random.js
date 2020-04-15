@@ -1,8 +1,8 @@
 // Define and require modules
+const { embed } = require("../../data/js/embed.js");
 const { Random, nativeMath } = require("random-js");
 const { Command } = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const { RichEmbed } = require("discord.js");
 const config = require("../../config.json");
 
 module.exports = class randomCommand extends Command {
@@ -42,19 +42,9 @@ module.exports = class randomCommand extends Command {
 	run(message, { min, max }) {
 		// Make sure min is less than max
 		if (min > max) {[min, max] = [max, min]}
-
-		// Get the random number
 		const random = new Random(nativeMath);
-		const number = random.integer(min, max);
 
-		const embed = new RichEmbed()
-			.setDescription(stripIndents`
-				**Random Number ${min} - ${max}:**
-				${number}
-			`)
-			.setFooter(`Requested by ${message.author.tag}`)
-			.setColor("#E3E3E3");
-
-		return message.channel.send(embed);
+		const embedMessage = embed({ "message": message, "title": `Random Number ${min} - ${max}:`, "description": random.integer(min, max) });
+		return message.channel.send(embedMessage);
 	}
 };

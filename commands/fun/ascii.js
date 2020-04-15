@@ -1,7 +1,8 @@
 // Define and require modules
+const getUserInput = require("../../data/js/getUserInput.js");
+const { embed } = require("../../data/js/embed.js");
 const { Command } = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const { RichEmbed } = require("discord.js");
 const config = require("../../config.json");
 const hastebin = require("hastebin");
 const figlet = require("figlet");
@@ -53,55 +54,21 @@ module.exports = class asciiCommand extends Command {
 	async run(message, { action, args }) {
 		// Return link to fonts if specified
 		if (action === "fonts") {
-			const embed = new RichEmbed()
-				.setDescription(stripIndents`
-					**Available Fonts:**
-					https://hastebin.com/raw/aqihuvepem
-				`)
-				.setFooter(`Requested by ${message.author.tag}`)
-				.setColor("#E3E3E3");
-
-			return message.channel.send(embed);
+			const embedMessage = embed({ "message": message, "title": "Available Fonts:", "description": "https://hastebin.com/raw/aqihuvepem" });
+			return message.channel.send(embedMessage);
 		} else {
-			// Start making the figlet
-			let toFiglet;
-			let exit = true;
-
-			// Ask for toFiglet if not specified
-			while (args === "" && exit) {
-				message.reply(stripIndents`
-					What would you like to make figlet art of?
-					Respond with \`cancel\` to cancel the command. The command will automatically be cancelled in 30 seconds.
-				`);
-
-				// Take user input
-				const filter = res => {return res.author.id === message.author.id};
-				args = await message.channel.awaitMessages(filter, {
-					"max": 1,
-					"time": 30000
-				}).catch(function() {exit = false; args = " "});
-
-				// Set toFiglet to inputted value
-				args.find(i => {toFiglet = i.content});
-			}
-			if (!toFiglet) toFiglet = args;
-			if (toFiglet === "cancel") return message.reply("Cancelled command.");
+			// Take input if not specified
+			if (!args) args = await getUserInput(message, { "question": "What would you like to make ascii art of?" });
+			if (args === "cancel") return message.reply("Cancelled command.");
 
 			// Create and upload figlet to hastebin
-			hastebin.createPaste(figlet.textSync(toFiglet, action), {
+			hastebin.createPaste(figlet.textSync(args, action), {
 				"raw": true,
 				"contentType": "text/plain",
 				"server": "https://hastebin.com"
 			}).then(function(link) {
-				const embed = new RichEmbed()
-					.setDescription(stripIndents`
-						**Figlet link:**
-						${link}
-					`)
-					.setFooter(`Requested by ${message.author.tag}`)
-					.setColor("#E3E3E3");
-
-				return message.channel.send(embed);
+				const embedMessage = embed({ "message": message, "title": "Figlet link:", "description": link });
+				return message.channel.send(embedMessage);
 			});
 		}
 	}
