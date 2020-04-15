@@ -70,7 +70,5 @@ module.exports.logger = function logger(mode, client, date, guildConfig, default
 			guildConfig.delete(guild.id);
 		});
 
-	process.on("unhandledRejection", (err) => log.error(err));
-
 	// TODO: MODERATION AND OTHER LOG EVENTS
 };

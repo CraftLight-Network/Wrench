@@ -7,13 +7,14 @@ const { translations } = require("./enmap.js");
 const similar = require("string-similarity");
 const { RichEmbed } = require("discord.js");
 const config = require("../../config.json");
-const average = require("array-average");
+const language = require("franc");
 
 // Translate function
 module.exports = async function translate(message, translator) {
 	// Define variables
 	let translate = message.content;
-	const averages = [];
+	const numbers = [];
+	let exit = false;
 
 	// Check if message is translatable
 	if (!config.translator.enabled || translate.charAt(0) === config.prefix) return;
@@ -36,14 +37,9 @@ module.exports = async function translate(message, translator) {
 	if (!translate) return;
 
 	// Detect language
-	const LanguageDetect = require("languagedetect");
-	const lngDetector = new LanguageDetect();
-	const language = lngDetector.detect(translate, 5);
-
-	if (!language || !language[0]) return;
-	if (language[0][0] === "english") return;
-	language.some((e, i) => {averages[i] = e[1]});
-	if (average(averages) < average(averages, 3)) return;
+	if (language(translate) === "eng" || language(translate) === "und") return;
+	language.all(translate).some(e => {if (e[0] === "eng" && e[1] > 0.65) exit = true;});
+	if (exit) return;
 
 	// Ratelimiting
 	const monthBucket = new TokenBucket("10000000", "month", null);
@@ -61,7 +57,7 @@ module.exports = async function translate(message, translator) {
 						"from": translated.lang,
 						"to": ""
 					},
-					"link": "Yandex",
+					"link": "yandexTL",
 					"provider": "Yandex Translate"
 				};
 
@@ -77,7 +73,7 @@ module.exports = async function translate(message, translator) {
 						"from": translated.detectedSourceLanguage,
 						"to": "-en"
 					},
-					"link": "google",
+					"link": "googleTL",
 					"provider": "Google Translate"
 				};
 
@@ -87,13 +83,15 @@ module.exports = async function translate(message, translator) {
 
 		case "baidu":
 			translator(translate).then(translated => {
+				if (translated.from === "en") return;
+
 				const options = {
 					"text": translated.trans_result.dst,
 					"lang": {
 						"from": translated.from,
 						"to": "-en"
 					},
-					"link": "baidu",
+					"link": "baiduTL",
 					"provider": "Baidu Translate"
 				};
 
@@ -104,7 +102,7 @@ module.exports = async function translate(message, translator) {
 
 	function translateEmbed(options) {
 		// Make sure translations are not the same
-		if (similar.compareTwoStrings(translate.replace(/[^\p{L}0-9\s]/gi, "").toLowerCase(), `${options.text}`.replace(/[^\p{L}0-9\s]/gi, "").toLowerCase()) >= 0.70) return;
+		if (similar.compareTwoStrings(translate, options.text) >= 0.75) return;
 		if (translate === `${options.text}`) return;
 
 		// Log the result
@@ -114,7 +112,7 @@ module.exports = async function translate(message, translator) {
 		const embed = new RichEmbed()
 			.setAuthor(`${message.author.username} (${options.lang.from}${options.lang.to})`, message.author.displayAvatarURL)
 			.setDescription(`**${options.text}**`)
-			.setFooter(`Translations from ${options.provider}. (http://cust.pw/${options.link})`)
+			.setFooter(`Translations from ${options.provider}. (http://cft.li/${options.link})`)
 			.setColor("#E3E3E3");
 
 		return message.channel.send(embed);
