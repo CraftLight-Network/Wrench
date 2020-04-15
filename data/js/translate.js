@@ -2,10 +2,10 @@
 const { log } = require("./logger.js");
 
 // Define and require modules
+const { embed } = require("../../data/js/embed.js");
 const TokenBucket = require("limiter").TokenBucket;
 const { translations } = require("./enmap.js");
 const similar = require("string-similarity");
-const { RichEmbed } = require("discord.js");
 const config = require("../../config.json");
 const language = require("franc");
 
@@ -13,7 +13,6 @@ const language = require("franc");
 module.exports = async function translate(message, translator) {
 	// Define variables
 	let translate = message.content;
-	const numbers = [];
 	let exit = false;
 
 	// Check if message is translatable
@@ -37,8 +36,9 @@ module.exports = async function translate(message, translator) {
 	if (!translate) return;
 
 	// Detect language
-	if (language(translate) === "eng" || language(translate) === "und") return;
-	language.all(translate).some(e => {if (e[0] === "eng" && e[1] > 0.65) exit = true;});
+	const detectedLanguage = language.all(translate);
+	if (detectedLanguage[0][0] === "eng" || detectedLanguage[0][0] === "und" || detectedLanguage[1][1] < 0.65) return;
+	language.all(translate).some(e => {if (e[0] === "eng" && e[1] > 0.875) exit = true;});
 	if (exit) return;
 
 	// Ratelimiting
@@ -62,11 +62,12 @@ module.exports = async function translate(message, translator) {
 				};
 
 				translateEmbed(options);
-			}).catch();
-			break;
+			}).catch(); break;
 
 		case "google":
 			translator.translate(translate, "en", (err, translated) => {
+				if (translated.detectedSourceLanguage === "en") return;
+
 				const options = {
 					"text": translated.translatedText,
 					"lang": {
@@ -78,8 +79,7 @@ module.exports = async function translate(message, translator) {
 				};
 
 				translateEmbed(options);
-			}).catch();
-			break;
+			}).catch(); break;
 
 		case "baidu":
 			translator(translate).then(translated => {
@@ -96,8 +96,7 @@ module.exports = async function translate(message, translator) {
 				};
 
 				translateEmbed(options);
-			}).catch(function() {});
-			break;
+			}).catch(function() {}); break;
 	}
 
 	function translateEmbed(options) {
@@ -107,14 +106,16 @@ module.exports = async function translate(message, translator) {
 
 		// Log the result
 		translations.inc("number");
-		log.translate(`${message.author.tag}: ${translate} -> ${options.text} (${options.lang.from}${options.lang.to})`);
+		log.translate(`${message.author.tag} | ${translate} -> ${options.text} (${options.lang.from}${options.lang.to})`);
 
-		const embed = new RichEmbed()
-			.setAuthor(`${message.author.username} (${options.lang.from}${options.lang.to})`, message.author.displayAvatarURL)
-			.setDescription(`**${options.text}**`)
-			.setFooter(`Translations from ${options.provider}. (http://cft.li/${options.link})`)
-			.setColor("#E3E3E3");
-
-		return message.channel.send(embed);
+		const embedMessage = embed({
+			"author": {
+				"name": `${message.author.username} (${options.lang.from}${options.lang.to})`,
+				"picture": message.author.displayAvatarURL
+			},
+			"description": `**${options.text}**`,
+			"footer": `Translations from ${options.provider}. (http://cft.li/${options.link})`
+		});
+		return message.channel.send(embedMessage);
 	}
 };

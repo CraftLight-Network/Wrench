@@ -1,8 +1,10 @@
+// Define and require modules
 const { RichEmbed } = require("discord.js");
+
 module.exports.embed = function embed(options) {
-	// message, author, title, description, footer, color, fields
 	// Set default options
-	if (!options.footer) options.footer = `Requested by ${options.message.author.tag}`;
+	if (!options.footer && options.message) options.footer = `Requested by ${options.message.author.tag}`;
+	else if (!options.footer) options.footer = "";
 	if (!options.color) options.color = "#E3E3E3";
 
 	// Make the embed
