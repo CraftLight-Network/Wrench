@@ -20,12 +20,12 @@ Setup is mostly specific to your OS.
 This guide won't show you how to install Node.js, Python, and other global dependencies on your device. You must have [Node.js](https://nodejs.org/), [Python](https://www.python.org/), Build Tools _(C++, Python)_, and [Git](https://git-scm.com/).    
 
 1. Create a bot via the [Discord Application panel](https://discordapp.com/login?redirect_to=%2Fdevelopers%2Fapplications%2F). [Invite the bot to your guild](https://discordpy.readthedocs.io/en/latest/discord.html).
-1. Run `git clone https://github.com/Edude42/WrenchBot.git` in a folder of your choice.  
+2. Run `git clone https://github.com/Edude42/WrenchBot.git` in a folder of your choice.  
 &nbsp;<sub>_For Debian, run `apt install gcc g++`. For Windows, run `npm install -g windows-build-tools@latest --vs2015`_</sub>  
 3. Run `npm install`. This command installs mostly everything the bot needs. _(Linux may need root/sudo)_
 4. Rename `auth-example.json` to `auth.json` and replace all tokens with your own. _(Translator tokens are optional)_
-6. Change the values in `config.json` to satisfy your wants.
-7. Run `node wrenchbot.js`.
+5. Change the values in `config.json` to satisfy your wants.
+6. Run `node wrenchbot.js`.
 
 ## Config
 Many features of the bot can be configured server-side and guild-side.  
