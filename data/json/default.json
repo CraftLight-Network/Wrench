@@ -17,21 +17,35 @@
             "message": "%member%#%ID% has left %server%."
         }
     },
-    "botChannel": {
-        "enabled": false,
-        "channelIDs": []
-    },
-    "log": {
-        "enabled": false,
-        "channelID": "",
-        "modules": {
-            "moderation": true,
-            "server": true,
-            "member": true,
-            "channel": true,
-            "emoji": false
-        }
-    },
+	"channels": {
+		"advert": {
+            "enabled": false,
+            "channelIDs": []
+        },
+        "spam": {
+            "enabled": false,
+            "channelIDs": []
+        },
+		"bot": {
+			"enabled": false,
+			"channelIDs": []
+		},
+		"counting": {
+			"enabled": false,
+			"channelIDs": []
+		},
+		"log": {
+			"enabled": false,
+			"channelID": "",
+			"modules": {
+				"moderation": true,
+				"server": true,
+				"member": true,
+				"channel": true,
+				"emoji": false
+			}
+		}
+	},
     "automod": {
         "enabled": true,
         "modRoleIDs": [],
@@ -44,18 +58,10 @@
     },
     "misc": {
         "translator": true,
-        "advert": {
-            "enabled": false,
-            "channelIDs": []
-        },
-        "spam": {
-            "enabled": false,
-            "channelIDs": []
-        },
         "reactions": {
             "greetings": true,
             "emotes": true
         }
     },
-    "version": "0.1"
+    "version": 1
 }
