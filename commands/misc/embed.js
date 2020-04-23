@@ -13,17 +13,17 @@ module.exports = class embedCommand extends Command {
 			"group": "misc",
 			"description": "Create an embedded message.",
 			"details": stripIndents`
-				Run \`${config.prefix}embed [JSON]\` to make an embed
+				Run \`${config.prefix.commands}embed [JSON]\` to make an embed
 				**Notes:**
 				[JSON]: Required, the contents of the embed.
 				How to format JSON: JSON always starts and ends with \`{\`/\`}\`
 				For an example on how to format the JSON for this command, run
-				\`${config.prefix}help embed\`
+				\`${config.prefix.commands}help embed\`
 
 				JSON elements: \`${values.join("`, ")}\`
 			`,
 			"examples": [
-				`${config.prefix}embed {"footer": "Hello"}`,
+				`${config.prefix.commands}embed {"footer": "Hello"}`,
 				`
 \`\`\`json
 {

@@ -18,17 +18,17 @@ module.exports = class asciiCommand extends Command {
 			"group": "fun",
 			"description": "Turn text in to figlet art.",
 			"details": stripIndents`
-				Run \`${config.prefix}ascii [action] [args]\` to make figlet art.
+				Run \`${config.prefix.commands}ascii [action] [args]\` to make figlet art.
 				**Notes:**
 				[action]: Required, \`fonts\` to list fonts, or \`<font>\`.
 				[args]: Required if font is specified, text the art will be made of.
 				Arguments must be under 100 characters.
-				Run \`${config.prefix}ascii fonts\` to list all fonts.
+				Run \`${config.prefix.commands}ascii fonts\` to list all fonts.
 			`,
 			"args": [
 				{
 					"key": "action",
-					"prompt": `What font would you like to use? (Run \`${config.prefix}ascii fonts\` for list.)`,
+					"prompt": `What font would you like to use? (Run \`${config.prefix.commands}ascii fonts\` for list.)`,
 					"type": "string",
 					"oneOf": fonts
 				},

@@ -17,7 +17,7 @@ module.exports = class serverInfoCommand extends Command {
 			"group": "misc",
 			"description": "View information about the server you are in.",
 			"details": stripIndents`
-				Run \`${config.prefix}server-info [action]\` to view server info.
+				Run \`${config.prefix.commands}server-info [action]\` to view server info.
 				**Notes:**
 				[action]: What level to grab server info.
 				${actions.join(", ")}

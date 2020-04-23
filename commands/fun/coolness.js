@@ -14,7 +14,7 @@ module.exports = class coolnessCommand extends Command {
 			"group": "fun",
 			"description": "Calculate the coolness of a user.",
 			"details": stripIndents`
-				Run \`${config.prefix}coolness [user]\` to calculate a user's coolness.
+				Run \`${config.prefix.commands}coolness [user]\` to calculate a user's coolness.
 				**Notes:**
 				[user]: Required, who's coolness will be calculated.
 				Valid format: \`@User#0000\`, \`User#0000\`, \`User\`. 

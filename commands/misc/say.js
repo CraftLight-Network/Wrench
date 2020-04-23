@@ -11,7 +11,7 @@ module.exports = class sayCommand extends Command {
 			"group": "misc",
 			"description": "Make the bot say stuff.",
 			"details": stripIndents`
-				Run \`${config.prefix}say [args]\` to make the bot say anything.
+				Run \`${config.prefix.commands}say [args]\` to make the bot say anything.
 				**Notes:**
 				[args]: Required, what the bot will say.
 				Arguments must be under 400 characters.

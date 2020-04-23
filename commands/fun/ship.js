@@ -14,7 +14,7 @@ module.exports = class shipCommand extends Command {
 			"group": "fun",
 			"description": "Calculate the compatibility between two users.",
 			"details": stripIndents`
-				Run \`${config.prefix}ship [person1] [person2]\` to calculate compatibility.
+				Run \`${config.prefix.commands}ship [person1] [person2]\` to calculate compatibility.
 				**Notes:**
                 [user1]: Required, first person to calculate.
                 [user2]: Required, second person to calculate.

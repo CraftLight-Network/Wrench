@@ -16,7 +16,7 @@ module.exports = async function translate(message, translator) {
 	let exit = false;
 
 	// Check if message is translatable
-	if (!config.translator.enabled || translate.charAt(0) === config.prefix) return;
+	if (!config.translator.enabled || translate.charAt(0) === config.prefix.commands) return;
 
 	// Message sanitization
 	// Members
@@ -37,7 +37,7 @@ module.exports = async function translate(message, translator) {
 
 	// Detect language
 	const detectedLanguage = language.all(translate);
-	if (detectedLanguage[0][0] === "eng" || detectedLanguage[0][0] === "und" || detectedLanguage[1][1] < 0.65) return;
+	if (detectedLanguage[0][0] === "eng" || detectedLanguage[0][0] === "und" || detectedLanguage[1][1] < 0.75) return;
 	language.all(translate).some(e => {if (e[0] === "eng" && e[1] > 0.875) exit = true;});
 	if (exit) return;
 
@@ -101,7 +101,7 @@ module.exports = async function translate(message, translator) {
 
 	function translateEmbed(options) {
 		// Make sure translations are not the same
-		if (similar.compareTwoStrings(translate, options.text) >= 0.75) return;
+		if (similar.compareTwoStrings(translate, options.text) >= 0.45) return;
 		if (translate === `${options.text}`) return;
 
 		// Log the result

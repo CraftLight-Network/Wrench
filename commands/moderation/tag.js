@@ -21,9 +21,9 @@ module.exports = class tagCommand extends Command {
 			"group": "moderation",
 			"description": "Create tags/shortcuts for longer or special messages.",
 			"details": stripIndents`
-				Run \`${config.prefix}tag [action] [args] [tag]\` to use commands.
+				Run \`${config.prefix.commands}tag [action] [args] [tag]\` to use commands.
 				**Notes:**
-				[action]: Required, run \`${config.prefix}tag actions\` for actions.
+				[action]: Required, run \`${config.prefix.commands}tag actions\` for actions.
 				[args]: Required, data for specified action to use.
 				[tag]: Required depending on action, what the tag will say.
 			`,
@@ -122,7 +122,7 @@ module.exports = class tagCommand extends Command {
 		tags.get(message.guild.id).some(tag => {
 			if (args !== tag.name) return false;
 
-			return message.say(tag.content);
+			return message.channel.send(tag.content);
 		});
 	}
 };

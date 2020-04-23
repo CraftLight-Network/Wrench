@@ -21,9 +21,9 @@ module.exports = class minecraftCommand extends Command {
 			"group": "search",
 			"description": "Get information on a Minecraft player.",
 			"details": stripIndents`
-				Run \`${config.prefix}minecraft [action] [args]\` to use commands.
+				Run \`${config.prefix.commands}minecraft [action] [args]\` to use commands.
 				**Notes:**
-				[action]: Required, run \`${config.prefix}minecraft actions\` for actions.
+				[action]: Required, run \`${config.prefix.commands}minecraft actions\` for actions.
 				[player]: Required, in-game name or UUID of the player.
 				[args] Required, data for specified action to use.
 			`,
@@ -59,7 +59,7 @@ module.exports = class minecraftCommand extends Command {
 		// List available actions
 		if (action === "actions") {
 			const embed = new RichEmbed()
-				.setAuthor(`${config.prefix}minecraft Actions`, message.author.displayAvatarURL)
+				.setAuthor(`${config.prefix.commands}minecraft Actions`, message.author.displayAvatarURL)
 				.setDescription(stripIndents`
 					\`skin\`: Grab the skin of a player
 					Valid args: \`${skinTypes.join("`, `")}\`

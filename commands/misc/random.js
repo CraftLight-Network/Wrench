@@ -14,7 +14,7 @@ module.exports = class randomCommand extends Command {
 			"group": "misc",
 			"description": "Choose a random number.",
 			"details": stripIndents`
-				Run \`${config.prefix}random [args]\` to choose a random number.
+				Run \`${config.prefix.commands}random [args]\` to choose a random number.
 				**Notes:**
 				[min]: Required, minimum number.
 				[max]: Required, maximum number.

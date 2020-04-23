@@ -15,7 +15,7 @@ module.exports = class wikipediaCommand extends Command {
 			"group": "search",
 			"description": "Search Wikipedia.",
 			"details": stripIndents`
-				Run \`${config.prefix}wikipedia [args]\` to search Wikipedia.
+				Run \`${config.prefix.commands}wikipedia [args]\` to search Wikipedia.
 				**Notes:**
 				[args]: Required, what will be searched.
 				Arguments must be links, slugs, or titles. 
