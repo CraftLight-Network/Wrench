@@ -55,15 +55,15 @@ module.exports.logger = function logger(mode, client, date, guildConfig, default
 	process.on("unhandledRejection", (err, p) => {log.error(`Rejected Promise: ${p} / Rejection: ${err}`)});
 
 	// Connection events
-	client.on("disconnect", () => log.warn("Bot disconnected from Discord."))
-		.on("reconnecting", () => log.info("Reconnecting to Discord..."))
+	client.on("reconnecting", () => log.info("Reconnecting to Discord..."));
+	client.on("resume", () => log.ok("Reconnected to Discord."));
 
-		// Guild events
-		.on("guildCreate", guild => {
-			log.info(`Added to ${guild.name} (ID: ${guild.id})`);
-			guildConfig.ensure(guild.id);
-		})
-		.on("guildDelete", guild => log.info(`Removed from ${guild.name} (ID: ${guild.id})`));
+	// Guild events
+	client.on("guildCreate", guild => {
+		log.info(`Added to ${guild.name} (ID: ${guild.id})`);
+		guildConfig.ensure(guild.id);
+	});
+	client.on("guildDelete", guild => log.info(`Removed from ${guild.name} (ID: ${guild.id})`));
 
 	// TODO: MODERATION AND OTHER LOG EVENTS
 };
