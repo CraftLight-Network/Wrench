@@ -35,7 +35,7 @@ const fs = require("fs");
 
 // Register + create command instance
 const client = new CommandoClient({
-	"commandPrefix": config.prefix,
+	"commandPrefix": config.prefix.commands,
 	"owner": config.owners,
 	"disableEveryone": true,
 	"unknownCommandResponse": false
@@ -98,7 +98,7 @@ client.on("ready", () => {
 
 		// Replace placeholders
 		const name = config.status.statuses[random].name
-			.replace(/%prefix%/g, config.prefix)
+			.replace(/%prefix%/g, config.prefix.commands)
 			.replace(/%servers%/g, client.guilds.size)
 			.replace(/%commands%/g, commands.get("number"))
 			.replace(/%messages%/g, messages.get("number"))
@@ -120,6 +120,12 @@ client.on("message", async message => {
 
 		// Run the automod
 		automod(message);
+
+		// Tag command
+		if (message.content.indexOf(config.prefix.tags) === 0 && !message.content.match(/ /g)) {
+			const tagCommand = client.registry.commands.find(c => c.name === "tag");
+			tagCommand.run(message, { "action": message.content.slice(1) });
+		}
 	}
 
 	// Run the reactions and translator
@@ -149,16 +155,8 @@ client.login(auth.token);
 // Login to the right translator
 let translator;
 if (config.translator.enabled) {
-	if (config.translator.provider === "yandex") {
-		log.info("Using Yandex.Translate");
-		translator = require("yandex-translate")(auth.yandex); // Get Yandex API key
-	}
-	if (config.translator.provider === "google") {
-		log.info("Using Google Translate !! THIS COSTS !!");
-		translator = require("google-translate")(auth.google); // Get Google API key
-	}
-	if (config.translator.provider === "baidu") {
-		log.info("Using Baidu");
-		translator = require("baidu-translate-api"); // Get Baidu Translator
-	}
+	if (config.translator.provider === "yandex") translator = require("yandex-translate")(auth.yandex);
+	if (config.translator.provider === "google") translator = require("google-translate")(auth.google);
+	if (config.translator.provider === "baidu") translator = require("baidu-translate-api");
+	log.info(`Using ${config.translator.provider} Translate.`);
 }
