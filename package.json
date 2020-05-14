@@ -1,7 +1,7 @@
 {
   "name": "wrenchbot",
   "version": "2.0.0",
-  "description": "Fun and Helpful Discord Bot",
+  "description": "Fun and Helpful Discord Bot.",
   "main": "wrenchbot.js",
   "scripts": {
     "start": "node .",
@@ -12,12 +12,12 @@
     "type": "git",
     "url": "git+https://github.com/Edude42/WrenchBot.git"
   },
-  "author": "Edude42",
+  "author": "Encode42",
   "license": "GPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/Edude42/WrenchBot/issues"
+    "url": "https://github.com/Encode42/WrenchBot/issues"
   },
-  "homepage": "https://edude42.dev/wrenchbot",
+  "homepage": "https://encode42.dev/wrenchbot",
   "dependencies": {
     "array-average": "^0.1.2",
     "async-request": "^1.2.0",
