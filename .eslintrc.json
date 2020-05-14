@@ -35,5 +35,6 @@
 		"brace-style": "off",
 		"no-prototype-builtins": "off",
 		"no-return-assign": "off"
-    }
+	},
+	"ignorePatterns": ["node_modules"]
 }

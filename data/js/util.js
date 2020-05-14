@@ -23,7 +23,7 @@ module.exports.embed = (options, message) => {
 		.setFooter(options.footer)
 		.setColor(options.color);
 
-	// Add attatchments
+	// Add attachments
 	if (options.attachments) embedMessage.attachFiles(options.attachments);
 
 	// Add author

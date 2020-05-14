@@ -3,10 +3,11 @@
 .node_repl_history
 node_modules/*
 
-# OS Files
+# OS files
 .DS_Store
 Thumbs.db
 desktop.ini
+/.vscode
 
 # Private files
 auth.json
