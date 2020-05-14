@@ -34,9 +34,7 @@ Many features of the bot can be configured server-side and guild-side.
 `owners`: Array of Discord user ids. Put contributor's ids in here. [Discord user ID]  
 `prefix`: The prefix the bot uses for commands. [Any character]  
 
-`translator.enabled`: Whether or not the translator will be enabled. [true / false]  
-`translator.provider`: What provider the translator will use. [yandex / baidu / google]  
-&nbsp;<sub>_Yandex is fast but mildly accurate. Baidu is slow but accurate. Google costs but is fast and accurate._</sub>  
+`translator`: Whether or not the translator will be enabled. [true / false]  
 
 `reactions.enabled`: Whether or not the bot reacts to messages. [true / false]  
 `reactions.ids.*`: ID's of the emojis the bot reacts with according to the message. [Discord emoji ID]  

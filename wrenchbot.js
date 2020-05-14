@@ -130,7 +130,7 @@ client.on("message", async message => {
 
 	// Run the reactions and translator
 	reactions(message);
-	translate(message, translator);
+	if (!message.content.match(/\]tran|\]translate/)) translate(message);
 
 	// Increase read/ran values
 	messages.inc("number");
@@ -145,18 +145,9 @@ client.on("commandRun", (command, promise, message) => {
 client.on("messageUpdate", (oldMessage, message) => {
 	if (message.guild) automod(message);
 	reactions(message);
-	translate(message, translator);
+	translate(message);
 });
 
 // Log the bot in
 const auth = require("./auth");
 client.login(auth.token);
-
-// Login to the right translator
-let translator;
-if (config.translator.enabled) {
-	if (config.translator.provider === "yandex") translator = require("yandex-translate")(auth.yandex);
-	if (config.translator.provider === "google") translator = require("google-translate")(auth.google);
-	if (config.translator.provider === "baidu") translator = require("baidu-translate-api");
-	log.info(`Using ${config.translator.provider} Translate.`);
-}

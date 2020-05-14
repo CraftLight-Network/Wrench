@@ -3,6 +3,7 @@ const { log } = require("./logger");
 
 // Define and require modules
 const TokenBucket = require("limiter").TokenBucket;
+const translator = require("baidu-translate-api");
 const embed = require("../../data/js/util").embed;
 const similar = require("string-similarity");
 const { translations } = require("./enmap");
@@ -10,13 +11,18 @@ const config = require("../../config");
 const language = require("franc");
 
 // Translate function
-module.exports = async function translate(message, translator) {
+module.exports = async function translate(message, options) {
 	// Define variables
-	let translate = message.content;
+	let translate;
+	if (options && options.command && config.translator) {
+		translate = options.translation;
+		return startTranslate();
+	}
+	else translate = message.content;
 	let exit = false;
 
 	// Check if message is translatable
-	if (!config.translator.enabled || translate.charAt(0) === config.prefix.commands) return;
+	if (!config.translator || translate.charAt(0) === config.prefix.commands) return;
 
 	// Message sanitization
 	// Members
@@ -37,85 +43,44 @@ module.exports = async function translate(message, translator) {
 
 	// Detect language
 	const detectedLanguage = language.all(translate);
-	if (detectedLanguage[0][0] === "eng" || detectedLanguage[0][0] === "und" || detectedLanguage[1][1] < 0.75) return;
-	language.all(translate).some(e => {if (e[0] === "eng" && e[1] > 0.875) exit = true;});
+	if (detectedLanguage[0][0] === "eng" || detectedLanguage[0][0] === "und" || detectedLanguage[1][1] < 0.815 || detectedLanguage[3][1] < 0.815) return;
+	language.all(translate).some(e => {if (e[0] === "eng" && e[1] > 0.635) exit = true;});
 	if (exit) return;
 
+	return startTranslate();
+
+	async function startTranslate() {
 	// Ratelimiting
-	const monthBucket = new TokenBucket("10000000", "month", null);
-	if (!monthBucket.tryRemoveTokens(message.content.length)) return;
-	const dayBucket = new TokenBucket("322580", "day", null);
-	if (!dayBucket.tryRemoveTokens(message.content.length)) return;
+		const monthBucket = new TokenBucket("10000000", "month", null);
+		if (!monthBucket.tryRemoveTokens(message.content.length)) return;
+		const dayBucket = new TokenBucket("322580", "day", null);
+		if (!dayBucket.tryRemoveTokens(message.content.length)) return;
 
-	// Translate the message
-	switch (config.translator.provider) {
-		case "yandex":
-			translator.translate(translate, { "to": "en" }, (err, translated) => {
-				const options = {
-					"text": translated.text,
-					"lang": {
-						"from": translated.lang,
-						"to": ""
-					},
-					"link": "yandexTL",
-					"provider": "Yandex Translate"
-				};
+		// Define options if undefined
+		let input = options;
+		if (!input) input = { "from": "auto", "to": "en", "command": false };
 
-				translateEmbed(options);
-			}).catch(() => {}); break;
+		// Translate the message
+		translator(translate, { "from": input.from, "to": input.to }).then(translated => {
+			if (!input.command && translated.from === "en") return;
 
-		case "google":
-			translator.translate(translate, "en", (err, translated) => {
-				if (translated.detectedSourceLanguage === "en") return;
+			// Make sure translations are not the same
+			if (!input.command && similar.compareTwoStrings(translate, translated.trans_result.dst) >= 0.45) return;
+			if (translate === `${translated.trans_result.dst}`) return;
 
-				const options = {
-					"text": translated.translatedText,
-					"lang": {
-						"from": translated.detectedSourceLanguage,
-						"to": "-en"
-					},
-					"link": "googleTL",
-					"provider": "Google Translate"
-				};
+			// Log the result
+			translations.inc("number");
+			log.translate(`${message.author.tag} | ${translate} -> ${translated.trans_result.dst} (${translated.from}-${translated.to})`);
 
-				translateEmbed(options);
-			}).catch(() => {}); break;
-
-		case "baidu":
-			translator(translate).then(translated => {
-				if (translated.from === "en") return;
-
-				const options = {
-					"text": translated.trans_result.dst,
-					"lang": {
-						"from": translated.from,
-						"to": "-en"
-					},
-					"link": "baiduTL",
-					"provider": "Baidu Translate"
-				};
-
-				translateEmbed(options);
-			}).catch(() => {}); break;
-	}
-
-	function translateEmbed(options) {
-		// Make sure translations are not the same
-		if (similar.compareTwoStrings(translate, options.text) >= 0.45) return;
-		if (translate === `${options.text}`) return;
-
-		// Log the result
-		translations.inc("number");
-		log.translate(`${message.author.tag} | ${translate} -> ${options.text} (${options.lang.from}${options.lang.to})`);
-
-		const embedMessage = embed({
-			"author": {
-				"name": `${message.author.username} (${options.lang.from}${options.lang.to})`,
-				"picture": message.author.displayAvatarURL
-			},
-			"description": `**${options.text}**`,
-			"footer": `Translations from ${options.provider}. (http://cft.li/${options.link})`
-		});
-		return message.channel.send(embedMessage);
+			const embedMessage = embed({
+				"author": {
+					"name": `${message.author.username} (${translated.from}-${translated.to})`,
+					"picture": message.author.displayAvatarURL
+				},
+				"description": `**${translated.trans_result.dst}**`,
+				"footer": `Translations from Baidu Translate. (http://cft.li/baiduTL)`
+			});
+			return message.channel.send(embedMessage);
+		}).catch(() => {});
 	}
 };
