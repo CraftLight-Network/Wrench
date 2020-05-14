@@ -1,9 +1,9 @@
 // Define and require modules
-const getUserInput = require("../../data/js/getUserInput.js");
-const { embed } = require("../../data/js/embed.js");
+const userInput = require("../../data/js/util").getUserInput;
 const { Command } = require("discord.js-commando");
+const embed = require("../../data/js/util").embed;
 const { stripIndents } = require("common-tags");
-const config = require("../../config.json");
+const config = require("../../config");
 const hastebin = require("hastebin");
 const figlet = require("figlet");
 
@@ -18,10 +18,10 @@ module.exports = class asciiCommand extends Command {
 			"group": "fun",
 			"description": "Turn text in to figlet art.",
 			"details": stripIndents`
-				Run \`${config.prefix.commands}ascii [action] [args]\` to make figlet art.
+				Run \`${config.prefix.commands}ascii <action> (args)\` to make figlet art.
 				**Notes:**
-				[action]: Required, \`fonts\` to list fonts, or \`<font>\`.
-				[args]: Required if font is specified, text the art will be made of.
+				<action>: Required, \`fonts\` to list fonts, or \`<font>\`.
+				(args): Required depending on action, text the art will be made of.
 				Arguments must be under 100 characters.
 				Run \`${config.prefix.commands}ascii fonts\` to list all fonts.
 			`,
@@ -34,7 +34,7 @@ module.exports = class asciiCommand extends Command {
 				},
 				{
 					"key": "args",
-					"prompt": "What would you like to make ascii art of?",
+					"prompt": "",
 					"type": "string",
 					"default": "",
 					"validate": arg => {
@@ -54,20 +54,20 @@ module.exports = class asciiCommand extends Command {
 	async run(message, { action, args }) {
 		// Return link to fonts if specified
 		if (action === "fonts") {
-			const embedMessage = embed({ "message": message, "title": "Available Fonts:", "description": "https://hastebin.com/raw/aqihuvepem" });
+			const embedMessage = embed({ "message": message, "title": "Available Fonts:", "description": "https://dl.encode42.dev/data/txt/wrenchbot-fonts.txt" });
 			return message.channel.send(embedMessage);
 		} else {
 			// Take input if not specified
-			if (!args) args = await getUserInput(message, { "question": "What would you like to make ascii art of?" });
+			if (!args) args = await userInput(message, { "question": "What would you like to make ascii art of?" });
 			if (args === "cancel") return message.reply("Cancelled command.");
 
 			// Create and upload figlet to hastebin
-			hastebin.createPaste(figlet.textSync(args, action), {
+			hastebin.createPaste(figlet.textSync(args, action.replace("_", " ")), {
 				"raw": true,
 				"contentType": "text/plain",
 				"server": "https://hastebin.com"
 			}).then(function(link) {
-				const embedMessage = embed({ "message": message, "title": "Figlet link:", "description": link });
+				const embedMessage = embed({ "title": "Figlet link:", "description": link }, message);
 				return message.channel.send(embedMessage);
 			});
 		}

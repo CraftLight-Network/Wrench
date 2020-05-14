@@ -11,14 +11,6 @@ const guildConfig = new Enmap({
 	"dataDir": dataDir
 });
 
-// Temp bans
-const tempBans = new Enmap({
-	"name": "tempBans",
-	"autoFetch": true,
-	"fetchAll": false,
-	"dataDir": dataDir
-});
-
 // Command counter
 const commands = new Enmap({
 	"name": "commands",
@@ -54,7 +46,6 @@ const tags = new Enmap({
 
 module.exports = {
 	guildConfig,
-	tempBans,
 	commands,
 	messages,
 	translations,

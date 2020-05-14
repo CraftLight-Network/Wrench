@@ -1,11 +1,11 @@
 // Get logger
-const { log } = require("./logger.js");
+const { log } = require("./logger");
 
 // Define and require modules
+const embed = require("../../data/js/util").embed;
 const { stripIndents } = require("common-tags");
 const AntiSpam = require("discord-anti-spam");
-const { guildConfig } = require("./enmap.js");
-const { RichEmbed } = require("discord.js");
+const { guildConfig } = require("./enmap");
 const request = require("async-request");
 
 // Format + update bad links
@@ -42,14 +42,21 @@ const antiSpam = new AntiSpam({
 });
 
 antiSpam.on("spamThresholdWarn", (member) => {
-	const embed = new RichEmbed()
-		.setAuthor("Warning", member.displayAvatarURL)
-		.addField(`Do not spam!`, stripIndents`
-			The server does not want you to spam there.
-			Please change your message or slow down.
-		`)
-		.setColor("#E3E3E3");
-	member.send(embed);
+	const embedMessage = {
+		"author": {
+			"name": "Warning",
+			"picture": "me"
+		},
+		"fields": [
+			["Do not spam!", stripIndents`
+				The server does not want you to spam there.
+				Please change your message or slow down.
+			`]
+		],
+		"footer": "Action done by AutoMod"
+	};
+
+	member.send(embed(embedMessage, member));
 });
 
 module.exports = function automod(message) {
@@ -70,7 +77,7 @@ module.exports = function automod(message) {
 
 		// Delete and warn
 		await message.delete();
-		reply("spam", "spam");
+		reply(message, { "name": "spam", "code": "spam" });
 	}
 
 	// Check for invites
@@ -81,7 +88,7 @@ module.exports = function automod(message) {
 
 		// Delete and warn
 		await message.delete();
-		reply("send invite links", "invite");
+		reply(message, { "name": "send invite links", "code": "invite" });
 	}
 
 	// Check for bad links
@@ -92,7 +99,7 @@ module.exports = function automod(message) {
 
 		// Delete and warn
 		await message.delete();
-		reply("send bad links", "link");
+		reply(message, { "name": "send bad links", "code": "link" });
 	}
 
 	// Check for caps
@@ -106,20 +113,26 @@ module.exports = function automod(message) {
 
 		// Delete and warn
 		await message.delete();
-		reply("send all caps", "caps");
+		reply(message, { "name": "send all caps", "code": "caps" });
 	}
 
 	// Reply function
-	function reply(warning, warningCode) {
-		const embed = new RichEmbed()
-			.setAuthor("Warning", message.author.displayAvatarURL)
-			.addField(`Do not ${warning}!`, stripIndents`
-				The server ${message.guild.name} does not want you to ${warning} there.
-				If this was a mistake, you may edit your message without the ${warningCode}.
-			`)
-			.addField("Original Message", message)
-			.setFooter(`Action done by AutoMod`)
-			.setColor("#E3E3E3");
-		message.author.send(embed);
+	function reply(message, warning) {
+		const embedMessage = {
+			"author": {
+				"name": "Warning",
+				"picture": "me"
+			},
+			"fields": [
+				[`Do not ${warning}!`, stripIndents`
+					The server ${message.guild.name} does not want you to ${warning.name} there.
+					If this was a mistake, you may edit your message without the ${warning.code}.
+				`],
+				["Original message:", message]
+			],
+			"footer": "Action made by AutoMod"
+		};
+
+		message.author.send(embed(embedMessage, message));
 	}
 };

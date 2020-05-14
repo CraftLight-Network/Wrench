@@ -1,7 +1,7 @@
 // Define and require modules
 const { Command } = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const config = require("../../config.json");
+const config = require("../../config");
 
 module.exports = class sayCommand extends Command {
 	constructor(client) {
@@ -11,9 +11,9 @@ module.exports = class sayCommand extends Command {
 			"group": "misc",
 			"description": "Make the bot say stuff.",
 			"details": stripIndents`
-				Run \`${config.prefix.commands}say [args]\` to make the bot say anything.
+				Run \`${config.prefix.commands}say <message>\` to make the bot say anything.
 				**Notes:**
-				[args]: Required, what the bot will say.
+				<message>: Required, what the bot will say.
 				Arguments must be under 400 characters.
 			`,
 			"args": [

@@ -1,9 +1,10 @@
 // Define and require modules
 const { Random, MersenneTwister19937 } = require("random-js");
 const { Command } = require("discord.js-commando");
+const embed = require("../../data/js/util").embed;
 const { stripIndents } = require("common-tags");
-const { RichEmbed } = require("discord.js");
-const config = require("../../config.json");
+const config = require("../../config");
+const binary = require("binstring");
 const date = new Date();
 
 module.exports = class coolnessCommand extends Command {
@@ -14,17 +15,21 @@ module.exports = class coolnessCommand extends Command {
 			"group": "fun",
 			"description": "Calculate the coolness of a user.",
 			"details": stripIndents`
-				Run \`${config.prefix.commands}coolness [user]\` to calculate a user's coolness.
+				Run \`${config.prefix.commands}coolness [person]\` to calculate a user's coolness.
 				**Notes:**
-				[user]: Required, who's coolness will be calculated.
-				Valid format: \`@User#0000\`, \`User#0000\`, \`User\`. 
+				[person]: Optional, who's coolness will be calculated.
+				Arguments must be under 150 characters.
 			`,
 			"args": [
 				{
-					"key": "toCalculate",
-					"prompt": "Who would you like me to calculate the coolness of?",
-					"default": message => message.author,
-					"type": "user"
+					"key": "person",
+					"prompt": "",
+					"default": message => message.author.username,
+					"type": "string",
+					"validate": arg => {
+						if (arg.length < 150) return true;
+						return "Please use under 150 characters!";
+					}
 				}
 			],
 			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
@@ -35,14 +40,13 @@ module.exports = class coolnessCommand extends Command {
 		});
 	}
 
-	run(message, { toCalculate }) {
+	run(message, { person }) {
 		// Calculate random numbers for coolness based on date and user ID
-		const seed = new Random(MersenneTwister19937.seed(toCalculate.id));
-		const random = new Random(MersenneTwister19937.seed(date.getDate() - date.getDay()));
+		const seed = new Random(MersenneTwister19937.seed(binary(person, { "out": "hex" }).replace(/[^0-9]/g, ""))).engine.data[0] +
+		new Random(MersenneTwister19937.seed(date.getDate() - date.getDay())).engine.data[0];
+
 		// Daily RNG
-		const difference100 = seed.integer(0, 100) - 100;
-		const differenceRest = 100 - seed.integer(0, 100);
-		const coolness = seed.integer(0, 100) - random.integer(difference100, differenceRest);
+		const coolness = new Random(MersenneTwister19937.seed(seed)).integer(0, 100);
 
 		// Define the emote to be used
 		let style =					{ "emote": "shades",	"color": "#00FF00", "bar": "[===============   ]" };
@@ -51,15 +55,19 @@ module.exports = class coolnessCommand extends Command {
 		if (coolness < 25) style =	{ "emote": "cross",		"color": "#FF0000", "bar": "[===               ]" };
 
 		// Max out/empty percent bar according to values
-		if (coolness === 100) style.bar = "[==================]";
-		if (coolness === 0) style.bar = "[                  ]";
+		if (coolness > 95) style.bar = "[==================]";
+		if (coolness < 5) style.bar = "[                  ]";
 
-		const embed = new RichEmbed()
-			.attachFiles([`data/img/emotes/${style.emote}.png`])
-			.setAuthor(`${toCalculate.username} is ${coolness}% cool.`, `attachment://${style.emote}.png`)
-			.setDescription(`\`${style.bar}\``)
-			.setFooter(`Requested by ${message.author.tag}`)
-			.setColor(style.color);
-		return message.channel.send(embed);
+		const embedMessage = {
+			"attachments": [`data/img/emotes/${style.emote}.png`],
+			"title": "Coolness results:",
+			"description": stripIndents`
+				**${person} is ${coolness}% cool.**
+				\`${style.bar}\`
+			`,
+			"color": style.color,
+			"thumbnail": `attachment://${style.emote}.png`
+		};
+		return message.channel.send(embed(embedMessage, message));
 	}
 };

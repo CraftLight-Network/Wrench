@@ -1,9 +1,10 @@
 // Define and require modules
 const { Command } = require("discord.js-commando");
+const embed = require("../../data/js/util").embed;
 const { stripIndents } = require("common-tags");
-const config = require("../../config.json");
-const { embed } = require("../../data/js/embed.js");
-const values = ["author", "author.name", "author.picture", "title", "description", "footer", "color", "fields"];
+const config = require("../../config");
+
+const values = ["author", "author.name", "author.picture", "title", "url", "thumbnail", "description", "footer", "color", "fields", "image"];
 
 module.exports = class embedCommand extends Command {
 	constructor(client) {
@@ -13,14 +14,14 @@ module.exports = class embedCommand extends Command {
 			"group": "misc",
 			"description": "Create an embedded message.",
 			"details": stripIndents`
-				Run \`${config.prefix.commands}embed [JSON]\` to make an embed
+				Run \`${config.prefix.commands}embed <JSON>\` to make an embed
 				**Notes:**
-				[JSON]: Required, the contents of the embed.
+				<JSON>: Required, the contents of the embed.
 				How to format JSON: JSON always starts and ends with \`{\`/\`}\`
-				For an example on how to format the JSON for this command, run
-				\`${config.prefix.commands}help embed\`
+				For an example on how to format the JSON for this command,
+				look a bit below these notes.
 
-				JSON elements: \`${values.join("`, ")}\`
+				JSON elements: \`${values.join("`, `")}\`
 			`,
 			"examples": [
 				`${config.prefix.commands}embed {"footer": "Hello"}`,
@@ -38,10 +39,7 @@ module.exports = class embedCommand extends Command {
 				`, `
 \`\`\`json
 {
-	"author": {
-		"name": "Cool Guy",
-		"picture": "me"
-	}
+	"author": { "name": "Cool Guy" }
 	"fields": [
 		["Field 1", "This is a field that is next to another", true],
 		["Field 2", "This is a field that is next to another", true],
@@ -52,8 +50,8 @@ module.exports = class embedCommand extends Command {
 			`],
 			"args": [
 				{
-					"key": "embedArgs",
-					"prompt": "What is the message you would like to count?",
+					"key": "embedJSON",
+					"prompt": "What is the JSON you would like to embed?",
 					"type": "string"
 				}
 			],
@@ -65,11 +63,8 @@ module.exports = class embedCommand extends Command {
 		});
 	}
 
-	run(message, { embedArgs }) {
-		const json = JSON.parse(embedArgs.match(/{[^]+}/));
-		json.message = message;
-
-		const embedMessage = embed(json);
-		return message.channel.send(embedMessage);
+	run(message, { embedJSON }) {
+		const embedMessage = JSON.parse(embedJSON.match(/{[^]+}/));
+		return message.channel.send(embed(embedMessage, message));
 	}
 };

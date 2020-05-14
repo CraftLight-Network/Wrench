@@ -1,4 +1,5 @@
 // Define and require modules
+const configHandler = require("./configHandler");
 const winston = require("winston");
 require("winston-daily-rotate-file");
 
@@ -50,9 +51,9 @@ const log = new (winston.Logger)({
 });
 
 module.exports.log = log;
-module.exports.logger = function logger(mode, client, date, guildConfig, defaultConfig) {
+module.exports.logger = function logger(client, options) {
 	// Unhandled rejections
-	process.on("unhandledRejection", (err, p) => {log.error(`Rejected Promise: ${p} / Rejection: ${err}`)});
+	process.on("unhandledRejection", (err, p) => {log.error(`Rejected Promise: ${p.toString()} | Rejection: ${err}`)});
 
 	// Connection events
 	client.on("reconnecting", () => log.info("Reconnecting to Discord..."));
@@ -61,7 +62,7 @@ module.exports.logger = function logger(mode, client, date, guildConfig, default
 	// Guild events
 	client.on("guildCreate", guild => {
 		log.info(`Added to ${guild.name} (ID: ${guild.id})`);
-		guildConfig.ensure(guild.id);
+		configHandler.ensure(guild);
 	});
 	client.on("guildDelete", guild => log.info(`Removed from ${guild.name} (ID: ${guild.id})`));
 

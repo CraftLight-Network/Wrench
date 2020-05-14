@@ -28,7 +28,8 @@
 
 // Define and require modules
 const { CommandoClient } = require("discord.js-commando");
-const config = require("./config.json");
+const configHandler = require("./data/js/configHandler");
+const config = require("./config");
 const moment = require("moment");
 const path = require("path");
 const fs = require("fs");
@@ -65,18 +66,18 @@ const sleep = require("discord.js").Util;
 
 // Get Enmap
 const Enmap = require("enmap");
-const { guildConfig, tempBans, commands, messages, translations } = require("./data/js/enmap.js");
-const defaultConfig = require("./data/json/default.json");
+const { commands, messages, translations } = require("./data/js/enmap");
+const defaultConfig = require("./data/json/default");
 
 // Logger
 const date = moment().format("M/D/YY hh:mm:ss A");
-const { log, logger } = require("./data/js/logger.js");
-logger("all", client, date, guildConfig, defaultConfig);
+const { log, logger } = require("./data/js/logger");
+logger(client);
 
 // Start modules
-const automod = require("./data/js/automod.js");
-const translate = require("./data/js/translate.js");
-const reactions = require("./data/js/reactions.js");
+const automod = require("./data/js/automod");
+const translate = require("./data/js/translate");
+const reactions = require("./data/js/reactions");
 
 client.on("ready", () => {
 	commands.ensure("number", 0);
@@ -114,9 +115,8 @@ client.on("message", async message => {
 	if (message.author.bot) return;
 
 	if (message.guild) {
-		// Make sure enmap exists
-		guildConfig.ensure(message.guild.id, defaultConfig);
-		guildConfig.fetchEverything();
+		// Get the config
+		configHandler.ensure(message.guild.id);
 
 		// Run the automod
 		automod(message);
@@ -149,7 +149,7 @@ client.on("messageUpdate", (oldMessage, message) => {
 });
 
 // Log the bot in
-const auth = require("./auth.json");
+const auth = require("./auth");
 client.login(auth.token);
 
 // Login to the right translator

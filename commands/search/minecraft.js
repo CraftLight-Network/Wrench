@@ -1,14 +1,14 @@
 // Define and require modules
-const getUserInput = require("../../data/js/getUserInput.js");
+const userInput = require("../../data/js/util").getUserInput;
 const { Random, nativeMath } = require("random-js");
 const { Command } = require("discord.js-commando");
+const embed = require("../../data/js/util").embed;
 const { stripIndents } = require("common-tags");
-const { RichEmbed } = require("discord.js");
-const config = require("../../config.json");
 const request = require("async-request");
+const config = require("../../config");
 
 // Actions array
-const actions	= ["skin", "info", "actions"];
+const actions	= ["skin", "info"];
 const skinTypes = ["skin", "face", "front", "frontfull", "head", "bust", "full"];
 const dataTypes = ["names", "name", "uuid"];
 
@@ -21,11 +21,15 @@ module.exports = class minecraftCommand extends Command {
 			"group": "search",
 			"description": "Get information on a Minecraft player.",
 			"details": stripIndents`
-				Run \`${config.prefix.commands}minecraft [action] [args]\` to use commands.
+				Run \`${config.prefix.commands}minecraft <action> (player) (args)\` to use commands.
 				**Notes:**
-				[action]: Required, run \`${config.prefix.commands}minecraft actions\` for actions.
-				[player]: Required, in-game name or UUID of the player.
-				[args] Required, data for specified action to use.
+				<action>: Required, what to do.
+				(player): Required depending on action, in-game name or UUID of the player.
+				(args): Required depending on action, data for specified action to use.
+
+				Actions: \`${actions.join("`, `")}\`
+				Skin types: \`${skinTypes.join("`, `")}\`
+				Data types: \`${dataTypes.join("`, `")}\`
 			`,
 			"args": [
 				{
@@ -56,23 +60,8 @@ module.exports = class minecraftCommand extends Command {
 	}
 
 	async run(message, { action, player, args }) {
-		// List available actions
-		if (action === "actions") {
-			const embed = new RichEmbed()
-				.setAuthor(`${config.prefix.commands}minecraft Actions`, message.author.displayAvatarURL)
-				.setDescription(stripIndents`
-					\`skin\`: Grab the skin of a player
-					Valid args: \`${skinTypes.join("`, `")}\`
-
-					\`info\`: Get the info of a player
-					Valid args: \`${dataTypes.join("`, `")}\`
-				`)
-				.setColor("#E3E3E3");
-			return message.channel.send(embed);
-		}
-
 		// Get player variable if not defined
-		if (!player) player = await getUserInput(message, { "question": "What is the in-game name or UUID of the player?" });
+		if (!player) player = await userInput(message, { "question": "What is the in-game name or UUID of the player?" });
 		if (player === "cancel") return message.reply("Cancelled command.");
 
 		// Get a random number to fix cache issues
@@ -95,10 +84,13 @@ module.exports = class minecraftCommand extends Command {
 
 		// Skin actions
 		if (action === "skin") {
-			// Get skin variable if not defined
+			// Make sure skin type if valid
+			if (!args || !skinTypes.some(l => args.includes(l))) {args = ""; message.say("Invalid skin type.")};
+
+			// Undefined skin action
 			if (!args) {
-				args = await getUserInput(message, {
-					"question": `How would you like the skin? (${skinTypes.join(", ")})`,
+				args = await userInput(message, {
+					"question": `How would you like the skin? (\`${skinTypes.join("`, `")}\`)`,
 					"validate": {
 						"name": "skin type",
 						"array": skinTypes
@@ -107,12 +99,13 @@ module.exports = class minecraftCommand extends Command {
 			}
 			if (args === "cancel") return message.reply("Cancelled command.");
 
-			const embed = new RichEmbed()
-				.setAuthor(`${name[0].name}'s skin (${args})`, `https://visage.surgeplay.com/face/${uuid}.png?${number}`)
-				.setImage(`https://visage.surgeplay.com/${args}/${uuid}.png?${number}`)
-				.setColor("#E3E3E3");
+			const embedMessage = {
+				"title": `${name[0].name}'s skin (${args})`,
+				"thumbnail": `https://visage.surgeplay.com/face/16/${uuid}.png?${number}`,
+				"image": `https://visage.surgeplay.com/${args}/${uuid}.png?${number}`
+			};
 
-			return message.channel.send(embed);
+			return message.channel.send(embed(embedMessage, message));
 		}
 
 		// Data actions
@@ -122,8 +115,8 @@ module.exports = class minecraftCommand extends Command {
 
 			// Undefined data action
 			if (!args) {
-				args = await getUserInput(message, {
-					"question": `What info would you like to grab? (${dataTypes.join(", ")})`,
+				args = await userInput(message, {
+					"question": `What info would you like to grab? (\`${dataTypes.join("`, `")}\`)`,
 					"validate": {
 						"name": "data type",
 						"array": dataTypes
@@ -134,36 +127,38 @@ module.exports = class minecraftCommand extends Command {
 
 			// Grab names
 			if (args === "names") {
-				const embed = new RichEmbed()
-					.setAuthor(`${name[0].name}'s names`, `https://visage.surgeplay.com/face/${uuid}.png?${number}`)
-					.setDescription("```")
-					.setColor("#E3E3E3");
+				const embedMessage = {
+					"title": `${name[0].name}'s names`,
+					"thumbnail": `https://visage.surgeplay.com/face/16/${uuid}.png?${number}`,
+					"description": "```"
+				};
 
 				name.forEach(function(i, index) {
-					if (name.length === 1) {embed.description += `\n*Purchased | ${i.name} (Current)`; return};
-					if (index + 1 === name.length) {embed.description += `\nPurchased | ${i.name} (Original)`; return};
+					if (name.length === 1) {embedMessage.description += `\n*Purchased | ${i.name} (Current)`; return};
+					if (index + 1 === name.length) {embedMessage.description += `\nPurchased | ${i.name} (Original)`; return};
 
 					const changedAt = new Date(i.changedToAt).toLocaleDateString("en-US", { "month": "2-digit", "day": "2-digit", "year": "2-digit" });
-					if (index === 0) {embed.description += `\n${changedAt}  | ${i.name} (Current)`; return};
-					embed.description += `\n${changedAt}  | ${i.name}`;
+					if (index === 0) {embedMessage.description += `\n${changedAt}  | ${i.name} (Current)`; return};
+					embedMessage.description += `\n${changedAt}  | ${i.name}`;
 				});
-				embed.description += "```";
+				embedMessage.description += "```";
 
-				return message.channel.send(embed);
+				return message.channel.send(embed(embedMessage, message));
 			}
 			// Grab UUID or name
 			if (args === "uuid" || args === "name") {
-				const embed = new RichEmbed()
-					.setAuthor(`${name[0].name}'s name + UUID`, `https://visage.surgeplay.com/face/${uuid}.png?${number}`)
-					.setDescription(stripIndents`
+				const embedMessage = {
+					"title": `${name[0].name}'s name + UUID`,
+					"thumbnail": `https://visage.surgeplay.com/face/16/${uuid}.png?${number}`,
+					"description": stripIndents`
 						\`\`\`
 						Name | ${player.name}
 						UUID | ${uuid}
 						\`\`\`
-					`)
-					.setColor("#E3E3E3");
+					`
+				};
 
-				return message.channel.send(embed);
+				return message.channel.send(embed(embedMessage, message));
 			}
 		}
 	}

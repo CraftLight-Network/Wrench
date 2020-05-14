@@ -1,9 +1,9 @@
 // Define and require modules
 const { Random, MersenneTwister19937 } = require("random-js");
 const { Command } = require("discord.js-commando");
+const embed = require("../../data/js/util").embed;
 const { stripIndents } = require("common-tags");
-const { RichEmbed } = require("discord.js");
-const config = require("../../config.json");
+const config = require("../../config");
 const binary = require("binstring");
 
 module.exports = class shipCommand extends Command {
@@ -16,8 +16,8 @@ module.exports = class shipCommand extends Command {
 			"details": stripIndents`
 				Run \`${config.prefix.commands}ship [person1] [person2]\` to calculate compatibility.
 				**Notes:**
-                [user1]: Required, first person to calculate.
-                [user2]: Required, second person to calculate.
+                [person1]: Required, first person to calculate.
+                [person2]: Required, second person to calculate.
                 Valid format: \`@User#0000\`, \`User\`.
                 Arguments must be under 25 characters.
 			`,
@@ -27,17 +27,18 @@ module.exports = class shipCommand extends Command {
 					"prompt": "Who is the first person you would like to ship?",
 					"type": "string",
 					"validate": arg => {
-						if (arg.length < 25) return true;
-						return "please use under 25 characters!";
+						if (arg.length < 150) return true;
+						return "Please use under 150 characters!";
 					}
 				},
 				{
 					"key": "person2",
-					"prompt": "Who is the second person you would like to ship?",
+					"prompt": "",
+					"default": message => message.author.username,
 					"type": "string",
 					"validate": arg => {
-						if (arg.length < 25) return true;
-						return "Please use under 25 characters!";
+						if (arg.length < 150) return true;
+						return "Please use under 150 characters!";
 					}
 				}
 			],
@@ -50,17 +51,6 @@ module.exports = class shipCommand extends Command {
 	}
 
 	run(message, { person1, person2 }) {
-		// Turn mentions into strings
-		if (person1.match(/<@![0-9]*>/)) {
-			if (!message.guild) return message.reply("Do not use mentions in DM's!");
-			try {person1 = message.guild.member(person1.replace(/[<@!>]/g, "")).displayName} catch (error) {message.reply("I'm not sure who person 1 is.")};
-		}
-
-		if (person2.match(/<@![0-9]*>/)) {
-			if (!message.guild) return message.reply("Do not use mentions in DM's!");
-			try {person2 = message.guild.member(person2.replace(/[<@!>]/g, "")).displayName} catch (error) {message.reply("I'm not sure who person 2 is.")};
-		}
-
 		// Calculate seed based on binary of persons
 		const seed = new Random(MersenneTwister19937.seed(binary(person1, { "out": "hex" }).replace(/[^0-9]/g, ""))).engine.data[0] +
 		new Random(MersenneTwister19937.seed(binary(person2, { "out": "hex" }).replace(/[^0-9]/g, ""))).engine.data[0];
@@ -75,15 +65,19 @@ module.exports = class shipCommand extends Command {
 		if (ship < 25) style =	{ "emote": "broken_heart",		"color": "#FF0000", "bar": "[===               ]" };
 
 		// Max out/empty percent bar according to values
-		if (ship === 100) style.bar = "[==================]";
-		if (ship === 0) style.bar = "[                  ]";
+		if (ship > 95) style.bar = "[==================]";
+		if (ship < 5) style.bar = "[                  ]";
 
-		const embed = new RichEmbed()
-			.attachFiles([`data/img/emotes/${style.emote}.png`])
-			.setAuthor(`${person1} and ${person2} are ${ship}% compatible.`, `attachment://${style.emote}.png`)
-			.setDescription(`\`${style.bar}\``)
-			.setFooter(`Requested by ${message.author.tag}`)
-			.setColor(style.color);
-		return message.channel.send(embed);
+		const embedMessage = {
+			"attachments": [`data/img/emotes/${style.emote}.png`],
+			"title": "Ship results:",
+			"description": stripIndents`
+				**${person1} and ${person2} are ${ship}% compatible.**
+				\`${style.bar}\`
+			`,
+			"thumbnail": `attachment://${style.emote}.png`,
+			"color": style.color
+		};
+		return message.channel.send(embed(embedMessage, message));
 	}
 };

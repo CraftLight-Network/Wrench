@@ -1,12 +1,13 @@
 /* eslint-disable spaced-comment */
 // Define and require modules
-const { guildConfig } = require("./enmap.js");
-const config = require("../../config.json");
+const config = require("../../config");
 
-module.exports = function reactions(message) {
+module.exports = async (message) => {
+	const guildConfig = await require("../../data/js/configHandler").getConfig(message.guild.id);
+	console.log(guildConfig);
 	const content = message.content;
 
-	if (!message.guild || guildConfig.get(message.guild.id, "misc.reactions.greetings")) checkGreetings();
+	if (!message.guild || guildConfig.misc.reactions.greetings) checkGreetings();
 	async function checkGreetings() {
 		let found = false;
 		const greeting = ["hello", "hi", "hey", "howdy", "sup", "yo", "hola", "hallo", "bonjour", "salut", "ciao", "konnichiwa", "hiya", "heyo"];
@@ -30,7 +31,7 @@ module.exports = function reactions(message) {
 			if (!found) message.react("👋").then(async () => {await message.react("🇧"); await message.react("🇾"); message.react("🇪")});
 		}
 	}
-	if (config.reactions.enabled && (!message.guild || guildConfig.get(message.guild.id, "misc.reactions.emotes"))) checkEmotes();
+	if (config.reactions.enabled && (!message.guild || guildConfig.misc.reactions.emotes)) checkEmotes();
 	function checkEmotes() {
 		if (content.match(/pog|pogchamp/gi))	message.react(config.reactions.ids.pogchamp);
 		if (content.match(/lul|lol/gi))			message.react(config.reactions.ids.lul);

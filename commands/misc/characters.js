@@ -1,8 +1,8 @@
 // Define and require modules
-const { embed } = require("../../data/js/embed.js");
 const { Command } = require("discord.js-commando");
+const embed = require("../../data/js/util").embed;
 const { stripIndents } = require("common-tags");
-const config = require("../../config.json");
+const config = require("../../config");
 
 module.exports = class charactersCommand extends Command {
 	constructor(client) {
@@ -13,9 +13,9 @@ module.exports = class charactersCommand extends Command {
 			"group": "misc",
 			"description": "Count how many characters are in a message.",
 			"details": stripIndents`
-				Run \`${config.prefix.commands}character [args]\` to count the characters in your message.
+				Run \`${config.prefix.commands}characters <args>\` to count the characters in your message.
 				**Notes:**
-				[args]: Required, what the bot will count.
+				<args>: Required, what the bot will count.
 			`,
 			"args": [
 				{
@@ -33,7 +33,7 @@ module.exports = class charactersCommand extends Command {
 	}
 
 	run(message, { toCount }) {
-		const embedMessage = embed({ "message": message, "title": "Character Count:", "description": toCount.length });
-		return message.channel.send(embedMessage);
+		const embedMessage = { "title": "Character Count:", "description": toCount.length };
+		return message.channel.send(embed(embedMessage, message));
 	}
 };

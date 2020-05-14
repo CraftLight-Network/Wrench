@@ -1,12 +1,12 @@
 // Get logger
-const { log } = require("./logger.js");
+const { log } = require("./logger");
 
 // Define and require modules
-const { embed } = require("../../data/js/embed.js");
 const TokenBucket = require("limiter").TokenBucket;
-const { translations } = require("./enmap.js");
+const embed = require("../../data/js/util").embed;
 const similar = require("string-similarity");
-const config = require("../../config.json");
+const { translations } = require("./enmap");
+const config = require("../../config");
 const language = require("franc");
 
 // Translate function
@@ -62,7 +62,7 @@ module.exports = async function translate(message, translator) {
 				};
 
 				translateEmbed(options);
-			}).catch(); break;
+			}).catch(() => {}); break;
 
 		case "google":
 			translator.translate(translate, "en", (err, translated) => {
@@ -79,7 +79,7 @@ module.exports = async function translate(message, translator) {
 				};
 
 				translateEmbed(options);
-			}).catch(); break;
+			}).catch(() => {}); break;
 
 		case "baidu":
 			translator(translate).then(translated => {
@@ -96,7 +96,7 @@ module.exports = async function translate(message, translator) {
 				};
 
 				translateEmbed(options);
-			}).catch(function() {}); break;
+			}).catch(() => {}); break;
 	}
 
 	function translateEmbed(options) {
