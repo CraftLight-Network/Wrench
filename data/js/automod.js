@@ -17,12 +17,13 @@ async function createBadLinks() {
 
 	// Format the bad links file
 	badLinks = await hosts.body
-		.replace(/#.*|[0-9].[0-9].[0-9].[0-9]\s|^((?!.*\..*).)*$/gmi, "")
+		.replace(/#.*|[0-9].[0-9].[0-9].[0-9]\s|^((?!.*\..*).)*$|https|http|:\/\//gmi, "")
 		.trim()
 		.split("\n")
 		.slice(14)
 		.map(file => file.trim().replace(/\s/g, ""))
 		.filter(Boolean);
+
 	log.info("Bad links array is ready!");
 	hosts = "";
 }
@@ -100,7 +101,7 @@ module.exports.automod = async (message) => {
 	if (guildConfig.automod.modules.badLinks == true) checkBadLinks();
 	async function checkBadLinks() {
 		// Make sure there are bad links
-		if (content === "" || !badLinks.some(l => content.includes(l))) return;
+		if (content === "" || !badLinks.some(l => content.split(" ").includes(l))) return;
 
 		// Delete and warn
 		await message.delete();
@@ -129,7 +130,7 @@ module.exports.automod = async (message) => {
 				"picture": "me"
 			},
 			"fields": [
-				[`Do not ${warning}!`, stripIndents`
+				[`Do not ${warning.name}!`, stripIndents`
 					The server ${message.guild.name} does not want you to ${warning.name} there.
 					If this was a mistake, you may edit your message without the ${warning.code}.
 				`],
