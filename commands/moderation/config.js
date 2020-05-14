@@ -1,8 +1,6 @@
 // Define and require modules
 const configHandler = require("../../data/js/configHandler");
-const userInput = require("../../data/js/util").getUserInput;
 const checkRole = require("../../data/js/util").checkRole;
-const { guildConfig } = require("../../data/js/enmap");
 const { Command } = require("discord.js-commando");
 const embed = require("../../data/js/util").embed;
 const { stripIndents } = require("common-tags");
@@ -61,7 +59,6 @@ module.exports = class configCommand extends Command {
 		const guildConfig = await configHandler.getConfig(message.guild.id);
 
 		if (!checkRole(guildConfig.automod.modRoleIDs, message)) return message.reply("You do not have permission to use this command.");
-
 
 		if (action === "view") {
 			const embedMessage = {
