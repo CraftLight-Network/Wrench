@@ -5,7 +5,7 @@ const Enmap = require("enmap");
 // Per-server settings
 const guildConfig = new Enmap({
 	"name": "guildConfig",
-	"fetchAll": false,
+	"fetchAll": true,
 	"autoFetch": true,
 	"cloneLevel": "deep",
 	"dataDir": dataDir

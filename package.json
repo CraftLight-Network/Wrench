@@ -42,6 +42,7 @@
     "moment": "^2.24.0",
     "random-js": "^2.1.0",
     "request": "^2.88.0",
+    "safe-eval": "^0.4.1",
     "string-similarity": "^3.0.0",
     "tictactoe-complex-ai": "^1.0.1",
     "wikijs": "^6.0.1",

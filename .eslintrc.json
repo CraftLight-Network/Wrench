@@ -32,6 +32,8 @@
         "handle-callback-err": "off",
         "no-self-assign": "off",
 		"no-unused-expressions": "warn",
-		"brace-style": "off"
+		"brace-style": "off",
+		"no-prototype-builtins": "off",
+		"no-return-assign": "off"
     }
 }
