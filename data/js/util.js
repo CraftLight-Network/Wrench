@@ -1,6 +1,7 @@
 // Define and require modules
 const { stripIndents } = require("common-tags");
 const { RichEmbed } = require("discord.js");
+const config = require("../../config");
 
 // Truncate string
 module.exports.truncate = (input, length) => {
@@ -89,4 +90,14 @@ module.exports.getUserInput = async (message, options) => {
 		}
 	}
 	return result;
+};
+
+// Permission check
+module.exports.checkRole = (roles, message) => {
+	let hasRole = false;
+	roles.some(r => {
+		if (message.member.roles.has(r)) return hasRole = true;
+	});
+	if (!hasRole && message.author.id !== message.guild.owner.id && !config.owners.includes(message.author.id)) return false;
+	return true;
 };
