@@ -7,7 +7,6 @@ const { stripIndents } = require("common-tags");
 const request = require("async-request");
 const config = require("../../config");
 
-// Actions array
 const actions	= ["skin", "info"];
 const skinTypes = ["skin", "face", "front", "frontfull", "head", "bust", "full"];
 const dataTypes = ["names", "name", "uuid"];

@@ -3,7 +3,7 @@ const { stripIndents } = require("common-tags");
 const { RichEmbed } = require("discord.js");
 
 // Truncate string
-module.exports.truncate = function(input, length) {
+module.exports.truncate = (input, length) => {
 	return input.length > length ? input.slice(0, length - 1).trim() + "..." : input;
 };
 

@@ -5,8 +5,9 @@ const embed = require("../../data/js/util").embed;
 const { stripIndents } = require("common-tags");
 const config = require("../../config");
 
-// Get Enmap
 const actions = ["list", "create", "delete", "view", "[tag name]"];
+
+// Get Enmap
 const { tags } = require("../../data/js/enmap");
 const defaultTag = [{
 	"title": "default",
