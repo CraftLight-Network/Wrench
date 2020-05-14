@@ -71,7 +71,7 @@ Many features of the bot can be configured server-side and guild-side.
 `channels.counting.enabled`: Whether or not the counting minigame channel is enabled. [true / false]  
 `channels.counting.channelIDs`: List of channel IDs to allow the counting minigame in. [Discord channel ID]  
 `channels.log.enabled`: Whether or not the log channel is enabled. [true / false]  
-`channels.log.channelIDs`: List of channel IDs to send logs in. [Discord channel ID]  
+`channels.log.channelID`: What channel to send logs in. [Discord channel ID]  
 `channels.log.modules`: What modules the logger will log.  
 Modules: `moderation` (AutoMod), `server` (Region, Role, etc. changes), `member` (Join/Leave, Bans, etc.), `channel` (Channel changes), `emoji`  
 &nbsp;<sub>_All modules are booleans (true / false)_</sub>  
