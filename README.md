@@ -83,6 +83,7 @@ Modules: `moderation` (AutoMod), `server` (Region, Role, etc. changes), `member`
 `automod.modRoleIDs`: List of role IDs that allow server moderation commands. [Discord role ID]  
 `automod.modules`: What modules the automod will use.  
 Modules: `spam`, `invites`, `badLinks`, `caps`  
+&nbsp;<sub>_All modules are booleans (true / false)_</sub>  
 
 **Misc**  
 `misc.translator`: Whether or not the auto translator is enabled. (true / false)  
