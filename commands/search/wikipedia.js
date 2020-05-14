@@ -3,7 +3,6 @@ const truncate = require("../../data/js/util").truncate;
 const { Command } = require("discord.js-commando");
 const embed = require("../../data/js/util").embed;
 const { stripIndents } = require("common-tags");
-const { RichEmbed } = require("discord.js");
 const wikipedia = require("wikijs").default;
 const config = require("../../config");
 
