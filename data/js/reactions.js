@@ -4,7 +4,6 @@ const config = require("../../config");
 
 module.exports = async (message) => {
 	const guildConfig = await require("../../data/js/configHandler").getConfig(message.guild.id);
-	console.log(guildConfig);
 	const content = message.content;
 
 	if (!message.guild || guildConfig.misc.reactions.greetings) checkGreetings();
