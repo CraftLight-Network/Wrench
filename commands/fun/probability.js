@@ -66,6 +66,7 @@ module.exports = class probabilityCommand extends Command {
 		if (probability > 95) style.bar = "[==================]";
 		if (probability < 5) style.bar = "[                  ]";
 
+		// Send the probability
 		const embedMessage = {
 			"attachments": [`data/img/emotes/${style.emote}.png`],
 			"title": "Ship results:",

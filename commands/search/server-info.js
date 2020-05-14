@@ -50,19 +50,21 @@ module.exports = class serverInfoCommand extends Command {
 
 		const embedMessage = { "title": `${guild.name} Info:`, "fields": [] };
 
-		// Image links
+		// Server icon link/image
 		const iconURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`;
 		if (guild.icon) {
 			icon = `[Click](${iconURL})`;
 			embedMessage.thumbnail = iconURL;
 		} else icon = "None";
 
+		// Splash link/image
 		const splashURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.splash}.png`;
 		if (guild.splash) {
 			splash = `[Click](${splashURL})`;
 			embedMessage.image = splashURL;
 		} else splash = "None";
 
+		// "All" level
 		if (actions.indexOf(action) > 0) {
 			embedMessage.fields.push(
 				["name", guild.name, true],
@@ -77,6 +79,7 @@ module.exports = class serverInfoCommand extends Command {
 			);
 		}
 
+		// "Advanced" level
 		if (actions.indexOf(action) > 1) {
 			embedMessage.fields.push(
 				["Verification", verificationLevel[guild.verificationLevel], true],
@@ -88,6 +91,7 @@ module.exports = class serverInfoCommand extends Command {
 			);
 		}
 
+		// Default/standard level
 		embedMessage.fields.push(
 			["Channels", guild.channels.size, true],
 			["Emojis", guild.emojis.size, true],
@@ -97,8 +101,7 @@ module.exports = class serverInfoCommand extends Command {
 			["Total users", guild.memberCount, true]
 		);
 
-		console.log(embedMessage.fields);
-
+		// Send the info
 		return message.channel.send(embed(embedMessage, message));
 	}
 };

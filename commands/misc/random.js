@@ -44,6 +44,7 @@ module.exports = class randomCommand extends Command {
 		if (min > max) [min, max] = [max, min];
 		const random = new Random(nativeMath);
 
+		// Send the number
 		const embedMessage = { "title": `Random Number ${min} - ${max}:`, "description": random.integer(min, max) };
 		return message.channel.send(embed(embedMessage, message));
 	}

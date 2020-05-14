@@ -68,6 +68,7 @@ module.exports = class shipCommand extends Command {
 		if (ship > 95) style.bar = "[==================]";
 		if (ship < 5) style.bar = "[                  ]";
 
+		// Send the ship
 		const embedMessage = {
 			"attachments": [`data/img/emotes/${style.emote}.png`],
 			"title": "Ship results:",

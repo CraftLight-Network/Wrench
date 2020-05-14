@@ -58,6 +58,7 @@ module.exports = class coolnessCommand extends Command {
 		if (coolness > 95) style.bar = "[==================]";
 		if (coolness < 5) style.bar = "[                  ]";
 
+		// Send the coolness
 		const embedMessage = {
 			"attachments": [`data/img/emotes/${style.emote}.png`],
 			"title": "Coolness results:",
