@@ -1,3 +1,4 @@
+/* eslint eqeqeq: "off" */
 // Define and require modules
 const configHandler = require("../../data/js/configHandler");
 const config = require("../../config");
