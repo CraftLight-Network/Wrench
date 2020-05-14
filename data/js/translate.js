@@ -11,7 +11,7 @@ const config = require("../../config");
 const language = require("franc");
 
 // Translate function
-module.exports = async function translate(message, options) {
+module.exports.translate = async (message, options) => {
 	// Define variables
 	let translate;
 	if (options && options.command && config.translator) {

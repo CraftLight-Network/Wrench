@@ -34,7 +34,8 @@
 		"no-unused-expressions": "warn",
 		"brace-style": "off",
 		"no-prototype-builtins": "off",
-		"no-return-assign": "off"
+		"no-return-assign": "off",
+		"eqeqeq": "warn"
 	},
 	"ignorePatterns": ["node_modules"]
 }

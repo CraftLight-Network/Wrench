@@ -1,3 +1,4 @@
+/* eslint eqeqeq: "off" */
 /*
               _______
              /       \
@@ -67,7 +68,6 @@ const sleep = require("discord.js").Util;
 // Get Enmap
 const Enmap = require("enmap");
 const { commands, messages, translations } = require("./data/js/enmap");
-const defaultConfig = require("./data/json/default");
 
 // Logger
 const date = moment().format("M/D/YY hh:mm:ss A");
@@ -75,9 +75,9 @@ const { log, logger } = require("./data/js/logger");
 logger(client);
 
 // Start modules
-const automod = require("./data/js/automod");
-const translate = require("./data/js/translate");
-const reactions = require("./data/js/reactions");
+const { automod } = require("./data/js/automod");
+const { translate } = require("./data/js/translate");
+const { reactions } = require("./data/js/reactions");
 
 client.on("ready", () => {
 	commands.ensure("number", 0);
@@ -114,23 +114,22 @@ client.on("message", async message => {
 	// Ignore bots
 	if (message.author.bot) return;
 
+	reactions(message);
 	if (message.guild) {
 		// Get the config
 		configHandler.ensure(message.guild.id);
+		const guildConfig = await configHandler.getConfig(message.guild.id);
 
-		// Run the automod
+		// Run the automod + translate + reactions
 		automod(message);
+		if (guildConfig.misc.translator == true && !message.content.match(/\]tran|\]translate/)) translate(message);
 
 		// Tag command
 		if (message.content.indexOf(config.prefix.tags) === 0 && !message.content.match(/ /g)) {
 			const tagCommand = client.registry.commands.find(c => c.name === "tag");
 			tagCommand.run(message, { "action": message.content.slice(1) });
 		}
-	}
-
-	// Run the reactions and translator
-	reactions(message);
-	if (!message.content.match(/\]tran|\]translate/)) translate(message);
+	} else {if (!message.content.match(/\]tran|\]translate/)) translate(message);}
 
 	// Increase read/ran values
 	messages.inc("number");
@@ -142,10 +141,19 @@ client.on("commandRun", (command, promise, message) => {
 });
 
 // Run automod and reactions on edited messages
-client.on("messageUpdate", (oldMessage, message) => {
-	if (message.guild) automod(message);
+client.on("messageUpdate", async (oldMessage, message) => {
+	if (message.author.bot) return;
+
 	reactions(message);
-	translate(message);
+	if (message.guild) {
+		// Get the config
+		configHandler.ensure(message.guild.id);
+		const guildConfig = await configHandler.getConfig(message.guild.id);
+
+		// Run the automod + translate + reactions
+		automod(message);
+		if (guildConfig.misc.translator == true && !message.content.match(/\]tran|\]translate/)) return translate(message);
+	} else translate(message);
 });
 
 // Log the bot in

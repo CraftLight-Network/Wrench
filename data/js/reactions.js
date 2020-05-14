@@ -1,13 +1,13 @@
-/* eslint-disable spaced-comment */
 // Define and require modules
+const configHandler = require("../../data/js/configHandler");
 const config = require("../../config");
 
-module.exports = async (message) => {
+module.exports.reactions = async (message) => {
 	let guildConfig;
-	if (message.guild) guildConfig = await require("../../data/js/configHandler").getConfig(message.guild.id);
+	if (message.guild) guildConfig = await configHandler.getConfig(message.guild.id);
 	const content = message.content;
 
-	if (!message.guild || guildConfig.misc.reactions.greetings) checkGreetings();
+	if (!message.guild || guildConfig.misc.reactions.greetings == true) checkGreetings();
 	async function checkGreetings() {
 		let found = false;
 		const greeting = ["hello", "hi", "hey", "howdy", "sup", "yo", "hola", "hallo", "bonjour", "salut", "ciao", "konnichiwa", "hiya", "heyo"];
@@ -31,7 +31,7 @@ module.exports = async (message) => {
 			if (!found) message.react("👋").then(async () => {await message.react("🇧"); await message.react("🇾"); message.react("🇪")});
 		}
 	}
-	if (config.reactions.enabled && (!message.guild || guildConfig.misc.reactions.emotes)) checkEmotes();
+	if (config.reactions.enabled && (!message.guild || guildConfig.misc.reactions.emotes == true)) checkEmotes();
 	function checkEmotes() {
 		if (content.match(/pog|pogchamp/gi))	message.react(config.reactions.ids.pogchamp);
 		if (content.match(/lul|lol/gi))			message.react(config.reactions.ids.lul);
