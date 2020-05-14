@@ -3,6 +3,7 @@
 const { log } = require("./logger");
 
 // Define and require modules
+const checkRole = require("../../data/js/util").checkRole;
 const embed = require("../../data/js/util").embed;
 const configHandler = require("./configHandler");
 const { stripIndents } = require("common-tags");
@@ -67,6 +68,9 @@ module.exports.automod = async (message) => {
 	else return;
 
 	if (guildConfig.automod.enabled == false) return;
+
+	// Permission check
+	if (checkRole(guildConfig.automod.modRoleIDs, message)) return;
 
 	// Shorter message content
 	const content = message.content;
