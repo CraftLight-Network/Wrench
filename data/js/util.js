@@ -3,6 +3,12 @@ const { stripIndents } = require("common-tags");
 const { RichEmbed }	   = require("discord.js");
 const config		   = require("../../config");
 
+let client, totals;
+module.exports.init = (c, t) => {
+	client = c;
+	totals = t;
+};
+
 // Truncate string
 module.exports.truncate = (input, length) => {
 	return input.length > length ? input.slice(0, length - 1).trim() + "..." : input;
@@ -111,4 +117,20 @@ module.exports.removeCommand = (command, message) => {
 module.exports.isCommand = (message, command) => {
 	if (message.content.charAt(0) === config.prefix.commands) message.content = message.content.slice(1, message.content.length);
 	if (message.content === command) return true;
+};
+
+module.exports.replacePlaceholders = (message) => {
+	// Replace placeholders
+	const placeholders = {
+		"%prefix%":				config.prefix.commands,
+		"%prefix_tags%":		config.prefix.tags,
+		"%total_servers%":		client.guilds.size,
+		"%total_commands%":		totals.get("commands"),
+		"%total_messages%":		totals.get("messages"),
+		"%total_translations%":	totals.get("translations"),
+		"%total_automod%":		totals.get("automod")
+	};
+
+	for (const i in placeholders) message = message.replace(i, placeholders[i]);
+	return message;
 };
