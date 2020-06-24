@@ -2,16 +2,16 @@
 	"owners": [ "272466470510788608" ],
 	"prefix": {
 		"commands": "]",
-		"tags": ">"
+		"tags":		">"
 	},
 	"translator": true,
 	"reactions": {
 		"enabled": true,
 		"ids": {
-			"pogchamp": "660203799377608704",
-			"lul": "660205635777986571",
-			"kappa": "660205713708154890",
-			"sleeper": "660205776744480789"
+			"pogchamp":	"660203799377608704",
+			"lul":		"660205635777986571",
+			"kappa":	"660205713708154890",
+			"sleeper":	"660205776744480789"
 		}
 	},
 	"status": {
@@ -24,7 +24,7 @@
 			},
 			{
 				"type": "WATCHING",
-				"name": "%servers% servers."
+				"name": "%total_servers% servers."
 			},
 			{
 				"type": "PLAYING",
