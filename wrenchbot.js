@@ -22,13 +22,16 @@
 */
 
 // Define and require modules
-const { CommandoClient } = require("discord.js-commando");
-const checkRole			 = require("./data/js/util").checkRole;
-const configHandler		 = require("./data/js/configHandler");
-const config			 = require("./config");
-const moment			 = require("moment");
-const path				 = require("path");
-const fs				 = require("fs");
+const { CommandoClient }  = require("discord.js-commando");
+const replacePlaceholders = require("./data/js/util").replacePlaceholders;
+const checkRole			  = require("./data/js/util").checkRole;
+const utilInit			  = require("./data/js/util").init;
+const Util				  = require("./data/js/util");
+const configHandler		  = require("./data/js/configHandler");
+const config			  = require("./config");
+const moment			  = require("moment");
+const path				  = require("path");
+const fs				  = require("fs");
 
 // Register + create command instance
 const client = new CommandoClient({
@@ -53,16 +56,12 @@ client.registry
 	})
 	.registerCommandsIn(path.join(__dirname, "commands"));
 
-// Sleep function
-const sleep = require("discord.js").Util;
-
-// Create private folders
+// Get Enmap
 !fs.existsSync("./data/private")	  && fs.mkdirSync("./data/private");
 !fs.existsSync("./data/private/logs") && fs.mkdirSync("./data/private/logs");
-
-// Get Enmap
-const Enmap	 = require("enmap");
 const totals = require("./data/js/enmap").totals;
+
+utilInit(client, totals);
 
 // Logger
 const { log, logger } = require("./data/js/logger");
@@ -87,21 +86,18 @@ client.on("ready", () => {
 	if (config.status.enabled) {status(); setInterval(status, config.status.timeout)};
 
 	function status() {
-		// Get a random status from the list
-		const status = config.status.statuses[Math.floor(Math.random() * config.status.statuses.length)];
-
-		// Replace placeholders
-		const placeholders = {
-			"%prefix%":				config.prefix.commands,
-			"%prefix_tags%":		config.prefix.tags,
-			"%total_servers%":		client.guilds.size,
-			"%total_commands%":		totals.get("commands"),
-			"%total_messages%":		totals.get("messages"),
-			"%total_translations%":	totals.get("translations"),
-			"%total_automod%":		totals.get("automod")
-		};
-		for (const i in placeholders) status.name = status.name.replace(i, placeholders[i]);
-		if (status.name === client.user.presence.activities[0].name) return status();
+		// Get a random status
+		function getStatus() {
+			const status = config.status.statuses[Math.floor(Math.random() * config.status.statuses.length)];
+			status.name = replacePlaceholders(status.name);
+			return status;
+		}
+		let status = getStatus();
+		if (client.user.presence.activities[0]) {
+			while (status.name === client.user.presence.activities[0].name) {
+				status = getStatus();
+			}
+		}
 
 		// Set the status
 		client.user.setPresence({ "game": { "type": status.type, "name": status.name } });
