@@ -101,6 +101,7 @@ client.on("ready", () => {
 			"%total_automod%":		totals.get("automod")
 		};
 		for (const i in placeholders) status.name = status.name.replace(i, placeholders[i]);
+		if (status.name === client.user.presence.activities[0].name) return status();
 
 		// Set the status
 		client.user.setPresence({ "game": { "type": status.type, "name": status.name } });
