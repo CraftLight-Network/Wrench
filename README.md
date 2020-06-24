@@ -32,6 +32,7 @@ This project utilizes PM2, a process manager. Tasks are ran in the
 background so you don't need to keep a command window open all the time.  
 `npm start`: Start the bot.  
 `npm stop`: Stop the bot.  
+`npm restart`: Restart the bot.  
 `npm run logs`: View the latest logs. (CTRL+C to exit)  
 `npm run status`: View what resources the bot is using.  
 

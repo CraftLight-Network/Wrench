@@ -6,6 +6,7 @@
   "scripts": {
 	"start": "pm2 start .\\wrenchbot.js --name WrenchBot --max-memory-restart 512M",
 	"stop": "pm2 delete WrenchBot",
+	"restart": "npm stop && npm start",
 	"logs": "pm2 logs WrenchBot",
 	"status": "pm2 list WrenchBot"
   },
