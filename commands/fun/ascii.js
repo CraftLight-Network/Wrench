@@ -67,7 +67,7 @@ module.exports = class asciiCommand extends Command {
 				"contentType": "text/plain",
 				"server":	   "https://hastebin.com"
 			}).then(function(link) {
-				const embedMessage = embed({ "title": "Figlet link:", "description": link }, message);
+				const embedMessage = embed({ "message": message, "title": "Figlet link:", "description": link });
 				return message.channel.send(embedMessage);
 			});
 		}

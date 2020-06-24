@@ -39,6 +39,7 @@ module.exports = class wikipediaCommand extends Command {
 		// Search on Wikipedia
 		wikipedia().page(toSearch).then(async result => {
 			const embedMessage = {
+				"message":	   message,
 				"attachments": ["data/img/wikipedia.png"],
 				"title":	   result.raw.title,
 				"url":		   result.url(),
@@ -55,7 +56,7 @@ module.exports = class wikipediaCommand extends Command {
 			} else {embedMessage.description = truncate(summary, 250)}
 
 			// Send the article
-			return message.channel.send(embed(embedMessage, message));
+			return message.channel.send(embed(embedMessage));
 		}).catch(() => {message.reply(`I cannot find any article related to ${toSearch}.`)});
 	}
 };

@@ -10,17 +10,15 @@ module.exports.init = (c, t) => {
 };
 
 // Truncate string
-module.exports.truncate = (input, length) => {
-	return input.length > length ? input.slice(0, length - 1).trim() + "..." : input;
-};
+module.exports.truncate = (input, length) => input.length > length ? input.slice(0, length - 1).trim() + "..." : input;
 
 // Embedded messages
-module.exports.embed = (options, message) => {
+module.exports.embed = (options) => {
 	// Convert member to message
-	if (message && !message.content && message.username) message.author = message;
+	if (options.message && !options.message.content && options.message.username) options.message.author = options.message;
 
 	// Set default options
-	if (options.footer === undefined && message) options.footer = `Requested by ${message.author.tag}`;
+	if (options.footer === undefined && options.message) options.footer = `Requested by ${options.message.author.tag}`;
 	else if (!options.footer) options.footer = "";
 	if (!options.color) options.color = "#E3E3E3";
 
@@ -34,7 +32,7 @@ module.exports.embed = (options, message) => {
 
 	// Add author
 	if (options.author) {
-		if (options.author.picture === "me") options.author.picture = message.author.displayAvatarURL;
+		if (options.author.picture === "me") options.author.picture = options.message.author.displayAvatarURL;
 		embedMessage.setAuthor(options.author.name, options.author.picture);
 	}
 
@@ -61,10 +59,10 @@ module.exports.embed = (options, message) => {
 // User input
 module.exports.getUserInput = async (message, options) => {
 	// Default options if not defined
-	if (!options.question) options.question = "What would you like to do?";
-	if (options.cancel === undefined) options.cancel = true;
-	if (!options.timeout) options.timeout = 30;
-	if (!options.validate) options.validate = false;
+	if (!options.question)			  options.question = "What would you like to do?";
+	if (options.cancel === undefined) options.cancel   = true;
+	if (!options.timeout)			  options.timeout  = 30;
+	if (!options.validate)			  options.validate = false;
 
 	let result = options.variable;
 	let exit;
@@ -81,36 +79,29 @@ module.exports.getUserInput = async (message, options) => {
 		result = await message.channel.awaitMessages(res => res.author.id === message.author.id, {
 			"max":	1,
 			"time":	options.timeout * 1000
-		}).catch(function() {exit = true});
+		}).catch(() => exit = true);
 
 		// Set result to input
-		await result.find(i => {result = i.content});
+		await result.find(i => result = i.content);
 		if (options.cancel) if (result === "cancel") break;
 
 		// Validate input
 		if (!options.validate) break;
-		if (!options.validate.array.includes(result)) {
-			result = "";
-			return message.reply(`Invalid ${options.validate.name}.`);
-		}
+		if (!options.validate.array.includes(result)) return result = "" && message.reply(`Invalid ${options.validate.name}.`);
 	}
 	return result;
 };
 
 // Permission check
-module.exports.checkRole = (roles, message) => {
+module.exports.checkRole = (message, roles) => {
 	let hasRole = false;
-	roles.some(r => {
-		if (message.member.roles.has(r)) return hasRole = true;
-	});
+	roles.some(r => {if (message.member.roles.has(r)) return hasRole = true;});
 	if (!hasRole && message.author.id !== message.guild.owner.id && !config.owners.includes(message.author.id)) return false;
 	return true;
 };
 
 // Remove command from message
-module.exports.removeCommand = (command, message) => {
-	message.replace(`${config.prefix.commands}${command.name} `, "");
-};
+module.exports.removeCommand = (message, command) => message.replace(`${config.prefix.commands}${command.name} `, "");
 
 // Test if a message is a command
 module.exports.isCommand = (message, command) => {

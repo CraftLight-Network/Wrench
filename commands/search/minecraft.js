@@ -97,13 +97,12 @@ module.exports = class minecraftCommand extends Command {
 			}
 			if (args === "cancel") return message.reply("Cancelled command.");
 
-			const embedMessage = {
+			return message.channel.send(embed({
+				"message":	 message,
 				"title":	 `${name[0].name}'s skin (${args})`,
 				"thumbnail": `https://visage.surgeplay.com/face/16/${uuid}.png?${number}`,
 				"image":	 `https://visage.surgeplay.com/${args}/${uuid}.png?${number}`
-			};
-
-			return message.channel.send(embed(embedMessage, message));
+			}));
 		}
 
 		// Data actions
@@ -126,6 +125,7 @@ module.exports = class minecraftCommand extends Command {
 			// Grab names
 			if (args === "names") {
 				const embedMessage = {
+					"message":	   message,
 					"title":	   `${name[0].name}'s names`,
 					"thumbnail":   `https://visage.surgeplay.com/face/16/${uuid}.png?${number}`,
 					"description": "```"
@@ -145,7 +145,8 @@ module.exports = class minecraftCommand extends Command {
 			}
 			// Grab UUID or name
 			if (args === "uuid" || args === "name") {
-				const embedMessage = {
+				return message.channel.send(embed({
+					"message":	   message,
 					"title":	   `${name[0].name}'s name + UUID`,
 					"thumbnail":   `https://visage.surgeplay.com/face/16/${uuid}.png?${number}`,
 					"description": stripIndents`
@@ -154,9 +155,7 @@ module.exports = class minecraftCommand extends Command {
 						UUID | ${uuid}
 						\`\`\`
 					`
-				};
-
-				return message.channel.send(embed(embedMessage, message));
+				}));
 			}
 		}
 	}

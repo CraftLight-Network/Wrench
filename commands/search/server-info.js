@@ -48,7 +48,7 @@ module.exports = class serverInfoCommand extends Command {
 		if (guild.defaultMessageNotifications === "MENTIONS") defaultMessageNotifications = "@mentions";
 		else defaultMessageNotifications = "All";
 
-		const embedMessage = { "title": `${guild.name} Info:`, "fields": [] };
+		const embedMessage = { "message": message, "title": `${guild.name} Info:`, "fields": [] };
 
 		// Server icon link/image
 		const iconURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`;
@@ -102,6 +102,6 @@ module.exports = class serverInfoCommand extends Command {
 		);
 
 		// Send the info
-		return message.channel.send(embed(embedMessage, message));
+		return message.channel.send(embed(embedMessage));
 	}
 };

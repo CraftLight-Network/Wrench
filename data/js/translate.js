@@ -72,15 +72,14 @@ module.exports = async (message, options) => {
 			totals.inc("translations");
 			log.translate(`${message.author.tag} | ${translate} -> ${translated.trans_result.dst} (${translated.from}-${translated.to})`);
 
-			const embedMessage = embed({
-				"author": {
+			return message.channel.send(embed({
+				"author":	   {
 					"name":	   `${message.author.username} (${translated.from}-${translated.to})`,
 					"picture": message.author.displayAvatarURL
 				},
 				"description": `**${translated.trans_result.dst}**`,
 				"footer":	   `Translations from Baidu Translate. (http://cft.li/baiduTL)`
-			});
-			return message.channel.send(embedMessage);
+			}));
 		}).catch(() => {});
 	}
 };

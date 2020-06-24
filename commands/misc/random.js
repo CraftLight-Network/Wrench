@@ -44,7 +44,6 @@ module.exports = class randomCommand extends Command {
 		if (min > max) [min, max] = [max, min];
 
 		// Send the number
-		const embedMessage = { "title": `Random Number ${min} - ${max}:`, "description": random.int(min, max) };
-		return message.channel.send(embed(embedMessage, message));
+		return message.channel.send(embed({ "message": message, "title": `Random Number ${min} - ${max}:`, "description": random.int(min, max) }));
 	}
 };

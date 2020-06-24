@@ -77,7 +77,7 @@ module.exports = class tagCommand extends Command {
 
 		if (action === "create") {
 			// Permission check
-			if (!checkRole(guildConfig.automod.modRoleIDs, message)) return message.reply("You do not have permission to use this command.");
+			if (!checkRole(message, guildConfig.automod.modRoleIDs)) return message.reply("You do not have permission to use this command.");
 
 			// Get args variable if not defined
 			if (!name) name = await userInput(message, { "question": "What is the name of the tag?" });
@@ -97,7 +97,7 @@ module.exports = class tagCommand extends Command {
 
 		if (action === "delete") {
 			// Permission check
-			if (!checkRole(guildConfig.automod.modRoleIDs, message)) return message.reply("You do not have permission to use this command.");
+			if (!checkRole(message, guildConfig.automod.modRoleIDs)) return message.reply("You do not have permission to use this command.");
 
 			// Get args variable if not defined
 			if (!name) name = await userInput(message, { "question": "What is the name of the tag?" });
@@ -117,12 +117,7 @@ module.exports = class tagCommand extends Command {
 		}
 
 		if (action === "list") {
-			const embedMessage = {
-				"title":	   "Available tags:",
-				"description": `**${names.length > 0 ? "None" : `\`${names.join("`, `")}\``}**`
-			};
-
-			return message.channel.send(embed(embedMessage));
+			return message.channel.send(embed({ "title": "Available tags:", "description": `**${names.length > 0 ? "None" : `\`${names.join("`, `")}\``}**` }));
 		}
 
 		// Get arg variable if not defined

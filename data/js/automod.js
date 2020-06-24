@@ -43,21 +43,20 @@ const antiSpam = new AntiSpam({
 });
 
 antiSpam.on("spamThresholdWarn", (member) => {
-	const embedMessage = {
-		"author": {
-			"name": "Warning",
+	member.send(embed({
+		"message": member,
+		"author":  {
+			"name":	   "Warning",
 			"picture": "me"
 		},
-		"fields": [
+		"fields":  [
 			["Do not spam!", stripIndents`
 				The server does not want you to spam there.
 				Please change your message or slow down.
 			`]
 		],
-		"footer": "Action done by AutoMod"
-	};
-
-	member.send(embed(embedMessage, member));
+		"footer":  "Action done by AutoMod"
+	}));
 });
 
 module.exports = async (message) => {
@@ -121,21 +120,20 @@ module.exports = async (message) => {
 
 	// Reply function
 	function reply(message, warning) {
-		const embedMessage = {
-			"author": {
+		message.author.send(embed({
+			"message": message,
+			"author":  {
 				"name":	   "Warning",
 				"picture": "me"
 			},
-			"fields": [
+			"fields":  [
 				[`Do not ${warning.name}!`, stripIndents`
 					The server ${message.guild.name} does not want you to ${warning.name} there.
 					If this was a mistake, you may edit your message without the ${warning.code}.
 				`],
 				["Original message:", message]
 			],
-			"footer": "Action made by AutoMod"
-		};
-
-		message.author.send(embed(embedMessage, message));
+			"footer":  "Action made by AutoMod"
+		}));
 	}
 };

@@ -68,6 +68,8 @@ module.exports = class embedCommand extends Command {
 		catch (e) {return message.reply("That is not valid JSON!")}
 
 		const embedMessage = JSON.parse(embedJSON.match(/{[^]+}/));
-		return message.channel.send(embed(embedMessage, message));
+		embedMessage.message = message;
+
+		return message.channel.send(embed(embedMessage));
 	}
 };

@@ -74,7 +74,8 @@ module.exports = class probabilityCommand extends Command {
 		}
 
 		// Send the probability
-		const embedMessage = {
+		return message.channel.send(embed({
+			"message":	   message,
 			"attachments": [`data/img/emotes/${style.emote}.png`],
 			"title":	   "Probability results:",
 			"description": stripIndents`
@@ -83,7 +84,6 @@ module.exports = class probabilityCommand extends Command {
 			`,
 			"thumbnail":  `attachment://${style.emote}.png`,
 			"color":	  style.color
-		};
-		return message.channel.send(embed(embedMessage, message));
+		}));
 	}
 };

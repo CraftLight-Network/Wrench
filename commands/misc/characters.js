@@ -33,7 +33,6 @@ module.exports = class charactersCommand extends Command {
 	}
 
 	run(message, { toCount }) {
-		const embedMessage = { "title": "Character Count:", "description": toCount.length };
-		return message.channel.send(embed(embedMessage, message));
+		return message.channel.send(embed({ "message": message, "title": "Character Count:", "description": toCount.length }));
 	}
 };

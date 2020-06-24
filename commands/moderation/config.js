@@ -61,19 +61,19 @@ module.exports = class configCommand extends Command {
 		const guildConfig = await configHandler.getConfig(message.guild.id);
 
 		// Permission check
-		if (!checkRole(guildConfig.automod.modRoleIDs, message)) return message.reply("You do not have permission to use this command.");
+		if (!checkRole(message, guildConfig.automod.modRoleIDs)) return message.reply("You do not have permission to use this command.");
 
 		// View command
 		if (action === "view") {
-			const embedMessage = {
+			return message.channel.send(embed({
+				"message":	   message,
 				"title":	   `${message.guild.name}'s config:`,
 				"description": `
 \`\`\`json
 ${JSON.stringify(guildConfig, null, 2)}
 \`\`\`
 				`
-			};
-			return message.channel.send(embed(embedMessage, message));
+			}));
 		}
 
 		// Reset command

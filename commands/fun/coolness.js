@@ -56,7 +56,8 @@ module.exports = class coolnessCommand extends Command {
 		if (coolness < 5)  style.bar = "[                  ]";
 
 		// Send the coolness
-		const embedMessage = {
+		return message.channel.send(embed({
+			"message":	   message,
 			"attachments": [`data/img/emotes/${style.emote}.png`],
 			"title":	   "Coolness results:",
 			"description": stripIndents`
@@ -65,7 +66,6 @@ module.exports = class coolnessCommand extends Command {
 			`,
 			"color":	   style.color,
 			"thumbnail":   `attachment://${style.emote}.png`
-		};
-		return message.channel.send(embed(embedMessage, message));
+		}));
 	}
 };

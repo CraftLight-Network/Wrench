@@ -130,7 +130,7 @@ async function guildEvents(message) {
 		const guildConfig = await configHandler.getConfig(message.guild.id);
 
 		// Run automod and reactions
-		if (guildConfig.automod.enabled === "true" && !checkRole(guildConfig.automod.modRoleIDs, message)) automod(message);
+		if (guildConfig.automod.enabled === "true" && !checkRole(message, guildConfig.automod.modRoleIDs)) automod(message);
 
 		// Tag command
 		if (message.content.indexOf(config.prefix.tags) === 0 && !message.content.match(/ /g)) {

@@ -65,7 +65,8 @@ module.exports = class shipCommand extends Command {
 		if (ship < 5)  style.bar = "[                  ]";
 
 		// Send the ship
-		const embedMessage = {
+		return message.channel.send(embed({
+			"message":	   message,
 			"attachments": [`data/img/emotes/${style.emote}.png`],
 			"title":	   "Ship results:",
 			"description": stripIndents`
@@ -74,7 +75,6 @@ module.exports = class shipCommand extends Command {
 			`,
 			"thumbnail":   `attachment://${style.emote}.png`,
 			"color":	   style.color
-		};
-		return message.channel.send(embed(embedMessage, message));
+		}));
 	}
 };
