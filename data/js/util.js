@@ -70,22 +70,21 @@ module.exports.getUserInput = async (message, options) => {
 	let exit;
 	while (!result && !exit) {
 		// Ask the question
-		let cancel = "";
-		if (options.cancel) cancel = `Respond with \`cancel\` to cancel the command. The command will automatically be cancelled in ${options.timeout} seconds.`;
+		const cancel = options.cancel ? `Respond with \`cancel\` to cancel the command. The command will automatically be cancelled in ${options.timeout} seconds.` : "";
 
-		message.reply(stripIndents`
+		await message.reply(stripIndents`
 			${options.question}
 			${cancel}
 		`);
 
 		// Take user input
-		result = await message.channel.awaitMessages(res => {return res.author.id === message.author.id}, {
+		result = await message.channel.awaitMessages(res => res.author.id === message.author.id, {
 			"max":	1,
-			"time":	30000
+			"time":	options.timeout * 1000
 		}).catch(function() {exit = true});
 
 		// Set result to input
-		result.find(i => {result = i.content});
+		await result.find(i => {result = i.content});
 		if (options.cancel) if (result === "cancel") break;
 
 		// Validate input
