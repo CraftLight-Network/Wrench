@@ -35,7 +35,9 @@
 		"brace-style": "off",
 		"no-prototype-builtins": "off",
 		"no-return-assign": "off",
-		"eqeqeq": "warn"
+		"eqeqeq": "warn",
+		"key-spacing": "off",
+		"no-multi-spaces": "off"
 	},
 	"ignorePatterns": ["node_modules"]
 }

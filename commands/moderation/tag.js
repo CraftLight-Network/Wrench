@@ -1,27 +1,29 @@
 // Define and require modules
-const userInput = require("../../data/js/util").getUserInput;
-const { Command } = require("discord.js-commando");
-const embed = require("../../data/js/util").embed;
+const { Command }	   = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const config = require("../../config");
+const userInput		   = require("../../data/js/util").getUserInput;
+const checkRole		   = require("../../data/js/util").checkRole;
+const configHandler	   = require("../../data/js/configHandler");
+const embed			   = require("../../data/js/util").embed;
+const config		   = require("../../config");
 
 const actions = ["list", "create", "delete", "view", "[tag name]"];
 
 // Get Enmap
-const { tags } = require("../../data/js/enmap");
+const tags = require("../../data/js/enmap").tags;
 const defaultTag = [{
-	"title": "default",
+	"title":	   "default",
 	"description": "This is a default tag."
 }];
 
 module.exports = class tagCommand extends Command {
 	constructor(client) {
 		super(client, {
-			"name": "tag",
-			"memberName": "tag",
-			"aliases": ["shortcut"],
-			"group": "moderation",
+			"name":		   "tag",
+			"memberName":  "tag",
+			"group":	   "moderation",
 			"description": "Create tags/shortcuts for longer or special messages.",
+			"guildOnly":   true,
 			"details": stripIndents`
 				Run \`${config.prefix.commands}tag <action> (name) (content)\` to use commands.
 				**Notes:**
@@ -51,16 +53,17 @@ module.exports = class tagCommand extends Command {
 					"type": "string"
 				}
 			],
-			"guildOnly": true,
+			"aliases": ["shortcut"],
 			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
 			"throttling": {
-				"usages": 2,
-				"duration": 5
+				"usages":	2,
+				"duration":	5
 			}
 		});
 	}
 
 	async run(message, { action, name, tag }) {
+		const guildConfig = await configHandler.getConfig(message.guild.id);
 		tags.ensure(message.guild.id, defaultTag);
 		tags.fetchEverything();
 
@@ -73,6 +76,9 @@ module.exports = class tagCommand extends Command {
 		await tags.get(message.guild.id).forEach((tag, i) => {names[i] = tag.name});
 
 		if (action === "create") {
+			// Permission check
+			if (!checkRole(guildConfig.automod.modRoleIDs, message)) return message.reply("You do not have permission to use this command.");
+
 			// Get args variable if not defined
 			if (!name) name = await userInput(message, { "question": "What is the name of the tag?" });
 			if (name === "cancel") return message.reply("Cancelled command.");
@@ -90,6 +96,9 @@ module.exports = class tagCommand extends Command {
 		}
 
 		if (action === "delete") {
+			// Permission check
+			if (!checkRole(guildConfig.automod.modRoleIDs, message)) return message.reply("You do not have permission to use this command.");
+
 			// Get args variable if not defined
 			if (!name) name = await userInput(message, { "question": "What is the name of the tag?" });
 			if (name === "cancel") return message.reply("Cancelled command.");
@@ -109,7 +118,7 @@ module.exports = class tagCommand extends Command {
 
 		if (action === "list") {
 			const embedMessage = {
-				"title": "Available tags:",
+				"title":	   "Available tags:",
 				"description": `**${names.length > 0 ? "None" : `\`${names.join("`, `")}\``}**`
 			};
 

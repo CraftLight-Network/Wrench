@@ -1,11 +1,11 @@
 // Define and require modules
-const userInput = require("../../data/js/util").getUserInput;
-const { Random, nativeMath } = require("random-js");
-const { Command } = require("discord.js-commando");
-const embed = require("../../data/js/util").embed;
-const { stripIndents } = require("common-tags");
-const request = require("async-request");
-const config = require("../../config");
+const { Command }			 = require("discord.js-commando");
+const { stripIndents }		 = require("common-tags");
+const userInput 			 = require("../../data/js/util").getUserInput;
+const embed 				 = require("../../data/js/util").embed;
+const request 				 = require("async-request");
+const config 				 = require("../../config");
+const random				 = require("random");
 
 const actions	= ["skin", "info"];
 const skinTypes = ["skin", "face", "front", "frontfull", "head", "bust", "full"];
@@ -14,10 +14,9 @@ const dataTypes = ["names", "name", "uuid"];
 module.exports = class minecraftCommand extends Command {
 	constructor(client) {
 		super(client, {
-			"name": "minecraft",
-			"memberName": "minecraft",
-			"aliases": ["mc"],
-			"group": "search",
+			"name":		   "minecraft",
+			"memberName":  "minecraft",
+			"group":	   "search",
 			"description": "Get information on a Minecraft player.",
 			"details": stripIndents`
 				Run \`${config.prefix.commands}minecraft <action> (player) (args)\` to use commands.
@@ -50,10 +49,11 @@ module.exports = class minecraftCommand extends Command {
 					"type": "string"
 				}
 			],
+			"aliases":			 ["mc"],
 			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
 			"throttling": {
-				"usages": 2,
-				"duration": 5
+				"usages":	2,
+				"duration":	5
 			}
 		});
 	}
@@ -64,8 +64,7 @@ module.exports = class minecraftCommand extends Command {
 		if (player === "cancel") return message.reply("Cancelled command.");
 
 		// Get a random number to fix cache issues
-		const random = new Random(nativeMath);
-		const number = random.integer(1, 65535);
+		const number = random.int(1, 65535);
 
 		// Get UUID of user
 		let uuid;
@@ -91,7 +90,7 @@ module.exports = class minecraftCommand extends Command {
 				args = await userInput(message, {
 					"question": `How would you like the skin? (\`${skinTypes.join("`, `")}\`)`,
 					"validate": {
-						"name": "skin type",
+						"name":	 "skin type",
 						"array": skinTypes
 					}
 				});
@@ -99,9 +98,9 @@ module.exports = class minecraftCommand extends Command {
 			if (args === "cancel") return message.reply("Cancelled command.");
 
 			const embedMessage = {
-				"title": `${name[0].name}'s skin (${args})`,
+				"title":	 `${name[0].name}'s skin (${args})`,
 				"thumbnail": `https://visage.surgeplay.com/face/16/${uuid}.png?${number}`,
-				"image": `https://visage.surgeplay.com/${args}/${uuid}.png?${number}`
+				"image":	 `https://visage.surgeplay.com/${args}/${uuid}.png?${number}`
 			};
 
 			return message.channel.send(embed(embedMessage, message));
@@ -117,7 +116,7 @@ module.exports = class minecraftCommand extends Command {
 				args = await userInput(message, {
 					"question": `What info would you like to grab? (\`${dataTypes.join("`, `")}\`)`,
 					"validate": {
-						"name": "data type",
+						"name":	 "data type",
 						"array": dataTypes
 					}
 				});
@@ -127,8 +126,8 @@ module.exports = class minecraftCommand extends Command {
 			// Grab names
 			if (args === "names") {
 				const embedMessage = {
-					"title": `${name[0].name}'s names`,
-					"thumbnail": `https://visage.surgeplay.com/face/16/${uuid}.png?${number}`,
+					"title":	   `${name[0].name}'s names`,
+					"thumbnail":   `https://visage.surgeplay.com/face/16/${uuid}.png?${number}`,
 					"description": "```"
 				};
 
@@ -147,8 +146,8 @@ module.exports = class minecraftCommand extends Command {
 			// Grab UUID or name
 			if (args === "uuid" || args === "name") {
 				const embedMessage = {
-					"title": `${name[0].name}'s name + UUID`,
-					"thumbnail": `https://visage.surgeplay.com/face/16/${uuid}.png?${number}`,
+					"title":	   `${name[0].name}'s name + UUID`,
+					"thumbnail":   `https://visage.surgeplay.com/face/16/${uuid}.png?${number}`,
 					"description": stripIndents`
 						\`\`\`
 						Name | ${player.name}

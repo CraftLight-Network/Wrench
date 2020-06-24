@@ -1,7 +1,7 @@
 // Define and require modules
 const { stripIndents } = require("common-tags");
-const { RichEmbed } = require("discord.js");
-const config = require("../../config");
+const { RichEmbed }	   = require("discord.js");
+const config		   = require("../../config");
 
 // Truncate string
 module.exports.truncate = (input, length) => {
@@ -33,10 +33,10 @@ module.exports.embed = (options, message) => {
 	}
 
 	// Add title, url, thumbnail, and description
-	if (options.title) embedMessage.setTitle(options.title);
+	if (options.title)				  embedMessage.setTitle(options.title);
 	if (options.title && options.url) embedMessage.setURL(options.url);
-	if (options.thumbnail) embedMessage.setThumbnail(options.thumbnail);
-	if (options.description) embedMessage.setDescription(options.description);
+	if (options.thumbnail)			  embedMessage.setThumbnail(options.thumbnail);
+	if (options.description)		  embedMessage.setDescription(options.description);
 
 	// Add fields
 	if (options.fields) {
@@ -74,8 +74,8 @@ module.exports.getUserInput = async (message, options) => {
 
 		// Take user input
 		result = await message.channel.awaitMessages(res => {return res.author.id === message.author.id}, {
-			"max": 1,
-			"time": 30000
+			"max":	1,
+			"time":	30000
 		}).catch(function() {exit = true});
 
 		// Set result to input
@@ -100,4 +100,15 @@ module.exports.checkRole = (roles, message) => {
 	});
 	if (!hasRole && message.author.id !== message.guild.owner.id && !config.owners.includes(message.author.id)) return false;
 	return true;
+};
+
+// Remove command from message
+module.exports.removeCommand = (command, message) => {
+	message.replace(`${config.prefix.commands}${command.name} `, "");
+};
+
+// Test if a message is a command
+module.exports.isCommand = (message, command) => {
+	if (message.content.charAt(0) === config.prefix.commands) message.content = message.content.slice(1, message.content.length);
+	if (message.content === command) return true;
 };

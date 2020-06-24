@@ -1,18 +1,17 @@
 // Define and require modules
-const truncate = require("../../data/js/util").truncate;
-const { Command } = require("discord.js-commando");
-const embed = require("../../data/js/util").embed;
+const { Command }	   = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const wikipedia = require("wikijs").default;
-const config = require("../../config");
+const truncate		   = require("../../data/js/util").truncate;
+const embed			   = require("../../data/js/util").embed;
+const wikipedia		   = require("wikijs").default;
+const config		   = require("../../config");
 
 module.exports = class wikipediaCommand extends Command {
 	constructor(client) {
 		super(client, {
-			"name": "wikipedia",
-			"memberName": "wikipedia",
-			"aliases": ["wiki"],
-			"group": "search",
+			"name":		   "wikipedia",
+			"memberName":  "wikipedia",
+			"group":	   "search",
 			"description": "Search Wikipedia.",
 			"details": stripIndents`
 				Run \`${config.prefix.commands}wikipedia <search>\` to search Wikipedia.
@@ -27,10 +26,11 @@ module.exports = class wikipediaCommand extends Command {
 					"type": "string"
 				}
 			],
+			"aliases":			 ["wiki"],
 			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
 			"throttling": {
-				"usages": 2,
-				"duration": 5
+				"usages":	2,
+				"duration":	5
 			}
 		});
 	}
@@ -40,9 +40,9 @@ module.exports = class wikipediaCommand extends Command {
 		wikipedia().page(toSearch).then(async result => {
 			const embedMessage = {
 				"attachments": ["data/img/wikipedia.png"],
-				"title": result.raw.title,
-				"url": result.url(),
-				"thumbnail": "attachment://wikipedia.png"
+				"title":	   result.raw.title,
+				"url":		   result.url(),
+				"thumbnail":   "attachment://wikipedia.png"
 			};
 
 			// Detect whether or not there are multiple results

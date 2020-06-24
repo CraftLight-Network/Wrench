@@ -1,11 +1,13 @@
+"use strict";
+
 // Define and require modules
-const configHandler = require("../../data/js/configHandler");
-const checkRole = require("../../data/js/util").checkRole;
-const { Command } = require("discord.js-commando");
-const embed = require("../../data/js/util").embed;
+const { Command }	   = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const config = require("../../config");
-const safeEval = require("safe-eval");
+const configHandler	   = require("../../data/js/configHandler");
+const checkRole		   = require("../../data/js/util").checkRole;
+const embed			   = require("../../data/js/util").embed;
+const config		   = require("../../config");
+const safeEval		   = require("safe-eval");
 
 const actions = ["view", "set", "add", "remove", "reset"];
 
@@ -28,29 +30,29 @@ module.exports = class configCommand extends Command {
 			`,
 			"args": [
 				{
-					"key": "action",
-					"prompt": "What would you like to do?",
-					"type": "string",
-					"oneOf": actions
+					"key":	   "action",
+					"prompt":  "What would you like to do?",
+					"type":	   "string",
+					"oneOf":   actions
 				},
 				{
-					"key": "property",
-					"prompt": "",
+					"key":	   "property",
+					"prompt":  "",
 					"default": "",
-					"type": "string"
+					"type":	   "string"
 				},
 				{
-					"key": "value",
-					"prompt": "",
+					"key":	   "value",
+					"prompt":  "",
 					"default": "",
-					"type": "string"
+					"type":	   "string"
 				}
 			],
 			"guildOnly": true,
 			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
 			"throttling": {
-				"usages": 2,
-				"duration": 5
+				"usages":	2,
+				"duration":	5
 			}
 		});
 	}
@@ -64,7 +66,7 @@ module.exports = class configCommand extends Command {
 		// View command
 		if (action === "view") {
 			const embedMessage = {
-				"title": `${message.guild.name}'s config:`,
+				"title":	   `${message.guild.name}'s config:`,
 				"description": `
 \`\`\`json
 ${JSON.stringify(guildConfig, null, 2)}
@@ -79,6 +81,9 @@ ${JSON.stringify(guildConfig, null, 2)}
 			configHandler.reset(message.guild.id);
 			return message.reply("Successfully reset the config.");
 		}
+
+		// Sanitize property
+		property = property.replace(/[^\w\d.]/, "");
 
 		// Make sure the property exists
 		if (!checkExists()) return message.reply("That config property does not exist.");

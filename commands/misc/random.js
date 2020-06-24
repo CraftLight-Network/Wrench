@@ -1,17 +1,16 @@
 // Define and require modules
-const embed = require("../../data/js/util.js").embed;
-const { Random, nativeMath } = require("random-js");
-const { Command } = require("discord.js-commando");
-const { stripIndents } = require("common-tags");
-const config = require("../../config");
+const { Command }			 = require("discord.js-commando");
+const { stripIndents }		 = require("common-tags");
+const embed					 = require("../../data/js/util.js").embed;
+const config				 = require("../../config");
+const random				 = require("random");
 
 module.exports = class randomCommand extends Command {
 	constructor(client) {
 		super(client, {
-			"name": "random",
-			"memberName": "random",
-			"aliases": ["rng"],
-			"group": "misc",
+			"name":		   "random",
+			"memberName":  "random",
+			"group": 	   "misc",
 			"description": "Choose a random number.",
 			"details": stripIndents`
 				Run \`${config.prefix.commands}random <min> <max>\` to choose a random number.
@@ -19,22 +18,23 @@ module.exports = class randomCommand extends Command {
 				<min>: Required, minimum number.
 				<max>: Required, maximum number.
 			`,
+			"aliases":			 ["rng"],
+			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
 			"args": [
 				{
-					"key": "min",
+					"key":	  "min",
 					"prompt": "What is the minimum number?",
-					"type": "integer"
+					"type":	  "integer"
 				},
 				{
-					"key": "max",
+					"key":	  "max",
 					"prompt": "What is the maximum number?",
-					"type": "integer"
+					"type":	  "integer"
 				}
 			],
-			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
 			"throttling": {
-				"usages": 2,
-				"duration": 5
+				"usages":	2,
+				"duration":	5
 			}
 		});
 	}
@@ -42,10 +42,9 @@ module.exports = class randomCommand extends Command {
 	run(message, { min, max }) {
 		// Make sure min is less than max
 		if (min > max) [min, max] = [max, min];
-		const random = new Random(nativeMath);
 
 		// Send the number
-		const embedMessage = { "title": `Random Number ${min} - ${max}:`, "description": random.integer(min, max) };
+		const embedMessage = { "title": `Random Number ${min} - ${max}:`, "description": random.int(min, max) };
 		return message.channel.send(embed(embedMessage, message));
 	}
 };

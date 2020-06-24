@@ -1,17 +1,17 @@
 // Define and require modules
-const { Command } = require("discord.js-commando");
-const embed = require("../../data/js/util").embed;
+const { Command }	   = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const config = require("../../config");
+const embed			   = require("../../data/js/util").embed;
+const config		   = require("../../config");
 
 const values = ["author", "author.name", "author.picture", "title", "url", "thumbnail", "description", "footer", "color", "fields", "image"];
 
 module.exports = class embedCommand extends Command {
 	constructor(client) {
 		super(client, {
-			"name": "embed",
-			"memberName": "embed",
-			"group": "misc",
+			"name":		   "embed",
+			"memberName":  "embed",
+			"group":	   "misc",
 			"description": "Create an embedded message.",
 			"details": stripIndents`
 				Run \`${config.prefix.commands}embed <JSON>\` to make an embed
@@ -48,22 +48,25 @@ module.exports = class embedCommand extends Command {
 }
 \`\`\`
 			`],
+			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
 			"args": [
 				{
-					"key": "embedJSON",
+					"key":	  "embedJSON",
 					"prompt": "What is the JSON you would like to embed?",
-					"type": "string"
+					"type":	  "string"
 				}
 			],
-			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
 			"throttling": {
-				"usages": 2,
-				"duration": 5
+				"usages":	2,
+				"duration":	5
 			}
 		});
 	}
 
 	run(message, { embedJSON }) {
+		try {JSON.parse(embedJSON.match(/{[^]+}/))}
+		catch (e) {return message.reply("That is not valid JSON!")}
+
 		const embedMessage = JSON.parse(embedJSON.match(/{[^]+}/));
 		return message.channel.send(embed(embedMessage, message));
 	}

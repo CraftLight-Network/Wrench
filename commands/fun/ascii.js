@@ -1,21 +1,20 @@
 // Define and require modules
-const userInput = require("../../data/js/util").getUserInput;
-const { Command } = require("discord.js-commando");
-const embed = require("../../data/js/util").embed;
+const { Command }	   = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const config = require("../../config");
-const hastebin = require("hastebin");
-const figlet = require("figlet");
+const userInput		   = require("../../data/js/util").getUserInput;
+const embed			   = require("../../data/js/util").embed;
+const config		   = require("../../config");
+const hastebin		   = require("hastebin");
+const figlet		   = require("figlet");
 
 const fonts = ["fonts"].concat(figlet.fontsSync().map(function(i) {return i.replace(" ", "_").toLowerCase()}));
 
 module.exports = class asciiCommand extends Command {
 	constructor(client) {
 		super(client, {
-			"name": "ascii",
-			"memberName": "ascii",
-			"aliases": ["figlet"],
-			"group": "fun",
+			"name":		   "ascii",
+			"memberName":  "ascii",
+			"group":	   "fun",
 			"description": "Turn text in to figlet art.",
 			"details": stripIndents`
 				Run \`${config.prefix.commands}ascii <action> (args)\` to make figlet art.
@@ -27,26 +26,27 @@ module.exports = class asciiCommand extends Command {
 			`,
 			"args": [
 				{
-					"key": "action",
-					"prompt": `What font would you like to use? (Run \`${config.prefix.commands}ascii fonts\` for list.)`,
-					"type": "string",
-					"oneOf": fonts
+					"key":		"action",
+					"prompt":	`What font would you like to use? (Run \`${config.prefix.commands}ascii fonts\` for list.)`,
+					"type":		"string",
+					"oneOf":	fonts
 				},
 				{
-					"key": "args",
-					"prompt": "",
-					"type": "string",
-					"default": "",
+					"key":		"args",
+					"prompt":	"",
+					"type":		"string",
+					"default":	"",
 					"validate": arg => {
 						if (arg.length < 100) return true;
 						return "Please use under 100 characters!";
 					}
 				}
 			],
+			"aliases":			 ["figlet"],
 			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
 			"throttling": {
-				"usages": 2,
-				"duration": 5
+				"usages":	2,
+				"duration":	5
 			}
 		});
 	}
@@ -63,9 +63,9 @@ module.exports = class asciiCommand extends Command {
 
 			// Create and upload figlet to hastebin
 			hastebin.createPaste(figlet.textSync(args, action.replace("_", " ")), {
-				"raw": true,
+				"raw":		   true,
 				"contentType": "text/plain",
-				"server": "https://hastebin.com"
+				"server":	   "https://hastebin.com"
 			}).then(function(link) {
 				const embedMessage = embed({ "title": "Figlet link:", "description": link }, message);
 				return message.channel.send(embedMessage);

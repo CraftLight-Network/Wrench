@@ -1,14 +1,14 @@
 // Define and require modules
-const { Command } = require("discord.js-commando");
+const { Command }	   = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const config = require("../../config");
+const config		   = require("../../config");
 
 module.exports = class sayCommand extends Command {
 	constructor(client) {
 		super(client, {
-			"name": "say",
-			"memberName": "say",
-			"group": "misc",
+			"name":		   "say",
+			"memberName":  "say",
+			"group":	   "misc",
 			"description": "Make the bot say stuff.",
 			"details": stripIndents`
 				Run \`${config.prefix.commands}say <message>\` to make the bot say anything.
@@ -18,9 +18,9 @@ module.exports = class sayCommand extends Command {
 			`,
 			"args": [
 				{
-					"key": "toSay",
-					"prompt": "What would you like me to say?",
-					"type": "string",
+					"key":		"toSay",
+					"prompt":	"What would you like me to say?",
+					"type":		"string",
 					"validate": arg => {
 						if (arg.length < 400 || arg.length > 0) return true;
 						return "Please use under 400 characters!";
@@ -29,7 +29,7 @@ module.exports = class sayCommand extends Command {
 			],
 			"clientPermissions": ["MANAGE_MESSAGES", "SEND_MESSAGES"],
 			"throttling": {
-				"usages": 2,
+				"usages":	2,
 				"duration": 5
 			}
 		});

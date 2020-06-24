@@ -1,14 +1,13 @@
-/* eslint eqeqeq: "off" */
 // Get logger
 const { log } = require("./logger");
 
 // Define and require modules
-const checkRole = require("../../data/js/util").checkRole;
-const embed = require("../../data/js/util").embed;
-const configHandler = require("./configHandler");
 const { stripIndents } = require("common-tags");
-const AntiSpam = require("discord-anti-spam");
-const request = require("async-request");
+const checkRole		   = require("../../data/js/util").checkRole;
+const embed			   = require("../../data/js/util").embed;
+const AntiSpam		   = require("discord-anti-spam");
+const configHandler	   = require("./configHandler");
+const request		   = require("async-request");
 
 // Format + update bad links
 let badLinks = [];
@@ -31,17 +30,17 @@ async function createBadLinks() {
 createBadLinks();
 
 const antiSpam = new AntiSpam({
-	"warnThreshold": 5,
-	"kickThreshold": 8,
-	"banThreshold": 12,
-	"maxInterval": 5000,
-	"maxDuplicatesWarning": 5,
-	"maxDuplicatesKick": 8,
-	"maxDuplicatesBan": 12,
-	"errorMessages": false,
-	"warnMessage": "",
-	"kickMessage": "**{user_tag}** has been kicked for spamming.",
-	"banMessage": "**{user_tag}** has been banned for spamming."
+	"warnThreshold":		5,
+	"kickThreshold":		8,
+	"banThreshold":			12,
+	"maxInterval":			5000,
+	"maxDuplicatesWarning":	5,
+	"maxDuplicatesKick":	8,
+	"maxDuplicatesBan":		12,
+	"errorMessages":		false,
+	"warnMessage":			"",
+	"kickMessage":			"**{user_tag}** has been kicked for spamming.",
+	"banMessage":			"**{user_tag}** has been banned for spamming."
 });
 
 antiSpam.on("spamThresholdWarn", (member) => {
@@ -62,21 +61,16 @@ antiSpam.on("spamThresholdWarn", (member) => {
 	member.send(embed(embedMessage, member));
 });
 
-module.exports.automod = async (message) => {
+module.exports = async (message) => {
 	let guildConfig;
 	if (message.guild) guildConfig = await configHandler.getConfig(message.guild.id);
 	else return;
-
-	if (guildConfig.automod.enabled == false) return;
-
-	// Permission check
-	if (checkRole(guildConfig.automod.modRoleIDs, message)) return;
 
 	// Shorter message content
 	const content = message.content;
 
 	// Check for spam
-	if (guildConfig.automod.modules.spam == true) checkSpam();
+	if (guildConfig.automod.modules.spam === "true") checkSpam();
 	async function checkSpam() {
 		// Make sure there's a message
 		if (content.split("").size !== 0) antiSpam.message(message);
@@ -91,7 +85,7 @@ module.exports.automod = async (message) => {
 	}
 
 	// Check for invites
-	if (guildConfig.automod.modules.invites == true) checkInvites();
+	if (guildConfig.automod.modules.invites === "true") checkInvites();
 	async function checkInvites() {
 		// Make sure there are invites
 		if (!content.match("discord.gg|discordapp.com/invite")) return;
@@ -102,7 +96,7 @@ module.exports.automod = async (message) => {
 	}
 
 	// Check for bad links
-	if (guildConfig.automod.modules.badLinks == true) checkBadLinks();
+	if (guildConfig.automod.modules.badLinks === "true") checkBadLinks();
 	async function checkBadLinks() {
 		// Make sure there are bad links
 		if (content === "" || !badLinks.some(l => content.split(" ").includes(l))) return;
@@ -113,7 +107,7 @@ module.exports.automod = async (message) => {
 	}
 
 	// Check for caps
-	if (guildConfig.automod.modules.caps == true) checkCaps();
+	if (guildConfig.automod.modules.caps === "true") checkCaps();
 	async function checkCaps() {
 		// Filter out emotes
 		const noEmotes = content.replace(/[\u1000-\uFFFF]+/gu, "");
@@ -130,7 +124,7 @@ module.exports.automod = async (message) => {
 	function reply(message, warning) {
 		const embedMessage = {
 			"author": {
-				"name": "Warning",
+				"name":	   "Warning",
 				"picture": "me"
 			},
 			"fields": [

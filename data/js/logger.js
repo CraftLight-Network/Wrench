@@ -1,14 +1,10 @@
 // Define and require modules
-const configHandler = require("./configHandler");
-const winston = require("winston");
+const configHandler	= require("./configHandler");
+const winston		= require("winston");
 require("winston-daily-rotate-file");
 
-// Set the Moment format
-const moment = require("moment");
-const date = moment().format("M/D/YY h:mm:ss A");
-
 // Make the Winston logger
-const log = new (winston.Logger)({
+const levels = {
 	"levels": {
 		"ok": 0,
 		"info": 1,
@@ -24,31 +20,43 @@ const log = new (winston.Logger)({
 		"translate": "cyan",
 		"warning": "yellow",
 		"error": "red"
-	},
-	"handleExceptions": true,
-	"transports": [
-		// Console logging
-		new (winston.transports.Console)({
-			"name": "console",
-			"timestamp": function() {return date},
-			"colorize": true,
-			"level": "error"
-		}),
+	}
+};
 
-		// File logging
-		new (winston.transports.DailyRotateFile)({
-			"name": "file",
-			"json": false,
-			"datePattern": "M-D-YY",
-			"timestamp": function() {return date},
-			"filename": "data/private/logs/log-%DATE%.log",
+const format = {
+	"base": winston.format.combine(
+		winston.format.timestamp({ "format": "M/D/YY h:mm:ss A" }),
+		winston.format.printf(({ level, message, label, timestamp }) => {return `${timestamp} | ${level}: ${message}`})
+	),
+	get "console"() {
+		return winston.format.combine(
+			winston.format.colorize(),
+			this.base
+		);
+	},
+	get "file"() {return winston.format.combine(this.base)}
+};
+
+// eslint-disable-next-line new-cap
+const log = new winston.createLogger({
+	"level":	   "error",
+	"levels":	   levels.levels,
+	"exitOnError": false,
+	"transports": [
+		new winston.transports.Console({ "format": format.console }),
+		new winston.transports.DailyRotateFile({
+			"format":		 format.file,
+			"filename":		 "data/private/logs/%DATE%.log",
+			"datePattern":	 "M-D-YY",
+			"createSymlink": true,
+			"symlinkName":	 "data/private/logs/latest.log",
 			"zippedArchive": true,
-			"maxSize": "128m",
-			"maxFiles": "30d",
-			"level": "error"
+			"frequency":	 "1d",
+			"maxFiles":		 "31d"
 		})
 	]
 });
+winston.addColors(levels.colors);
 
 module.exports.log = log;
 module.exports.logger = function logger(client, options) {

@@ -2,16 +2,16 @@
 const { log } = require("./logger");
 
 // Define and require modules
+const embed		  = require("../../data/js/util").embed;
 const TokenBucket = require("limiter").TokenBucket;
-const translator = require("baidu-translate-api");
-const embed = require("../../data/js/util").embed;
-const similar = require("string-similarity");
-const { translations } = require("./enmap");
-const config = require("../../config");
-const language = require("franc");
+const translator  = require("baidu-translate-api");
+const similar	  = require("string-similarity");
+const totals	  = require("./enmap").totals;
+const config	  = require("../../config");
+const language	  = require("franc");
 
 // Translate function
-module.exports.translate = async (message, options) => {
+module.exports = async (message, options) => {
 	// Define variables
 	let translate;
 	if (options && options.command && config.translator) {
@@ -31,11 +31,11 @@ module.exports.translate = async (message, options) => {
 		translate = translate.replace(new RegExp(users, "gi"), "");
 	}
 
-	translate = translate.replace(/http.[^\s]*/gu, "")		// Links
-		.replace(/<@.*>|@[^\s]+/gu, "")						// Mentions
-		.replace(/<:.*>|:.*:/gu, "")						// Emojis
-		.replace(/[^\p{L}1-9.,!?'"\-+\s]/giu, "")			// Symbols
-		.replace(/`|\s+/gu, " ").trim();					// Trimming
+	translate = translate.replace(/http.[^\s]*/gu, "") // Links
+		.replace(/<@.*>|@[^\s]+/gu, "")				   // Mentions
+		.replace(/<:.*>|:.*:/gu, "")				   // Emojis
+		.replace(/[^\p{L}1-9.,!?'"\-+\s]/giu, "")	   // Symbols
+		.replace(/`|\s+/gu, " ").trim();			   // Trimming
 
 	// Ignore s p a c e d messages
 	if (Math.round(translate.length / 2) === translate.split(" ").length) return;
@@ -43,7 +43,7 @@ module.exports.translate = async (message, options) => {
 
 	// Detect language
 	const detectedLanguage = language.all(translate);
-	if (detectedLanguage[0][0] === "eng" || detectedLanguage[0][0] === "und" || detectedLanguage[1][1] < 0.815 || detectedLanguage[3][1] < 0.815) return;
+	if (detectedLanguage[0][0] === "eng" || detectedLanguage[0][0] === "und" || detectedLanguage[1][1] < 0.82) return;
 	language.all(translate).some(e => {if (e[0] === "eng" && e[1] > 0.635) exit = true;});
 	if (exit) return;
 
@@ -69,16 +69,16 @@ module.exports.translate = async (message, options) => {
 			if (translate === `${translated.trans_result.dst}`) return;
 
 			// Log the result
-			translations.inc("number");
+			totals.inc("translations");
 			log.translate(`${message.author.tag} | ${translate} -> ${translated.trans_result.dst} (${translated.from}-${translated.to})`);
 
 			const embedMessage = embed({
 				"author": {
-					"name": `${message.author.username} (${translated.from}-${translated.to})`,
+					"name":	   `${message.author.username} (${translated.from}-${translated.to})`,
 					"picture": message.author.displayAvatarURL
 				},
 				"description": `**${translated.trans_result.dst}**`,
-				"footer": `Translations from Baidu Translate. (http://cft.li/baiduTL)`
+				"footer":	   `Translations from Baidu Translate. (http://cft.li/baiduTL)`
 			});
 			return message.channel.send(embedMessage);
 		}).catch(() => {});

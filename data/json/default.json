@@ -1,66 +1,66 @@
 {
     "join": {
         "message": {
-            "enabled": false,
+            "enabled": "false",
             "channelID": "",
             "message": "%member% has joined %server%!"
         },
         "role": {
-            "enabled": false,
+            "enabled": "false",
             "roleID": ""
         }
     },
     "leave": {
         "message": {
-            "enabled": false,
+            "enabled": "false",
             "channelID": "",
             "message": "%member%#%ID% has left %server%."
         }
     },
 	"channels": {
 		"advert": {
-            "enabled": false,
+            "enabled": "false",
             "channelIDs": []
         },
         "spam": {
-            "enabled": false,
+            "enabled": "false",
             "channelIDs": []
         },
 		"bot": {
-			"enabled": false,
+			"enabled": "false",
 			"channelIDs": []
 		},
 		"counting": {
-			"enabled": false,
+			"enabled": "false",
 			"channelIDs": []
 		},
 		"log": {
-			"enabled": false,
+			"enabled": "false",
 			"channelID": "",
 			"modules": {
-				"moderation": true,
-				"server": true,
-				"member": true,
-				"channel": true,
-				"emoji": false
+				"moderation": "true",
+				"server": "true",
+				"member": "true",
+				"channel": "true",
+				"emoji": "false"
 			}
 		}
 	},
     "automod": {
-        "enabled": true,
+        "enabled": "true",
         "modRoleIDs": [],
         "modules": {
-            "spam": true,
-            "invites": true,
-            "badLinks": true,
-            "caps": false
+            "spam": "true",
+            "invites": "true",
+            "badLinks": "true",
+            "caps": "false"
         }
     },
     "misc": {
-        "translator": true,
+        "translator": "true",
         "reactions": {
-            "greetings": true,
-            "emotes": true
+            "greetings": "true",
+            "emotes": "true"
         }
     },
     "version": 1
