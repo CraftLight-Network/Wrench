@@ -5,7 +5,7 @@
 **CraftLight Network:** [![Discord](https://discordapp.com/api/guilds/525487377817534484/embed.png?18)](https://craftlight.org/discord)
 
 ## About
-This bot is used mainly for the CraftLight Network.<br/>
+This bot is used mainly for the CraftLight Network.  
 If you would like to see this bot in action, go to the [CraftLight Network Discord server](https://craftlight.org/discord).
 
 WrenchBot is a fun and helpful bot.  
@@ -17,7 +17,7 @@ and a bunch of helpful and fun commands!
 
 ## Setup
 Setup is mostly specific to your OS.  
-This guide won't show you how to install Node.js, Python, and other global dependencies on your device. You must have [Node.js](https://nodejs.org/), [Python](https://www.python.org/), Build Tools _(C++, Python)_, and [Git](https://git-scm.com/).    
+This guide won't show you how to install Node.js, Python, and other global dependencies on your device. You must have [Node.js](https://nodejs.org/), [Python](https://www.python.org/), Build Tools _(C++, Python)_, and [Git](https://git-scm.com/).
 
 1. Create a bot via the [Discord Application panel](https://discord.com/developer/applications). [Invite the bot to your guild](https://discordpy.readthedocs.io/en/latest/discord.html).
 2. Run `git clone https://github.com/Encode42/WrenchBot.git` in a folder of your choice.  
