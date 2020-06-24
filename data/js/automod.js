@@ -3,7 +3,6 @@ const { log } = require("./logger");
 
 // Define and require modules
 const { stripIndents } = require("common-tags");
-const checkRole		   = require("../../data/js/util").checkRole;
 const embed			   = require("../../data/js/util").embed;
 const AntiSpam		   = require("discord-anti-spam");
 const configHandler	   = require("./configHandler");
