@@ -25,7 +25,15 @@ This guide won't show you how to install Node.js, Python, and other global depen
 3. Run `npm install`. This command installs mostly everything the bot needs. _(Linux may need root/sudo)_
 4. Rename `auth-example.json` to `auth.json` and replace all tokens with your own. _(Translator tokens are optional)_
 5. Change the values in `config.json` to satisfy your wants.
-6. Run `node wrenchbot.js`.
+6. Run `npm start`.
+
+### Starting/stopping the bot  
+This project utilizes PM2, a process manager. Tasks are ran in the  
+background so you don't need to keep a command window open all the time.  
+`npm start`: Start the bot.  
+`npm stop`: Stop the bot.  
+`npm run logs`: View the latest logs. (CTRL+C to exit)  
+`npm run status`: View what resources the bot is using.  
 
 ## Config
 Many features of the bot can be configured server-side and guild-side.  
