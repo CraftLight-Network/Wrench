@@ -84,7 +84,7 @@ client.on("ready", () => {
 	log.info(`Currently in ${client.guilds.size} servers.`);
 
 	// Set the bots status
-	if (config.status.enabled) {status(); setTimeout(status, config.status.timeout)};
+	if (config.status.enabled) {status(); setInterval(status, config.status.timeout)};
 
 	function status() {
 		// Get a random status from the list
