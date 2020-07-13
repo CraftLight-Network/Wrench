@@ -1,14 +1,20 @@
 # Contributing
-If you want to contribute to this bot, please open a pull request or issue.
+Thanks for being interested in the project!  
+Before contributing, make sure to read this file.
 
-## Pull request
-1. Ensure there are no major vulnerabilities. This includes DoS, SQL Injection, and other types of attacks.
-2. Make sure to clearly describe what you have changed.
-3. Test your stuff. It must actually work.
+When contributing, please make sure your changes follow the below guidelines. If possible, notify the owners of this repository about changes you are making.  
+If you do not follow these guidelines, your requests may be denied or require further work on the request.
 
-## Requirements
-1. Commands must be properly formatted with tabs as the delimiter.
-2. Changes must not be malicious or code-breaking.
-3. Do not include any personal information! You don't want to leak your stuff.
+## DOs
+- Follow the formatting! The repository may include files or packages that will help check your code.
+- Make sure to describe what you have done with detail so reviewers know exactly what to check.
+- Test your changes extensively. We don't want broken changes added to the repository!
+- Keep to the style of the rest of the code. Avoid comments that don't fit, code that doesn't look right, etc.
 
-The ESLint config will format all code the way it's meant to be formatted.
+## DON'Ts
+- Changes you make must not be malicious or code-breaking.
+- Avoid any offensive, religious, or controversial code or comments.
+- **MAKE SURE TO CLEAR ANY PERSONAL INFORMATION!** Make sure to remove tokens, emails, etc.
+
+## REQUIREMENTS
+1. `DOs` and `DON'Ts` are completely followed.

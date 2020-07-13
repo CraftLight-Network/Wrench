@@ -1,6 +1,8 @@
-**Summary**<br/>
-This pull request fixes/adds/removes (Insert changes)
+## Summary
+We need to know *why* you want to merge your code.  
+Example:
 
-**Issue Number (Optional)**<br/>
-Fixes #(Issue number)
-
+```md
+This pull request fixes #3 where the client crashed when typing the phrase, "crash"
+To fix the issue, I removed the functionality to crash the client when the phrase is typed.
+```
