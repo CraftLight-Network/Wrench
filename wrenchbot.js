@@ -26,7 +26,6 @@ const { CommandoClient }  = require("discord.js-commando");
 const replacePlaceholders = require("./data/js/util").replacePlaceholders;
 const checkRole			  = require("./data/js/util").checkRole;
 const utilInit			  = require("./data/js/util").init;
-const Util				  = require("./data/js/util");
 const configHandler		  = require("./data/js/configHandler");
 const config			  = require("./config");
 const moment			  = require("moment");

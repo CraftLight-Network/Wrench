@@ -13,7 +13,7 @@ module.exports.init = (c, t) => {
 module.exports.truncate = (input, length) => input.length > length ? input.slice(0, length - 1).trim() + "..." : input;
 
 // Embedded messages
-module.exports.embed = (options) => {
+module.exports.embed = options => {
 	// Convert member to message
 	if (options.message && !options.message.content && options.message.username) options.message.author = options.message;
 
@@ -109,7 +109,7 @@ module.exports.isCommand = (message, command) => {
 	if (message.content === command) return true;
 };
 
-module.exports.replacePlaceholders = (message) => {
+module.exports.replacePlaceholders = message => {
 	// Replace placeholders
 	const placeholders = {
 		"%prefix%":				config.prefix.commands,
@@ -123,4 +123,21 @@ module.exports.replacePlaceholders = (message) => {
 
 	for (const i in placeholders) message = message.replace(i, placeholders[i]);
 	return message;
+};
+
+module.exports.toArray = (string, char) => {
+	if (string === undefined)	    return [];
+	if (typeof string === "object") return string;
+	else return string.split(char);
+};
+
+module.exports.toString = (array, char) => {
+	if (array === undefined)	   return "";
+	if (typeof array === "string") return array;
+	else return array.join(char);
+};
+
+module.exports.newIncludes = (string, compare) => {
+	if (!string) return false;
+	return compare.some(c => string.includes(c));
 };

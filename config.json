@@ -9,20 +9,36 @@
 		"enabled": true,
 		"types": [
 			{
+				"regex": [
+						"\\bhello\\b", "\\bhi\\b", "\\bhey\\b", "\\bhiya\\b", "\\bheyo\\b",
+						"\\bhowdy\\b", "\\bsup\\b", "\\byo\\b", "\\bhola\\b", "\\bhallo\\b",
+						"\\bbonjour\\b", "\\bsalut\\b", "\\bciao\\b", "\\bkonnichiwa\\b"
+					],
+				"emotes": ["👋", "🇭", "🇮"],
+				"checkPrevious": 4
+			},
+			{
+				"regex": [
+					"\\bgoodbye\\b", "\\bbye\\b", "\\bcya\\b", "\\bgtg\\b"
+				],
+				"emotes": ["👋", "🇧", "🇾", "🇪"],
+				"checkPrevious": 4
+			},
+			{
 				"regex": "pog",
-				"emote": "660203799377608704"
+				"emotes": "660203799377608704"
 			},
 			{
 				"regex": "l[ou]l",
-				"emote": "660205635777986571"
+				"emotes": "660205635777986571"
 			},
 			{
-				"regex": "sleeper|\\bz+",
-				"emote": "660205776744480789"
+				"regex": ["sleeper", "\\bz+"],
+				"emotes": "660205776744480789"
 			},
 			{
 				"regex": "WrenchBot",
-				"message": "???"
+				"messages": "???"
 			}
 		]
 	},

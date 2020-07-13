@@ -57,10 +57,7 @@
         }
     },
     "misc": {
-        "reactions": {
-            "greetings": "true",
-            "emotes": "true"
-        }
+        "reactions": "true"
     },
     "version": 1
 }

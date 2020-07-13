@@ -2,6 +2,7 @@
 const { Command }			 = require("discord.js-commando");
 const { stripIndents }		 = require("common-tags");
 const userInput 			 = require("../../data/js/util").getUserInput;
+const newIncludes			 = require("../../data/js/util").newIncludes;
 const embed 				 = require("../../data/js/util").embed;
 const request 				 = require("async-request");
 const config 				 = require("../../config");
@@ -87,7 +88,7 @@ module.exports = class minecraftCommand extends Command {
 		// Skin actions
 		if (action === "skin") {
 			// Make sure skin type if valid
-			if (!args || !skinTypes.some(l => args.includes(l))) {args = ""; message.say("Invalid skin type.")};
+			if (!newIncludes(args, skinTypes)) {args = ""; message.say("Invalid skin type.")};
 
 			// Undefined skin action
 			if (!args) {
@@ -112,7 +113,7 @@ module.exports = class minecraftCommand extends Command {
 		// Data actions
 		if (action === "info") {
 			// Make sure info type if valid
-			if (!args || !dataTypes.some(l => args.includes(l))) {args = ""; message.say("Invalid data type.")};
+			if (!newIncludes(args, dataTypes)) {args = ""; message.say("Invalid data type.")};
 
 			// Undefined data action
 			if (!args) {
