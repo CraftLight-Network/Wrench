@@ -3,7 +3,6 @@ This bot is being completely re-written. To view progress or test out the latest
 
 <img src="https://repository-images.githubusercontent.com/160117136/8186cd80-63b0-11e9-88f6-fa3933300bc1" width="200">
 
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ae8bd42415fe4598b089d79b3a09a784)](https://app.codacy.com/gh/CraftLight-Network/WrenchBot?utm_source=github.com&utm_medium=referral&utm_content=CraftLight-Network/WrenchBot&utm_campaign=Badge_Grade_Dashboard)
 [![Discord](https://discordapp.com/api/guilds/525487377817534484/embed.png)](https://discord.gg/sAxRWVb)
 
 # WrenchBot
