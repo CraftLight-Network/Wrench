@@ -76,7 +76,7 @@ client.on("ready", () => {
 	totals.ensure("messages", 0);
 	totals.ensure("automod",  0);
 	log.ok("--------------------------------------------");
-	log.ok(`  WrenchBot START ON: ${moment().format("M/D/YY hh:mm:ss A")}				`);
+	log.ok(`  WrenchBot START ON: ${moment().format("M/D/YY hh:mm:ss A")}`);
 	log.ok("--------------------------------------------");
 	log.info(`Name: ${client.user.tag} | ID: ${client.user.id} | ${client.guilds.size} servers`);
 	log.info(`${totals.get("commands")} commands used | ${totals.get("messages")} messages read | ${totals.get("translations")} translations done`);
@@ -88,7 +88,7 @@ client.on("ready", () => {
 	function status() {
 		// Get a random status
 		function getStatus() {
-			const status = config.status.statuses[Math.floor(Math.random() * config.status.statuses.length)];
+			const status = config.status.types[Math.floor(Math.random() * config.status.types.length)];
 			status.name = replacePlaceholders(status.name);
 			return status;
 		}

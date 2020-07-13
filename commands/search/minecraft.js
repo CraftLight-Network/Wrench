@@ -68,13 +68,17 @@ module.exports = class minecraftCommand extends Command {
 
 		// Get UUID of user
 		let uuid;
-		if (player.length !== 32) {
+		if (player.length <= 16) {
 			const playerRequest = await request(`https://api.mojang.com/users/profiles/minecraft/${player}`);
 			player = JSON.parse(playerRequest.body);
 
 			if (!player) return message.reply("That player does not exist. Please enter a valid in-game name or UUID.");
 			uuid = player.id;
-		} else uuid = player;
+		} else {
+			uuid = player
+				.toLowerCase()
+				.replace(/[^0-9a-z]/g, "");
+		}
 
 		// Get name of user
 		const nameRequest = await request(`https://api.mojang.com/user/profiles/${uuid}/names`);
@@ -151,7 +155,7 @@ module.exports = class minecraftCommand extends Command {
 					"thumbnail":   `https://visage.surgeplay.com/face/16/${uuid}.png?${number}`,
 					"description": stripIndents`
 						\`\`\`
-						Name | ${player.name}
+						Name | ${name[0].name}
 						UUID | ${uuid}
 						\`\`\`
 					`

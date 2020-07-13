@@ -60,12 +60,14 @@ winston.addColors(levels.colors);
 
 module.exports.log = log;
 module.exports.logger = function logger(client, options) {
+	/* ### Bot events ### */
 	// Unhandled rejections
-	process.on("unhandledRejection", (err, p) => {log.error(`Rejected Promise: ${p.toString()} | Rejection: ${err}`)});
+	process.on("unhandledRejection", (reason) => {throw reason});
+	process.on("unhandledError",	 (reason) => {throw reason});
 
 	// Connection events
 	client.on("reconnecting", () => log.info("Reconnecting to Discord..."));
-	client.on("resume", () => log.ok("Reconnected to Discord."));
+	client.on("resume",		  () => log.ok("Reconnected to Discord."));
 
 	// Guild events
 	client.on("guildCreate", guild => {
@@ -74,5 +76,5 @@ module.exports.logger = function logger(client, options) {
 	});
 	client.on("guildDelete", guild => log.info(`Removed from ${guild.name} (ID: ${guild.id})`));
 
-	// TODO: MODERATION AND OTHER LOG EVENTS
+	/* ### Guild events ### */
 };

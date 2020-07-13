@@ -122,7 +122,7 @@ module.exports = class tagCommand extends Command {
 
 		// Get arg variable if not defined
 		if (!name) name = action;
-		if (!names.some(n => name.includes(n))) {return message.reply(`The tag \`${name}\` does not exist.`)};
+		if (message.content.charAt(0) !== config.prefix.tags) if (!names.some(n => name.includes(n))) {return message.reply(`The tag \`${name}\` does not exist.`)};
 
 		tags.get(message.guild.id).some(tag => {
 			if (name !== tag.name) return false;
