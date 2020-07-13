@@ -34,7 +34,11 @@ const format = {
 			this.base
 		);
 	},
-	get "file"() {return winston.format.combine(this.base)}
+	get "file"() {
+		return winston.format.combine(
+			this.base
+		);
+	}
 };
 
 // eslint-disable-next-line new-cap
@@ -62,8 +66,8 @@ module.exports.log = log;
 module.exports.logger = function logger(client, options) {
 	/* ### Bot events ### */
 	// Unhandled rejections
-	process.on("unhandledRejection", (reason) => {throw reason});
-	process.on("unhandledError",	 (reason) => {throw reason});
+	process.on("unhandledRejection", (reason) => {console.trace(reason)});
+	process.on("unhandledError",	 (reason) => {console.trace(reason)});
 
 	// Connection events
 	client.on("reconnecting", () => log.info("Reconnecting to Discord..."));
