@@ -3,9 +3,13 @@
         "commonjs": true,
         "es6": true,
         "node": true
-    },
+	},
+	"plugins": [
+		"security"
+	],
     "extends": [
-        "standard"
+		"standard",
+		"plugin:security/recommended"
     ],
     "globals": {
         "Atomics": "readonly",
@@ -37,7 +41,8 @@
 		"no-return-assign": "off",
 		"eqeqeq": "warn",
 		"key-spacing": "off",
-		"no-multi-spaces": "off"
+		"no-multi-spaces": "off",
+		"security/detect-non-literal-regexp": "off"
 	},
 	"ignorePatterns": ["!node_modules/*"]
 }
