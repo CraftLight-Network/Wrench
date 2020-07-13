@@ -51,7 +51,11 @@ Many features of the bot can be configured server-side and guild-side.
 `translator`: Whether or not the translator will be enabled. [true / false]  
 
 `reactions.enabled`: Whether or not the bot reacts to messages. [true / false]  
-`reactions.ids.*`: ID's of the emojis the bot reacts with according to the message. [Discord emoji ID]  
+`reactions.types`: Array of all messages the bot will react to. [Array]  
+`reactions.types.*.regex`: Pattern the bot will test the message for. [String, regex pattern]  
+`reactions.types.*.messages`: Messages the bot will send if matches. [String / Array]  
+`reactions.types.*.emotes`: Emotes the bot will react with if matches. [String / Array]  
+`reactions.types.*.checkPrevious`: How many messages the bot will search for duplicates. [Number] (*Optional*)  
 &nbsp;<sub>_The bot must be in the guild that the emojis are from._</sub>  
 
 `status.enabled`: Whether or not the bot changes its status. [true / false]  
@@ -99,5 +103,4 @@ Modules: `spam`, `invites`, `badLinks`, `caps`
 
 **Misc**  
 `misc.translator`: Whether or not the auto translator is enabled. (true / false)  
-`misc.reactions.greetings`: Whether or not greeting/farewell reactions happen. (true / false)  
-`misc.reactions.emotes`: Whether or not general emotes happen. (true / false)
+`misc.reactions`: Whether or not reactions happen. (true / false)  
