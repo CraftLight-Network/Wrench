@@ -7,17 +7,29 @@
 	"translator": true,
 	"reactions": {
 		"enabled": true,
-		"ids": {
-			"pogchamp":	"660203799377608704",
-			"lul":		"660205635777986571",
-			"kappa":	"660205713708154890",
-			"sleeper":	"660205776744480789"
-		}
+		"types": [
+			{
+				"regex": "pog",
+				"emote": "660203799377608704"
+			},
+			{
+				"regex": "l[ou]l",
+				"emote": "660205635777986571"
+			},
+			{
+				"regex": "sleeper|\\bz+",
+				"emote": "60205776744480789"
+			},
+			{
+				"regex": "WrenchBot",
+				"message": "???"
+			}
+		]
 	},
 	"status": {
 		"enabled": true,
 		"timeout": 30000,
-		"statuses": [
+		"types": [
 			{
 				"type": "WATCHING",
 				"name": "you."

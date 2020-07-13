@@ -10,7 +10,7 @@ module.exports = async (message) => {
 	if (!message.guild || guildConfig.misc.reactions.greetings === "true") checkGreetings();
 	async function checkGreetings() {
 		let found = false;
-		const greeting = ["hello", "hi", "hey", "howdy", "sup", "yo", "hola", "hallo", "bonjour", "salut", "ciao", "konnichiwa", "hiya", "heyo"];
+		const greeting = ["hello", "hi", "hey", "hiya", "heyo", "howdy", "sup", "yo", "hola", "hallo", "bonjour", "salut", "ciao", "konnichiwa"];
 		const farewell = ["goodbye", "bye", "cya", "gtg"];
 
 		if (greeting.includes(message.content)) {
@@ -31,11 +31,12 @@ module.exports = async (message) => {
 			if (!found) message.react("👋").then(async () => {await message.react("🇧"); await message.react("🇾"); message.react("🇪")});
 		}
 	}
-	if (config.reactions.enabled && (!message.guild || guildConfig.misc.reactions.emotes === "true")) checkEmotes();
-	function checkEmotes() {
-		if (content.match(/pog|pogchamp/gi)) message.react(config.reactions.ids.pogchamp);
-		if (content.match(/lul|lol/gi))		 message.react(config.reactions.ids.lul);
-		if (content.match(/kappa/gi))		 message.react(config.reactions.ids.kappa);
-		if (content.match(/sleeper/gi))		 message.react(config.reactions.ids.sleeper);
+	if (config.reactions.enabled && (!message.guild || guildConfig.misc.reactions.emotes === "true")) checkReactions();
+	function checkReactions() {
+		config.reactions.types.forEach(e => {
+			if (!message.content.match(new RegExp(e.regex))) return;
+			if (e.message) message.channel.send(e.message);
+			if (e.emote)   message.react(e.emote);
+		});
 	}
 };
