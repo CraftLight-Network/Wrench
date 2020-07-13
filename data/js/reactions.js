@@ -5,7 +5,6 @@ const config		= require("../../config");
 module.exports = async (message) => {
 	let guildConfig;
 	if (message.guild) guildConfig = await configHandler.getConfig(message.guild.id);
-	const content = message.content;
 
 	if (!message.guild || guildConfig.misc.reactions.greetings === "true") checkGreetings();
 	async function checkGreetings() {
