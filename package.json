@@ -4,11 +4,11 @@
   "description": "Fun and Helpful Discord Bot.",
   "main": "wrenchbot.js",
   "scripts": {
-	"start": "pm2 start .\\wrenchbot.js --name WrenchBot --watch --max-memory-restart 512M",
-	"stop": "pm2 delete WrenchBot",
-	"restart": "npm stop && npm start",
-	"logs": "pm2 logs WrenchBot",
-	"status": "pm2 list WrenchBot"
+    "start": "pm2 start .\\wrenchbot.js --name WrenchBot --watch --max-memory-restart 512M",
+    "stop": "pm2 delete WrenchBot",
+    "restart": "npm stop && npm start",
+    "logs": "pm2 logs WrenchBot",
+    "status": "pm2 list WrenchBot"
   },
   "repository": {
     "type": "git",
@@ -23,7 +23,7 @@
   "dependencies": {
     "array-average": "^0.1.2",
     "async-request": "^1.2.0",
-    "baidu-translate-api": "^0.4.0",
+    "baidu-translate-api": "^0.4.1",
     "better-sqlite-pool": "^0.2.3",
     "binstring": "^0.2.1",
     "center-align": "^1.0.1",
@@ -32,13 +32,13 @@
     "discord-anti-spam": "^2.4.1",
     "discord.js": "^11.6.4",
     "discord.js-commando": "^0.10.0",
-    "enmap": "^5.3.1",
-    "figlet": "^1.4.0",
+    "enmap": "^5.3.2",
+    "figlet": "^1.5.0",
     "franc": "^5.0.0",
     "fs": "0.0.1-security",
     "hastebin": "^0.2.1",
     "limiter": "^1.1.5",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "merge-json": "0.1.0-b.3",
     "minimist": "^1.2.5",
     "moment": "^2.27.0",
@@ -53,9 +53,9 @@
     "winston-daily-rotate-file": "^3.10.0"
   },
   "devDependencies": {
-    "eslint": "^7.3.1",
+    "eslint": "^7.4.0",
     "eslint-config-standard": "^14.1.1",
-    "eslint-plugin-import": "^2.21.2",
+    "eslint-plugin-import": "^2.22.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1"
