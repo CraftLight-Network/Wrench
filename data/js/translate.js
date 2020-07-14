@@ -8,7 +8,6 @@ const translator  = require("baidu-translate-api");
 const similar	  = require("string-similarity");
 const totals	  = require("./enmap").totals;
 const config	  = require("../../config");
-const language	  = require("franc");
 
 // Translate function
 module.exports = async (message, options) => {
@@ -18,36 +17,45 @@ module.exports = async (message, options) => {
 		translate = options.translation;
 		return startTranslate();
 	}
-	else translate = message.content;
-	let exit = false;
 
-	// Check if message is translatable
-	if (!config.translator || translate.charAt(0) === config.prefix.commands) return;
+	/*
+		This is the backend code for the auto-translation feature.
+		It is disabled because of false positives with the language detection.
+		If you would like to re-enable it, uncomment this block.
 
-	// Message sanitization
-	// Members
-	if (message.guild !== null) {
-		const users = message.guild.roles.get(message.guild.id).members.map(m => m.user.username).join("|");
-		translate = translate.replace(new RegExp(users, "gi"), "");
-	}
+		const language = require("franc");
+		else translate = message.content;
+		let exit = false;
 
-	translate = translate.replace(/http.[^\s]*/gu, "") // Links
-		.replace(/<@.*>|@[^\s]+/gu, "")				   // Mentions
-		.replace(/<:.*>|:.*:/gu, "")				   // Emojis
-		.replace(/[^\p{L}1-9.,!?'"\-+\s]/giu, "")	   // Symbols
-		.replace(/`|\s+/gu, " ").trim();			   // Trimming
+		// Check if message is translatable
+		if (!config.translator || translate.charAt(0) === config.prefix.commands) return;
 
-	// Ignore s p a c e d messages
-	if (Math.round(translate.length / 2) === translate.split(" ").length) return;
-	if (!translate) return;
+		// Message sanitization
+		// Members
+		if (message.guild !== null) {
+			const users = message.guild.roles.get(message.guild.id).members.map(m => m.user.username).join("|");
+			translate = translate.replace(new RegExp(users, "gi"), "");
+		}
 
-	// Detect language
-	const detectedLanguage = language.all(translate);
-	if (detectedLanguage[0][0] === "eng" || detectedLanguage[0][0] === "und" || detectedLanguage[1][1] < 0.82) return;
-	language.all(translate).some(e => {if (e[0] === "eng" && e[1] > 0.635) exit = true;});
-	if (exit) return;
+		// BACKEND: Replace "-" with "*"
+		translate = translate.replace(/http.[^\s]-/gu, "") // Links
+			.replace(/<@.*>|@[^\s]+/gu, "")				   // Mentions
+			.replace(/<:.*>|:.*:/gu, "")				   // Emojis
+			.replace(/[^\p{L}1-9.,!?'"\-+\s]/giu, "")	   // Symbols
+			.replace(/`|\s+/gu, " ").trim();			   // Trimming
 
-	return startTranslate();
+		// Ignore s p a c e d messages
+		if (Math.round(translate.length / 2) === translate.split(" ").length) return;
+		if (!translate) return;
+
+		// Detect language
+		const detectedLanguage = language.all(translate);
+		if (detectedLanguage[0][0] === "eng" || detectedLanguage[0][0] === "und" || detectedLanguage[1][1] < 0.82) return;
+		language.all(translate).some(e => {if (e[0] === "eng" && e[1] > 0.635) exit = true;});
+		if (exit) return;
+
+		return startTranslate();
+	*/
 
 	async function startTranslate() {
 	// Ratelimiting
