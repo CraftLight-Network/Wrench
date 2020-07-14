@@ -22,8 +22,6 @@ module.exports.getConfig = async (guild) => {
 module.exports.setConfig = async (guild, property, value) => {
 	guildConfig.evict(`${guild}.${property}`);
 
-	console.log(path.query(await this.getConfig(guild), `$.${property}`))
-
 	if (!(path.query(await this.getConfig(guild), `$.${property}`)[0] instanceof Array)) return guildConfig.set(guild, value, property);
 	else return guildConfig.set(guild, [value], property);
 };
