@@ -90,6 +90,8 @@ ${JSON.stringify(guildConfig, null, 2)}
 
 		// Set command
 		if (action === "set") {
+			if (property === "version") return message.reply("You cannot change `version`.");
+
 			configHandler.setConfig(message.guild.id, property, value);
 			return message.reply(`Set ${property} to ${value}.`);
 		}
