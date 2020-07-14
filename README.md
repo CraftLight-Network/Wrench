@@ -61,8 +61,8 @@ Many features of the bot can be configured server-side and guild-side.
 `status.enabled`: Whether or not the bot changes its status. [true / false]  
 `status.timeout`: How long the bot waits before changing its status. [Any time above 15s in ms]  
 `status.statuses`: The statuses the bot switches to.  
-`status.statuses.type`: The prefix of the status. [WATCHING / PLAYING / STREAMING / LISTENING]  
-`status.statuses.name`: What the status is. [Any string]  
+`status.statuses.*.type`: The prefix of the status. [WATCHING / PLAYING / STREAMING / LISTENING]  
+`status.statuses.*.name`: What the status is. [Any string]  
 
 ### Discord-side:
 **Join**  

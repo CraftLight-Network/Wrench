@@ -4,7 +4,7 @@
 const guildConfig	= require("./enmap").guildConfig;
 const defaultConfig	= require("../json/default");
 const merge			= require("merge-json");
-const safeEval		= require("safe-eval");
+const path			= require("jsonpath");
 const _				= require("lodash");
 
 // Create the config
@@ -22,15 +22,17 @@ module.exports.getConfig = async (guild) => {
 module.exports.setConfig = async (guild, property, value) => {
 	guildConfig.evict(`${guild}.${property}`);
 
-	if (!(safeEval(`config.${property}`, { "config": await this.getConfig(guild) }) instanceof Array)) return guildConfig.setProp(guild, property, value);
-	else return guildConfig.setProp(guild, property, [value]);
+	console.log(path.query(await this.getConfig(guild), `$.${property}`))
+
+	if (!(path.query(await this.getConfig(guild), `$.${property}`)[0] instanceof Array)) return guildConfig.set(guild, value, property);
+	else return guildConfig.set(guild, [value], property);
 };
 
 // Add to the config
 module.exports.addConfig = async (guild, property, value) => {
 	guildConfig.fetchEverything();
 
-	if (!guildConfig.get(guild, property)) return guildConfig.setProp(guild, property, [value]);
+	if (!guildConfig.get(guild, property)) return guildConfig.set(guild, [value], property);
 	return guildConfig.pushIn(guild, property, value, true);
 };
 

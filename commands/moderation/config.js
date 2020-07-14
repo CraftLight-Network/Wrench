@@ -7,7 +7,7 @@ const configHandler	   = require("../../data/js/configHandler");
 const checkRole		   = require("../../data/js/util").checkRole;
 const embed			   = require("../../data/js/util").embed;
 const config		   = require("../../config");
-const safeEval		   = require("safe-eval");
+const path			   = require("jsonpath");
 
 const actions = ["view", "set", "add", "remove", "reset"];
 
@@ -114,14 +114,14 @@ ${JSON.stringify(guildConfig, null, 2)}
 		// Uses eval because I couldn't find a way to navigate JSON
 		// with variables with dots.
 		function checkExists() {
-			if (safeEval(`guildConfig.${property}`, { "guildConfig": guildConfig })) return true;
+			if (path.query(guildConfig, `$.${property}`)[0]) return true;
 			return false;
 		}
 
 		// Function to check if a config value is an array
 		// Uses eval for the same reason as checkExists()
 		function isArray() {
-			if (safeEval(`guildConfig.${property}`, { "guildConfig": guildConfig }) instanceof Array) return true;
+			if (path.query(guildConfig, `$.${property}`)[0] instanceof Array) return true;
 			return false;
 		}
 	}
