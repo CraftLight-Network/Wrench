@@ -7,7 +7,7 @@ const config		   = require("../../config");
 const hastebin		   = require("hastebin");
 const figlet		   = require("figlet");
 
-const fonts = ["fonts"].concat(figlet.fontsSync().map(function(i) {return i.replace(" ", "_").toLowerCase()}));
+const fonts = ["fonts"].concat(figlet.fontsSync().map(i => {return i.replace(" ", "_").toLowerCase()}));
 
 module.exports = class asciiCommand extends Command {
 	constructor(client) {
@@ -54,7 +54,7 @@ module.exports = class asciiCommand extends Command {
 	async run(message, { action, args }) {
 		// Return link to fonts if specified
 		if (action === "fonts") {
-			const embedMessage = embed({ "message": message, "title": "Available Fonts:", "description": "https://dl.encode42.dev/data/txt/wrenchbot-fonts.txt" });
+			const embedMessage = embed({ "message": message, "title": "Available Fonts:", "description": "https://dl.encode42.dev/Etc/wrenchbot-fonts.txt" });
 			return message.channel.send(embedMessage);
 		} else {
 			// Take input if not specified

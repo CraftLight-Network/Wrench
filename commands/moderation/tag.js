@@ -12,7 +12,7 @@ const actions = ["list", "create", "delete", "view", "[tag name]"];
 // Get Enmap
 const tags = require("../../data/js/enmap").tags;
 const defaultTag = [{
-	"title":	   "default",
+	"name":		   "default",
 	"description": "This is a default tag."
 }];
 
@@ -27,7 +27,7 @@ module.exports = class tagCommand extends Command {
 			"details": stripIndents`
 				Run \`${config.prefix.commands}tag <action> (name) (content)\` to use commands.
 				**Notes:**
-				<action>: Required, what to do.
+				<action>: Required, what to do. (\`create\`, \`delete\`, \`list\`)
 				(name): Required depending on action, name of the tag.
 				(content): Required depending on action, what the tag will say.
 
@@ -53,7 +53,7 @@ module.exports = class tagCommand extends Command {
 					"type": "string"
 				}
 			],
-			"aliases": ["shortcut"],
+			"aliases": ["tags", "shortcut"],
 			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
 			"throttling": {
 				"usages":	2,
@@ -73,7 +73,7 @@ module.exports = class tagCommand extends Command {
 
 		// Get list of tag names
 		const names = [];
-		await tags.get(message.guild.id).forEach((tag, i) => {names[i] = tag.name});
+		await tags.get(message.guild.id).forEach((tag, i) => names[i] = tag.name);
 
 		if (action === "create") {
 			// Permission check
@@ -117,7 +117,7 @@ module.exports = class tagCommand extends Command {
 		}
 
 		if (action === "list") {
-			return message.channel.send(embed({ "title": "Available tags:", "description": `**${names.length > 0 ? "None" : `\`${names.join("`, `")}\``}**` }));
+			return message.channel.send(embed({ "title": "Available tags:", "description": `${names.length > 0 ? `\`${names.join("`, `")}\`` : "**None**"}` }));
 		}
 
 		// Get arg variable if not defined
