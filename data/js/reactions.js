@@ -26,7 +26,7 @@ module.exports = async (message) => {
 
 	async function checkMessages(message, checks, limit) {
 		let found = false;
-		await message.channel.fetchMessages({ "limit": limit }).then(messages => {
+		await message.channel.messages.fetch({ "limit": limit }).then(messages => {
 			messages.delete(message.id);
 			messages.some(msg => {if (checks.includes(msg.content)) found = true;});
 		});

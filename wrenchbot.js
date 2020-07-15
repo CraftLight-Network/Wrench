@@ -25,8 +25,8 @@
 const { CommandoClient }  = require("discord.js-commando");
 const replacePlaceholders = require("./data/js/util").replacePlaceholders;
 const checkRole			  = require("./data/js/util").checkRole;
-const utilInit			  = require("./data/js/util").init;
 const configHandler		  = require("./data/js/configHandler");
+const utilInit			  = require("./data/js/util").init;
 const config			  = require("./config");
 const moment			  = require("moment");
 const path				  = require("path");
@@ -34,23 +34,23 @@ const fs				  = require("fs");
 
 // Register + create command instance
 const client = new CommandoClient({
-	"commandPrefix":		  config.prefix.commands,
-	"owner":				  config.owners,
-	"disableEveryone":		  true,
-	"unknownCommandResponse": false
+	"owner":				   config.owners,
+	"invite":				   config.support,
+	"commandPrefix":		   config.prefix.commands,
+	"commandEditableDuration": 1
 });
 client.registry
 	.registerDefaultTypes()
 	.registerGroups([
 		["search",	   "Search"],
 		["image",	   "Image"],
-		["games",	   "Games"],
 		["fun",		   "Fun"],
 		["moderation", "Moderation"],
 		["misc",	   "Misc"]
 	])
 	.registerDefaultGroups()
 	.registerDefaultCommands({
+		"unknownCommand": false,
 		"_eval": false
 	})
 	.registerCommandsIn(path.join(__dirname, "commands"));
@@ -77,9 +77,8 @@ client.on("ready", () => {
 	log.ok("--------------------------------------------");
 	log.ok(`  WrenchBot START ON: ${moment().format("M/D/YY hh:mm:ss A")}`);
 	log.ok("--------------------------------------------");
-	log.info(`Name: ${client.user.tag} | ID: ${client.user.id} | ${client.guilds.size} servers`);
+	log.info(`Name: ${client.user.tag} | ID: ${client.user.id} | ${client.guilds.cache.size} servers`);
 	log.info(`${totals.get("commands")} commands used | ${totals.get("messages")} messages read | ${totals.get("translations")} translations done`);
-	log.info(`Currently in ${client.guilds.size} servers.`);
 
 	// Set the bots status
 	if (config.status.enabled) {status(); setInterval(status, config.status.timeout)};
@@ -99,7 +98,7 @@ client.on("ready", () => {
 		}
 
 		// Set the status
-		client.user.setPresence({ "game": { "type": status.type, "name": status.name } });
+		client.user.setActivity(status.name, { "type": status.type, "url": status.url });
 	}
 });
 

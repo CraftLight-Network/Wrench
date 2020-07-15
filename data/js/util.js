@@ -1,6 +1,6 @@
 // Define and require modules
 const { stripIndents } = require("common-tags");
-const { RichEmbed }	   = require("discord.js");
+const Embed			   = require("discord.js").MessageEmbed;
 const config		   = require("../../config");
 
 let client, totals;
@@ -23,37 +23,37 @@ module.exports.embed = options => {
 	if (!options.color) options.color = "#E3E3E3";
 
 	// Make the embed
-	const embedMessage = new RichEmbed()
+	const embed = new Embed()
 		.setFooter(options.footer)
 		.setColor(options.color);
 
 	// Add attachments
-	if (options.attachments) embedMessage.attachFiles(options.attachments);
+	if (options.attachments) embed.attachFiles(options.attachments);
 
 	// Add author
 	if (options.author) {
-		if (options.author.picture === "me") options.author.picture = options.message.author.displayAvatarURL;
-		embedMessage.setAuthor(options.author.name, options.author.picture);
+		if (options.author.picture === "me") options.author.picture = options.message.author.displayAvatarURL();
+		embed.setAuthor(options.author.name, options.author.picture);
 	}
 
 	// Add title, url, thumbnail, and description
-	if (options.title)				  embedMessage.setTitle(options.title);
-	if (options.title && options.url) embedMessage.setURL(options.url);
-	if (options.thumbnail)			  embedMessage.setThumbnail(options.thumbnail);
-	if (options.description)		  embedMessage.setDescription(options.description);
+	if (options.title)				  embed.setTitle(options.title);
+	if (options.title && options.url) embed.setURL(options.url);
+	if (options.thumbnail)			  embed.setThumbnail(options.thumbnail);
+	if (options.description)		  embed.setDescription(options.description);
 
 	// Add fields
 	if (options.fields) {
 		options.fields.some(e => {
 			if (!e[2]) e[2] = false;
-			embedMessage.addField(e[0], e[1], e[2]);
+			embed.addField(e[0], e[1], e[2]);
 		});
 	};
 
 	// Add image
-	if (options.image) embedMessage.setImage(options.image);
+	if (options.image) embed.setImage(options.image);
 
-	return embedMessage;
+	return embed;
 };
 
 // User input
@@ -95,7 +95,7 @@ module.exports.getUserInput = async (message, options) => {
 // Permission check
 module.exports.checkRole = (message, roles) => {
 	let hasRole = false;
-	roles.some(r => {if (message.member.roles.has(r)) return hasRole = true;});
+	roles.some(r => {if (message.member.roles.cache.has(r)) return hasRole = true;});
 	if (!hasRole && message.author.id !== message.guild.owner.id && !config.owners.includes(message.author.id)) return false;
 	return true;
 };
@@ -114,7 +114,7 @@ module.exports.replacePlaceholders = message => {
 	const placeholders = {
 		"%prefix%":				config.prefix.commands,
 		"%prefix_tags%":		config.prefix.tags,
-		"%total_servers%":		client.guilds.size,
+		"%total_servers%":		client.guilds.cache.size,
 		"%total_commands%":		totals.get("commands"),
 		"%total_messages%":		totals.get("messages"),
 		"%total_translations%":	totals.get("translations"),

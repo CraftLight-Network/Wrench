@@ -1,5 +1,6 @@
 {
 	"owners": [ "272466470510788608" ],
+	"support": "https://encode42.dev/support",
 	"prefix": {
 		"commands": "]",
 		"tags":		">"
@@ -33,7 +34,7 @@
 				"emotes": "660205635777986571"
 			},
 			{
-				"regex": ["sleeper", "\\bz+"],
+				"regex": ["\\bsleep", "\\bz+\\b"],
 				"emotes": "660205776744480789"
 			},
 			{
@@ -59,7 +60,7 @@
 				"name": "a game."
 			},
 			{
-				"type": "STREAMING",
+				"type": "LISTENING",
 				"name": "%prefix%help"
 			},
 			{
