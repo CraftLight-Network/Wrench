@@ -1,7 +1,6 @@
 # Node stuff
-.npm
-.node_repl_history
-node_modules/*
+/.npm
+/node_modules
 
 # OS files
 .DS_Store
@@ -12,4 +11,3 @@ desktop.ini
 # Private files
 auth.json
 /data/private
-/v1/
