@@ -6,7 +6,7 @@ const config						   = require("../../config");
 const seedrandom					   = require("seedrandom");
 const random						   = require("random");
 
-module.exports = class shipCommand extends Command {
+module.exports = class ShipCommand extends Command {
 	constructor(client) {
 		super(client, {
 			"name":		   "ship",

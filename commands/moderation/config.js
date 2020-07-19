@@ -11,7 +11,7 @@ const path			   = require("jsonpath");
 
 const actions = ["view", "set", "add", "remove", "reset"];
 
-module.exports = class configCommand extends Command {
+module.exports = class ConfigCommand extends Command {
 	constructor(client) {
 		super(client, {
 			"name": "config",

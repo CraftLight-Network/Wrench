@@ -7,7 +7,7 @@ const seedrandom					   = require("seedrandom");
 const random						   = require("random");
 const date							   = new Date();
 
-module.exports = class coolnessCommand extends Command {
+module.exports = class CoolnessCommand extends Command {
 	constructor(client) {
 		super(client, {
 			"name":		   "coolness",

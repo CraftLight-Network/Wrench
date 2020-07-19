@@ -9,7 +9,7 @@ const figlet		   = require("figlet");
 
 const fonts = ["fonts"].concat(figlet.fontsSync().map(i => {return i.replace(" ", "_").toLowerCase()}));
 
-module.exports = class asciiCommand extends Command {
+module.exports = class AsciiCommand extends Command {
 	constructor(client) {
 		super(client, {
 			"name":		   "ascii",

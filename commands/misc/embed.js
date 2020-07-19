@@ -6,7 +6,7 @@ const config		   = require("../../config");
 
 const values = ["author", "author.name", "author.picture", "title", "url", "thumbnail", "description", "footer", "color", "fields", "image"];
 
-module.exports = class embedCommand extends Command {
+module.exports = class EmbedCommand extends Command {
 	constructor(client) {
 		super(client, {
 			"name":		   "embed",

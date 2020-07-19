@@ -6,7 +6,7 @@ const embed			   = require("../../data/js/util").embed;
 const wikipedia		   = require("wikijs").default;
 const config		   = require("../../config");
 
-module.exports = class wikipediaCommand extends Command {
+module.exports = class WikipediaCommand extends Command {
 	constructor(client) {
 		super(client, {
 			"name":		   "wikipedia",

@@ -6,7 +6,7 @@ const config						   = require("../../config");
 const seedrandom					   = require("seedrandom");
 const random						   = require("random");
 
-module.exports = class probabilityCommand extends Command {
+module.exports = class ProbabilityCommand extends Command {
 	constructor(client) {
 		super(client, {
 			"name":		   "probability",

@@ -13,7 +13,7 @@ const languages = [
 	"swe", "hu", "cht", "vie"
 ];
 
-module.exports = class translateCommand extends Command {
+module.exports = class TranslateCommand extends Command {
 	constructor(client) {
 		super(client, {
 			"name":		   "translate",

@@ -12,7 +12,7 @@ const actions	= ["skin", "info"];
 const skinTypes = ["skin", "face", "front", "frontfull", "head", "bust", "full"];
 const dataTypes = ["names", "name", "uuid"];
 
-module.exports = class minecraftCommand extends Command {
+module.exports = class MinecraftCommand extends Command {
 	constructor(client) {
 		super(client, {
 			"name":		   "minecraft",

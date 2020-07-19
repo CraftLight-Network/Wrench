@@ -9,7 +9,7 @@ const actions = ["standard", "advanced", "all"];
 const verificationLevel = ["None", "Low", "Medium", "(╯°□°）╯︵ ┻━┻", "┻━┻ ﾐヽ(ಠ益ಠ)ノ彡┻━┻"];
 const explicitContentFilter = ["Off", "On (No Role)", "On (All)"];
 
-module.exports = class serverInfoCommand extends Command {
+module.exports = class ServerInfoCommand extends Command {
 	constructor(client) {
 		super(client, {
 			"name":		   "server-info",

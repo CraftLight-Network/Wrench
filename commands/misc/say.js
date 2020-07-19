@@ -3,7 +3,7 @@ const { Command }	   = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
 const config		   = require("../../config");
 
-module.exports = class sayCommand extends Command {
+module.exports = class SayCommand extends Command {
 	constructor(client) {
 		super(client, {
 			"name":		   "say",

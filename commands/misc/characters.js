@@ -4,7 +4,7 @@ const { stripIndents } = require("common-tags");
 const embed			   = require("../../data/js/util").embed;
 const config		   = require("../../config");
 
-module.exports = class charactersCommand extends Command {
+module.exports = class CharactersCommand extends Command {
 	constructor(client) {
 		super(client, {
 			"name":		   "characters",

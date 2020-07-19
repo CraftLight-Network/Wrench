@@ -16,7 +16,7 @@ const defaultTag = [{
 	"description": "This is a default tag."
 }];
 
-module.exports = class tagCommand extends Command {
+module.exports = class TagCommand extends Command {
 	constructor(client) {
 		super(client, {
 			"name":		   "tag",

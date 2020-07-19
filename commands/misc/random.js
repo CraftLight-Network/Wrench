@@ -5,7 +5,7 @@ const embed					 = require("../../data/js/util.js").embed;
 const config				 = require("../../config");
 const random				 = require("random");
 
-module.exports = class randomCommand extends Command {
+module.exports = class RandomCommand extends Command {
 	constructor(client) {
 		super(client, {
 			"name":		   "random",
