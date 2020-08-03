@@ -1,27 +1,27 @@
 // Define and require modules
-const { Command }	   = require("discord.js-commando");
+const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const userInput		   = require("../../data/js/util").getUserInput;
-const checkRole		   = require("../../data/js/util").checkRole;
-const configHandler	   = require("../../data/js/configHandler");
-const embed			   = require("../../data/js/util").embed;
-const config		   = require("../../config");
+const userInput        = require("../../data/js/util").getUserInput;
+const checkRole        = require("../../data/js/util").checkRole;
+const configHandler    = require("../../data/js/configHandler");
+const embed            = require("../../data/js/util").embed;
+const config           = require("../../config");
 
 const actions = ["list", "create", "delete", "view", "[tag name]"];
 
 // Get Enmap
 const tags = require("../../data/js/enmap").tags;
 const defaultTag = [{
-	"name":		   "default",
+	"name":        "default",
 	"description": "This is a default tag."
 }];
 
 module.exports = class TagCommand extends Command {
 	constructor(client) {
 		super(client, {
-			"name":		   "tag",
+			"name":        "tag",
 			"memberName":  "tag",
-			"group":	   "moderation",
+			"group":       "moderation",
 			"description": "Create tags/shortcuts for longer or special messages.",
 			"guildOnly":   true,
 			"details": stripIndents`
@@ -56,8 +56,8 @@ module.exports = class TagCommand extends Command {
 			"aliases": ["tags", "shortcut"],
 			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
 			"throttling": {
-				"usages":	2,
-				"duration":	5
+				"usages":   2,
+				"duration": 5
 			}
 		});
 	}

@@ -3,10 +3,10 @@ const { log } = require("./logger");
 
 // Define and require modules
 const { stripIndents } = require("common-tags");
-const embed			   = require("../../data/js/util").embed;
-const AntiSpam		   = require("discord-anti-spam");
-const configHandler	   = require("./configHandler");
-const request		   = require("async-request");
+const embed            = require("../../data/js/util").embed;
+const AntiSpam         = require("discord-anti-spam");
+const configHandler    = require("./configHandler");
+const request          = require("async-request");
 
 // Format + update bad links
 let badLinks = [];
@@ -29,24 +29,24 @@ async function createBadLinks() {
 createBadLinks();
 
 const antiSpam = new AntiSpam({
-	"warnThreshold":		5,
-	"kickThreshold":		8,
-	"banThreshold":			12,
-	"maxInterval":			5000,
-	"maxDuplicatesWarning":	5,
-	"maxDuplicatesKick":	8,
-	"maxDuplicatesBan":		12,
-	"errorMessages":		false,
-	"warnMessage":			"",
-	"kickMessage":			"**{user_tag}** has been kicked for spamming.",
-	"banMessage":			"**{user_tag}** has been banned for spamming."
+	"warnThreshold":        5,
+	"kickThreshold":        8,
+	"banThreshold":         12,
+	"maxInterval":          5000,
+	"maxDuplicatesWarning": 5,
+	"maxDuplicatesKick":    8,
+	"maxDuplicatesBan":     12,
+	"errorMessages":        false,
+	"warnMessage":          "",
+	"kickMessage":          "**{user_tag}** has been kicked for spamming.",
+	"banMessage":           "**{user_tag}** has been banned for spamming."
 });
 
 antiSpam.on("spamThresholdWarn", (member) => {
 	member.send(embed({
 		"message": member,
 		"author":  {
-			"name":	   "Warning",
+			"name":    "Warning",
 			"picture": "me"
 		},
 		"fields":  [
@@ -123,7 +123,7 @@ module.exports = async (message) => {
 		message.author.send(embed({
 			"message": message,
 			"author":  {
-				"name":	   "Warning",
+				"name":    "Warning",
 				"picture": "me"
 			},
 			"fields":  [

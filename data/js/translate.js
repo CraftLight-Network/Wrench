@@ -2,12 +2,12 @@
 const { log } = require("./logger");
 
 // Define and require modules
-const embed		  = require("../../data/js/util").embed;
+const embed       = require("../../data/js/util").embed;
 const TokenBucket = require("limiter").TokenBucket;
 const translator  = require("baidu-translate-api");
-const similar	  = require("string-similarity");
-const totals	  = require("./enmap").totals;
-const config	  = require("../../config");
+const similar     = require("string-similarity");
+const totals      = require("./enmap").totals;
+const config      = require("../../config");
 
 // Translate function
 module.exports = async (message, options) => {
@@ -39,10 +39,10 @@ module.exports = async (message, options) => {
 
 		// BACKEND: Replace "-" with "*"
 		translate = translate.replace(/http.[^\s]-/gu, "") // Links
-			.replace(/<@.*>|@[^\s]+/gu, "")				   // Mentions
-			.replace(/<:.*>|:.*:/gu, "")				   // Emojis
-			.replace(/[^\p{L}1-9.,!?'"\-+\s]/giu, "")	   // Symbols
-			.replace(/`|\s+/gu, " ").trim();			   // Trimming
+			.replace(/<@.*>|@[^\s]+/gu, "")                // Mentions
+			.replace(/<:.*>|:.*:/gu, "")                   // Emojis
+			.replace(/[^\p{L}1-9.,!?'"\-+\s]/giu, "")      // Symbols
+			.replace(/`|\s+/gu, " ").trim();               // Trimming
 
 		// Ignore s p a c e d messages
 		if (Math.round(translate.length / 2) === translate.split(" ").length) return;
@@ -81,12 +81,12 @@ module.exports = async (message, options) => {
 			log.translate(`${message.author.tag} | ${translate} -> ${translated.trans_result.dst} (${translated.from}-${translated.to})`);
 
 			return message.channel.send(embed({
-				"author":	   {
-					"name":	   `${message.author.username} (${translated.from}-${translated.to})`,
+				"author": {
+					"name":    `${message.author.username} (${translated.from}-${translated.to})`,
 					"picture": message.author.displayAvatarURL()
 				},
 				"description": `**${translated.trans_result.dst}**`,
-				"footer":	   `Translations from Baidu Translate. (http://cft.li/baiduTL)`
+				"footer":      `Translations from Baidu Translate. (http://cft.li/baiduTL)`
 			}));
 		}).catch(() => {});
 	}

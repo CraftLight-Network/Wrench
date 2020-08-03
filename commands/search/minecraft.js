@@ -1,23 +1,23 @@
 // Define and require modules
-const { Command }			 = require("discord.js-commando");
-const { stripIndents }		 = require("common-tags");
-const userInput 			 = require("../../data/js/util").getUserInput;
-const newIncludes			 = require("../../data/js/util").newIncludes;
-const embed 				 = require("../../data/js/util").embed;
-const request 				 = require("async-request");
-const config 				 = require("../../config");
-const random				 = require("random");
+const { Command }      = require("discord.js-commando");
+const { stripIndents } = require("common-tags");
+const userInput        = require("../../data/js/util").getUserInput;
+const newIncludes      = require("../../data/js/util").newIncludes;
+const embed            = require("../../data/js/util").embed;
+const request          = require("async-request");
+const config           = require("../../config");
+const random           = require("random");
 
-const actions	= ["skin", "info"];
+const actions   = ["skin", "info"];
 const skinTypes = ["skin", "face", "front", "frontfull", "head", "bust", "full"];
 const dataTypes = ["names", "name", "uuid"];
 
 module.exports = class MinecraftCommand extends Command {
 	constructor(client) {
 		super(client, {
-			"name":		   "minecraft",
+			"name":        "minecraft",
 			"memberName":  "minecraft",
-			"group":	   "search",
+			"group":       "search",
 			"description": "Get information on a Minecraft player.",
 			"details": stripIndents`
 				Run \`${config.prefix.commands}minecraft <action> (player) (args)\` to use commands.
@@ -50,11 +50,11 @@ module.exports = class MinecraftCommand extends Command {
 					"type": "string"
 				}
 			],
-			"aliases":			 ["mc"],
+			"aliases":           ["mc"],
 			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
 			"throttling": {
-				"usages":	2,
-				"duration":	5
+				"usages":   2,
+				"duration": 5
 			}
 		});
 	}
@@ -95,7 +95,7 @@ module.exports = class MinecraftCommand extends Command {
 				args = await userInput(message, {
 					"question": `How would you like the skin? (\`${skinTypes.join("`, `")}\`)`,
 					"validate": {
-						"name":	 "skin type",
+						"name":  "skin type",
 						"array": skinTypes
 					}
 				});
@@ -103,10 +103,10 @@ module.exports = class MinecraftCommand extends Command {
 			if (args === "cancel") return message.reply("Cancelled command.");
 
 			return message.channel.send(embed({
-				"message":	 message,
-				"title":	 `${name[0].name}'s skin (${args})`,
+				"message":    message,
+				"title":     `${name[0].name}'s skin (${args})`,
 				"thumbnail": `https://visage.surgeplay.com/face/16/${uuid}.png?${number}`,
-				"image":	 `https://visage.surgeplay.com/${args}/${uuid}.png?${number}`
+				"image":     `https://visage.surgeplay.com/${args}/${uuid}.png?${number}`
 			}));
 		}
 
@@ -120,7 +120,7 @@ module.exports = class MinecraftCommand extends Command {
 				args = await userInput(message, {
 					"question": `What info would you like to grab? (\`${dataTypes.join("`, `")}\`)`,
 					"validate": {
-						"name":	 "data type",
+						"name":  "data type",
 						"array": dataTypes
 					}
 				});
@@ -130,8 +130,8 @@ module.exports = class MinecraftCommand extends Command {
 			// Grab names
 			if (args === "names") {
 				const embedMessage = {
-					"message":	   message,
-					"title":	   `${name[0].name}'s names`,
+					"message":     message,
+					"title":       `${name[0].name}'s names`,
 					"thumbnail":   `https://visage.surgeplay.com/face/16/${uuid}.png?${number}`,
 					"description": "```"
 				};
@@ -151,8 +151,8 @@ module.exports = class MinecraftCommand extends Command {
 			// Grab UUID or name
 			if (args === "uuid" || args === "name") {
 				return message.channel.send(embed({
-					"message":	   message,
-					"title":	   `${name[0].name}'s name + UUID`,
+					"message":     message,
+					"title":      `${name[0].name}'s name + UUID`,
 					"thumbnail":   `https://visage.surgeplay.com/face/16/${uuid}.png?${number}`,
 					"description": stripIndents`
 						\`\`\`

@@ -1,16 +1,16 @@
 // Define and require modules
-const { Command }			 = require("discord.js-commando");
-const { stripIndents }		 = require("common-tags");
-const embed					 = require("../../data/js/util.js").embed;
-const config				 = require("../../config");
-const random				 = require("random");
+const { Command }      = require("discord.js-commando");
+const { stripIndents } = require("common-tags");
+const embed            = require("../../data/js/util.js").embed;
+const config           = require("../../config");
+const random           = require("random");
 
 module.exports = class RandomCommand extends Command {
 	constructor(client) {
 		super(client, {
-			"name":		   "random",
+			"name":        "random",
 			"memberName":  "random",
-			"group": 	   "misc",
+			"group":       "misc",
 			"description": "Choose a random number.",
 			"details": stripIndents`
 				Run \`${config.prefix.commands}random <min> <max>\` to choose a random number.
@@ -18,23 +18,23 @@ module.exports = class RandomCommand extends Command {
 				<min>: Required, minimum number.
 				<max>: Required, maximum number.
 			`,
-			"aliases":			 ["rng"],
+			"aliases":           ["rng"],
 			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
 			"args": [
 				{
-					"key":	  "min",
+					"key":    "min",
 					"prompt": "What is the minimum number?",
-					"type":	  "integer"
+					"type":   "integer"
 				},
 				{
-					"key":	  "max",
+					"key":    "max",
 					"prompt": "What is the maximum number?",
-					"type":	  "integer"
+					"type":   "integer"
 				}
 			],
 			"throttling": {
-				"usages":	2,
-				"duration":	5
+				"usages":   2,
+				"duration": 5
 			}
 		});
 	}

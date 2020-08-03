@@ -1,8 +1,8 @@
 // Define and require modules
-const configHandler	= require("../../data/js/configHandler");
-const config		= require("../../config");
-const toString		= require("./util").toString;
-const toArray		= require("./util").toArray;
+const configHandler = require("../../data/js/configHandler");
+const config        = require("../../config");
+const toString      = require("./util").toString;
+const toArray       = require("./util").toArray;
 
 module.exports = async (message) => {
 	let guildConfig;
@@ -12,7 +12,7 @@ module.exports = async (message) => {
 	function checkReactions() {
 		config.reactions.types.forEach(async e => {
 			e.messages = toArray(e.messages, "|");
-			e.emotes   = toArray(e.emotes,	 "|");
+			e.emotes   = toArray(e.emotes,   "|");
 			if (!message.content.match(new RegExp(toString(e.regex, "|")))) return;
 
 			// Checks

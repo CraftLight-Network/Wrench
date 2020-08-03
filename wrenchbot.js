@@ -24,29 +24,29 @@
 // Define and require modules
 const { CommandoClient }  = require("discord.js-commando");
 const replacePlaceholders = require("./data/js/util").replacePlaceholders;
-const checkRole			  = require("./data/js/util").checkRole;
-const configHandler		  = require("./data/js/configHandler");
-const utilInit			  = require("./data/js/util").init;
-const config			  = require("./config");
-const moment			  = require("moment");
-const path				  = require("path");
-const fs				  = require("fs");
+const checkRole           = require("./data/js/util").checkRole;
+const configHandler       = require("./data/js/configHandler");
+const utilInit            = require("./data/js/util").init;
+const config              = require("./config");
+const moment              = require("moment");
+const path                = require("path");
+const fs                  = require("fs");
 
 // Register + create command instance
 const client = new CommandoClient({
-	"owner":				   config.owners,
-	"invite":				   config.support,
-	"commandPrefix":		   config.prefix.commands,
+	"owner":                   config.owners,
+	"invite":                  config.support,
+	"commandPrefix":           config.prefix.commands,
 	"commandEditableDuration": 1
 });
 client.registry
 	.registerDefaultTypes()
 	.registerGroups([
-		["search",	   "Search"],
-		["image",	   "Image"],
-		["fun",		   "Fun"],
+		["search",     "Search"],
+		["image",      "Image"],
+		["fun",        "Fun"],
 		["moderation", "Moderation"],
-		["misc",	   "Misc"]
+		["misc",       "Misc"]
 	])
 	.registerDefaultGroups()
 	.registerDefaultCommands({
@@ -56,7 +56,7 @@ client.registry
 	.registerCommandsIn(path.join(__dirname, "commands"));
 
 // Get Enmap
-!fs.existsSync("./data/private")	  && fs.mkdirSync("./data/private");
+!fs.existsSync("./data/private")      && fs.mkdirSync("./data/private");
 !fs.existsSync("./data/private/logs") && fs.mkdirSync("./data/private/logs");
 const totals = require("./data/js/enmap").totals;
 
@@ -67,8 +67,8 @@ const { log, logger } = require("./data/js/logger");
 logger(client);
 
 // Start modules
-const automod	= require("./data/js/automod");
-const reactions	= require("./data/js/reactions");
+const automod   = require("./data/js/automod");
+const reactions = require("./data/js/reactions");
 
 client.on("ready", () => {
 	totals.ensure("commands", 0);

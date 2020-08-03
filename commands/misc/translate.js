@@ -1,8 +1,8 @@
 // Define and require modules
-const { Command }	   = require("discord.js-commando");
+const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const translate		   = require("../../data/js/translate");
-const config		   = require("../../config");
+const translate        = require("../../data/js/translate");
+const config           = require("../../config");
 
 const languages = [
 	"auto", "zh", "en", "yue", "wyw",
@@ -16,9 +16,9 @@ const languages = [
 module.exports = class TranslateCommand extends Command {
 	constructor(client) {
 		super(client, {
-			"name":		   "translate",
+			"name":        "translate",
 			"memberName":  "translate",
-			"group":	   "misc",
+			"group":       "misc",
 			"description": "Translate a message from one language to another.",
 			"details": stripIndents`
 				Run \`${config.prefix.commands}translate <from> <to> <message>\` to translate a message.
@@ -29,29 +29,29 @@ module.exports = class TranslateCommand extends Command {
 				Languages: \`${languages.join("`, `")}\`
 				*For more, go to <https://www.npmjs.com/package/baidu-translate-api#languages>*
 			`,
-			"aliases":			 ["tran"],
+			"aliases":           ["tran"],
 			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
 			"args": [
 				{
-					"key":	  "from",
+					"key":    "from",
 					"prompt": "What would you like to translate from?",
-					"type":	  "string",
+					"type":   "string",
 					"oneOf":  languages
 				},
 				{
-					"key":	  "to",
+					"key":    "to",
 					"prompt": "What would you like to translate to?",
-					"type":	  "string",
+					"type":   "string",
 					"oneOf":  languages.slice(1)
 				},
 				{
-					"key":	  "translation",
+					"key":    "translation",
 					"prompt": "What would you like to translate?",
-					"type":	  "string"
+					"type":   "string"
 				}
 			],
 			"throttling": {
-				"usages":	2,
+				"usages":   2,
 				"duration": 5
 			}
 		});

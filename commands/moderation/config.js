@@ -1,13 +1,13 @@
 "use strict";
 
 // Define and require modules
-const { Command }	   = require("discord.js-commando");
+const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const configHandler	   = require("../../data/js/configHandler");
-const checkRole		   = require("../../data/js/util").checkRole;
-const embed			   = require("../../data/js/util").embed;
-const config		   = require("../../config");
-const path			   = require("jsonpath");
+const configHandler    = require("../../data/js/configHandler");
+const checkRole        = require("../../data/js/util").checkRole;
+const embed            = require("../../data/js/util").embed;
+const config           = require("../../config");
+const path             = require("jsonpath");
 
 const actions = ["view", "set", "add", "remove", "reset"];
 
@@ -30,29 +30,29 @@ module.exports = class ConfigCommand extends Command {
 			`,
 			"args": [
 				{
-					"key":	   "action",
+					"key":     "action",
 					"prompt":  "What would you like to do?",
-					"type":	   "string",
+					"type":    "string",
 					"oneOf":   actions
 				},
 				{
-					"key":	   "property",
+					"key":     "property",
 					"prompt":  "",
 					"default": "",
-					"type":	   "string"
+					"type":    "string"
 				},
 				{
-					"key":	   "value",
+					"key":     "value",
 					"prompt":  "",
 					"default": "",
-					"type":	   "string"
+					"type":    "string"
 				}
 			],
 			"guildOnly": true,
 			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
 			"throttling": {
-				"usages":	2,
-				"duration":	5
+				"usages":   2,
+				"duration": 5
 			}
 		});
 	}
@@ -66,8 +66,8 @@ module.exports = class ConfigCommand extends Command {
 		// View command
 		if (action === "view") {
 			return message.channel.send(embed({
-				"message":	   message,
-				"title":	   `${message.guild.name}'s config:`,
+				"message":     message,
+				"title":       `${message.guild.name}'s config:`,
 				"description": `
 \`\`\`json
 ${JSON.stringify(guildConfig, null, 2)}

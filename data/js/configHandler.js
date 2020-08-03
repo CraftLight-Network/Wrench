@@ -1,11 +1,9 @@
-"use strict";
-
 // Define and require modules
-const guildConfig	= require("./enmap").guildConfig;
-const defaultConfig	= require("../json/default");
-const merge			= require("merge-json");
-const path			= require("jsonpath");
-const _				= require("lodash");
+const guildConfig   = require("./enmap").guildConfig;
+const defaultConfig = require("../json/default");
+const merge         = require("merge-json");
+const path          = require("jsonpath");
+const _             = require("lodash");
 
 // Create the config
 module.exports.ensure = (guild) => {

@@ -1,7 +1,7 @@
 // Define and require modules
 const { stripIndents } = require("common-tags");
-const Embed			   = require("discord.js").MessageEmbed;
-const config		   = require("../../config");
+const Embed            = require("discord.js").MessageEmbed;
+const config           = require("../../config");
 
 let client, totals;
 module.exports.init = (c, t) => {
@@ -37,10 +37,10 @@ module.exports.embed = options => {
 	}
 
 	// Add title, url, thumbnail, and description
-	if (options.title)				  embed.setTitle(options.title);
+	if (options.title)                embed.setTitle(options.title);
 	if (options.title && options.url) embed.setURL(options.url);
-	if (options.thumbnail)			  embed.setThumbnail(options.thumbnail);
-	if (options.description)		  embed.setDescription(options.description);
+	if (options.thumbnail)            embed.setThumbnail(options.thumbnail);
+	if (options.description)          embed.setDescription(options.description);
 
 	// Add fields
 	if (options.fields) {
@@ -59,14 +59,13 @@ module.exports.embed = options => {
 // User input
 module.exports.getUserInput = async (message, options) => {
 	// Default options if not defined
-	if (!options.question)			  options.question = "What would you like to do?";
+	if (!options.question)            options.question = "What would you like to do?";
 	if (options.cancel === undefined) options.cancel   = true;
-	if (!options.timeout)			  options.timeout  = 30;
-	if (!options.validate)			  options.validate = false;
+	if (!options.timeout)             options.timeout  = 30;
+	if (!options.validate)            options.validate = false;
 
 	let result = options.variable;
-	let exit;
-	while (!result && !exit) {
+	while (!result) {
 		// Ask the question
 		const cancel = options.cancel ? `Respond with \`cancel\` to cancel the command. The command will automatically be cancelled in ${options.timeout} seconds.` : "";
 
@@ -77,9 +76,9 @@ module.exports.getUserInput = async (message, options) => {
 
 		// Take user input
 		result = await message.channel.awaitMessages(res => res.author.id === message.author.id, {
-			"max":	1,
-			"time":	options.timeout * 1000
-		}).catch(() => exit = true);
+			"max":  1,
+			"time": options.timeout * 1000
+		});
 
 		// Set result to input
 		await result.find(i => result = i.content);
@@ -112,13 +111,13 @@ module.exports.isCommand = (message, command) => {
 module.exports.replacePlaceholders = message => {
 	// Replace placeholders
 	const placeholders = {
-		"%prefix%":				config.prefix.commands,
-		"%prefix_tags%":		config.prefix.tags,
-		"%total_servers%":		client.guilds.cache.size,
-		"%total_commands%":		totals.get("commands"),
-		"%total_messages%":		totals.get("messages"),
-		"%total_translations%":	totals.get("translations"),
-		"%total_automod%":		totals.get("automod")
+		"%prefix%":             config.prefix.commands,
+		"%prefix_tags%":        config.prefix.tags,
+		"%total_servers%":      client.guilds.cache.size,
+		"%total_commands%":     totals.get("commands"),
+		"%total_messages%":     totals.get("messages"),
+		"%total_translations%": totals.get("translations"),
+		"%total_automod%":      totals.get("automod")
 	};
 
 	for (const i in placeholders) message = message.replace(i, placeholders[i]);
@@ -126,13 +125,13 @@ module.exports.replacePlaceholders = message => {
 };
 
 module.exports.toArray = (string, char) => {
-	if (string === undefined)	    return [];
+	if (string === undefined)       return [];
 	if (typeof string === "object") return string;
 	else return string.split(char);
 };
 
 module.exports.toString = (array, char) => {
-	if (array === undefined)	   return "";
+	if (array === undefined)       return "";
 	if (typeof array === "string") return array;
 	else return array.join(char);
 };
