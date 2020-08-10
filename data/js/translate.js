@@ -13,7 +13,7 @@ const config      = require("../../config");
 module.exports = async (message, options) => {
 	// Define variables
 	let translate;
-	if (options && options.command && config.translator) {
+	if (options && options.command) {
 		translate = options.translation;
 		return startTranslate();
 	}

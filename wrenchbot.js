@@ -71,9 +71,6 @@ const automod   = require("./data/js/automod");
 const reactions = require("./data/js/reactions");
 
 client.on("ready", () => {
-	totals.ensure("commands", 0);
-	totals.ensure("messages", 0);
-	totals.ensure("automod",  0);
 	log.ok("--------------------------------------------");
 	log.ok(`  WrenchBot START ON: ${moment().format("M/D/YY hh:mm:ss A")}`);
 	log.ok("--------------------------------------------");

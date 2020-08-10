@@ -13,10 +13,15 @@ const guildConfig = new Enmap({
 
 // Command counter
 const totals = new Enmap({
-	"name":      "totals",
-	"autoFetch": true,
-	"fetchAll":  false,
-	"dataDir":   dataDir
+	"name":       "totals",
+	"autoEnsure": {
+		"commands": 0,
+		"messages": 0,
+		"automod":  0
+	},
+	"autoFetch":  true,
+	"fetchAll":   false,
+	"dataDir":    dataDir
 });
 
 // Tags

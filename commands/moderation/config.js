@@ -113,17 +113,14 @@ ${JSON.stringify(guildConfig, null, 2)}
 		}
 
 		// Function to check if a config value exists
-		// Uses eval because I couldn't find a way to navigate JSON
-		// with variables with dots.
 		function checkExists() {
-			if (path.query(guildConfig, `$.${property}`)[0]) return true;
+			if (path.query(guildConfig, `$.${property}`, 0) !== undefined) return true;
 			return false;
 		}
 
 		// Function to check if a config value is an array
-		// Uses eval for the same reason as checkExists()
 		function isArray() {
-			if (path.query(guildConfig, `$.${property}`)[0] instanceof Array) return true;
+			if (path.query(guildConfig, `$.${property}`, 0) instanceof Array) return true;
 			return false;
 		}
 	}
