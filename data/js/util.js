@@ -109,7 +109,7 @@ module.exports.isCommand = (message, command) => {
 };
 
 module.exports.replacePlaceholders = (message, custom) => {
-	// Replace placeholders
+	// Pre-set placeholders
 	const placeholders = {
 		"%prefix%":             config.prefix.commands,
 		"%prefix_tags%":        config.prefix.tags,
@@ -120,12 +120,29 @@ module.exports.replacePlaceholders = (message, custom) => {
 		"%total_automod%":      totals.get("automod")
 	};
 
+	// Custom placeholders
 	if (custom !== undefined) {
 		custom.forEach(e => placeholders[e[0]] = e[1]);
 	}
 
+	// Replace placeholders
 	for (const i in placeholders) message = message.replace(i, placeholders[i]);
 	return message;
+};
+
+module.exports.commonPlaceholders = (object, mode) => {
+	let placeholders;
+	if (mode === "member") {
+		placeholders = [
+			["%memberName%",  object.displayName],
+			["%memberID%",    object.id],
+			["%memberTag%",   object.user.tag],
+			["%server%",      object.guild],
+			["%serverCount%", object.guild.memberCount]
+		];
+	}
+
+	return placeholders;
 };
 
 module.exports.toArray = (string, char) => {

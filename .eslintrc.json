@@ -44,7 +44,8 @@
 		"no-multi-spaces": "off",
 		"security/detect-non-literal-regexp": "off",
 		"security/detect-object-injection": "off",
-		"security/detect-unsafe-regex": "off"
+		"security/detect-unsafe-regex": "off",
+		"curly": "off"
 	},
 	"ignorePatterns": ["!node_modules/*"]
 }

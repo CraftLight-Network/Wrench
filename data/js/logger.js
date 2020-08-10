@@ -1,5 +1,6 @@
 // Define and require modules
 const replacePlaceholders = require("./util").replacePlaceholders;
+const commonPlaceholders  = require("./util").commonPlaceholders;
 const configHandler       = require("./configHandler");
 const winston             = require("winston");
 require("winston-daily-rotate-file");
@@ -86,21 +87,13 @@ module.exports.logger = function logger(client, options) {
 	client.on("guildMemberAdd", async member => {
 		const guildConfig = await configHandler.getConfig(member.guild.id);
 
-		const placeholders = [
-			["%memberName%",  member.displayName],
-			["%memberID%",    member.id],
-			["%memberTag%",   member.user.tag],
-			["%server%",      member.guild],
-			["%serverCount%", member.guild.memberCount]
-		];
+		// Message
+		if (guildConfig.join.message.enabled === "true") sendMessage(member, {
+			"channel": guildConfig.join.message.channelID,
+			"message": guildConfig.join.message.message
+		});
 
-		if (guildConfig.join.message.enabled === "true") {
-			client.channels.cache.get(guildConfig.join.message.channelID)
-				.send(
-					replacePlaceholders(guildConfig.join.message.message, placeholders)
-				);
-		}
-
+		// Role
 		if (guildConfig.join.role.enabled === "true") {
 			guildConfig.join.role.roleIDs.forEach(e => {
 				member.roles.add(e);
@@ -112,19 +105,15 @@ module.exports.logger = function logger(client, options) {
 	client.on("guildMemberRemove", async member => {
 		const guildConfig = await configHandler.getConfig(member.guild.id);
 
-		const placeholders = [
-			["%memberName%",  member.displayName],
-			["%memberID%",    member.id],
-			["%memberTag%",   member.user.tag],
-			["%server%",      member.guild],
-			["%serverCount%", member.guild.memberCount]
-		];
-
-		if (guildConfig.leave.message.enabled === "true") {
-			client.channels.cache.get(guildConfig.leave.message.channelID)
-				.send(
-					replacePlaceholders(guildConfig.leave.message.message, placeholders)
-				);
-		}
+		if (guildConfig.leave.message.enabled === "true") sendMessage(member, {
+			"channel": guildConfig.leave.message.channelID,
+			"message": guildConfig.leave.message.message
+		});
 	});
+
+	function sendMessage(member, options) {
+		client.channels.cache.get(options.channel).send(
+			replacePlaceholders(options.message, commonPlaceholders(member, "member"))
+		);
+	}
 };
