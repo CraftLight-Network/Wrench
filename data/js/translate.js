@@ -7,7 +7,6 @@ const TokenBucket = require("limiter").TokenBucket;
 const translator  = require("baidu-translate-api");
 const similar     = require("string-similarity");
 const totals      = require("./enmap").totals;
-const config      = require("../../config");
 
 // Translate function
 module.exports = async (message, options) => {
