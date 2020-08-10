@@ -3,18 +3,18 @@
         "message": {
             "enabled": "false",
             "channelID": "",
-            "message": "%member% has joined %server%!"
+            "message": "%memberName% has joined %server%!"
         },
         "role": {
             "enabled": "false",
-            "roleID": ""
+            "roleIDs": []
         }
     },
     "leave": {
         "message": {
             "enabled": "false",
             "channelID": "",
-            "message": "%member%#%ID% has left %server%."
+            "message": "%memberName%#%memberTag% has left %server%."
         }
     },
 	"channels": {

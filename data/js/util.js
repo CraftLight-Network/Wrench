@@ -108,7 +108,7 @@ module.exports.isCommand = (message, command) => {
 	if (message.content === command) return true;
 };
 
-module.exports.replacePlaceholders = message => {
+module.exports.replacePlaceholders = (message, custom) => {
 	// Replace placeholders
 	const placeholders = {
 		"%prefix%":             config.prefix.commands,
@@ -119,6 +119,10 @@ module.exports.replacePlaceholders = message => {
 		"%total_translations%": totals.get("translations"),
 		"%total_automod%":      totals.get("automod")
 	};
+
+	if (custom !== undefined) {
+		custom.forEach(e => placeholders[e[0]] = e[1]);
+	}
 
 	for (const i in placeholders) message = message.replace(i, placeholders[i]);
 	return message;
@@ -136,6 +140,7 @@ module.exports.toString = (array, char) => {
 	else return array.join(char);
 };
 
+// An alternate way of checking if a string includes a statement
 module.exports.newIncludes = (string, compare) => {
 	if (!string) return false;
 	return compare.some(c => string.includes(c));

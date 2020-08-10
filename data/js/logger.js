@@ -1,6 +1,7 @@
 // Define and require modules
-const configHandler = require("./configHandler");
-const winston       = require("winston");
+const replacePlaceholders = require("./util").replacePlaceholders;
+const configHandler       = require("./configHandler");
+const winston             = require("winston");
 require("winston-daily-rotate-file");
 
 // Make the Winston logger
@@ -81,7 +82,49 @@ module.exports.logger = function logger(client, options) {
 	client.on("guildDelete", guild => log.info(`Removed from ${guild.name} (ID: ${guild.id})`));
 
 	/* ### Guild events ### */
-	client.on("guildMemberAdd", member => {
+	// Join
+	client.on("guildMemberAdd", async member => {
+		const guildConfig = await configHandler.getConfig(member.guild.id);
 
+		const placeholders = [
+			["%memberName%",  member.displayName],
+			["%memberID%",    member.id],
+			["%memberTag%",   member.user.tag],
+			["%server%",      member.guild],
+			["%serverCount%", member.guild.memberCount]
+		];
+
+		if (guildConfig.join.message.enabled === "true") {
+			client.channels.cache.get(guildConfig.join.message.channelID)
+				.send(
+					replacePlaceholders(guildConfig.join.message.message, placeholders)
+				);
+		}
+
+		if (guildConfig.join.role.enabled === "true") {
+			guildConfig.join.role.roleIDs.forEach(e => {
+				member.roles.add(e);
+			});
+		}
+	});
+
+	// Leave
+	client.on("guildMemberRemove", async member => {
+		const guildConfig = await configHandler.getConfig(member.guild.id);
+
+		const placeholders = [
+			["%memberName%",  member.displayName],
+			["%memberID%",    member.id],
+			["%memberTag%",   member.user.tag],
+			["%server%",      member.guild],
+			["%serverCount%", member.guild.memberCount]
+		];
+
+		if (guildConfig.leave.message.enabled === "true") {
+			client.channels.cache.get(guildConfig.leave.message.channelID)
+				.send(
+					replacePlaceholders(guildConfig.leave.message.message, placeholders)
+				);
+		}
 	});
 };
