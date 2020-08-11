@@ -114,13 +114,13 @@ ${JSON.stringify(guildConfig, null, 2)}
 
 		// Function to check if a config value exists
 		function checkExists() {
-			if (path.query(guildConfig, `$.${property}`, 0) !== undefined) return true;
+			if (path.query(guildConfig, `$.${property}`)[0] !== undefined) return true;
 			return false;
 		}
 
 		// Function to check if a config value is an array
 		function isArray() {
-			if (path.query(guildConfig, `$.${property}`, 0) instanceof Array) return true;
+			if (path.query(guildConfig, `$.${property}`)[0] instanceof Array) return true;
 			return false;
 		}
 	}
