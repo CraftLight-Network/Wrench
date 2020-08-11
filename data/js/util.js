@@ -10,7 +10,8 @@ module.exports.init = (c, t) => {
 };
 
 // Truncate string
-module.exports.truncate = (input, length) => input.length > length ? input.slice(0, length - 1).trim() + "..." : input;
+function truncate(input, length) {return input.length > length ? input.slice(0, length - 1).trim() + "..." : input}
+module.exports.truncate = truncate;
 
 // Embedded messages
 module.exports.embed = options => {
@@ -156,7 +157,10 @@ module.exports.embedToString = message => {
 
 			if (e.title)       es += e.title       + " | ";
 			if (e.author)      es += e.author      + " | ";
-			if (e.description) es += e.description + " | ";
+			if (e.description) es += truncate(
+				e.description.replace(/[\r\n]+|  +/gm, ""),
+				60
+			)                                      + " | ";
 			if (e.image)       es += e.image       + " | ";
 			if (e.thumbnail)   es += e.thumbnail   + " | ";
 			if (e.footer)      es += e.footer.text + " | ";
