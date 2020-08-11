@@ -43,6 +43,7 @@
     "merge-json": "0.1.0-b.3",
     "minimist": "^1.2.5",
     "moment": "^2.27.0",
+    "moment-duration-format": "^2.3.2",
     "pm2": "^4.4.0",
     "random": "^2.2.0",
     "request": "^2.88.2",

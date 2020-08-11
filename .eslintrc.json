@@ -45,7 +45,8 @@
 		"security/detect-non-literal-regexp": "off",
 		"security/detect-object-injection": "off",
 		"security/detect-unsafe-regex": "off",
-		"curly": "off"
+		"curly": "off",
+		"one-var": "off"
 	},
 	"ignorePatterns": ["!node_modules/*"]
 }

@@ -1,9 +1,17 @@
 // Define and require modules
+const { stripIndents }    = require("common-tags");
 const replacePlaceholders = require("./util").replacePlaceholders;
 const commonPlaceholders  = require("./util").commonPlaceholders;
+const getMessage          = require("./util").getMessage;
 const configHandler       = require("./configHandler");
+const sleep               = require("./util").sleep;
+const embed               = require("./util").embed;
 const winston             = require("winston");
 require("winston-daily-rotate-file");
+
+// Moment + sleep
+const moment = require("moment");
+require("moment-duration-format");
 
 // Make the Winston logger
 const levels = {
@@ -88,15 +96,33 @@ module.exports.logger = function logger(client) {
 		const guildConfig = await configHandler.getConfig(member.guild.id);
 
 		// Message
-		if (guildConfig.join.message.enabled === "true") sendMessage(member, {
+		if (guildConfig.join.message.enabled === "true") sendMessage({
 			"channel": guildConfig.join.message.channelID,
 			"message": guildConfig.join.message.message
-		});
+		}, member);
 
 		// Role
 		if (guildConfig.join.role.enabled === "true") {
 			guildConfig.join.role.roleIDs.forEach(e => {
 				member.roles.add(e);
+			});
+		}
+
+		if (guildConfig.channels.log.enabled === "true" || guildConfig.channels.log.modules.member === "true") {
+			sendMessage({
+				"commonPlaceholders": false,
+				"channel": guildConfig.channels.log.channelID,
+				"message": embed({
+					"description": `**Member joined**`,
+					"thumbnail": member.user.avatarURL({ "format": "png", "dynamic": true, "size": 512 }),
+					"fields": [
+						["Member",      member.displayName],
+						["ID",          member.id],
+						["Account age", getDuration(member.user.createdAt.getTime())]
+					],
+					"color": "#00ff00",
+					"timestamp": true
+				})
 			});
 		}
 	});
@@ -105,15 +131,160 @@ module.exports.logger = function logger(client) {
 	client.on("guildMemberRemove", async member => {
 		const guildConfig = await configHandler.getConfig(member.guild.id);
 
-		if (guildConfig.leave.message.enabled === "true") sendMessage(member, {
+		if (guildConfig.leave.message.enabled === "true") sendMessage({
 			"channel": guildConfig.leave.message.channelID,
 			"message": guildConfig.leave.message.message
+		}, member);
+	});
+
+	/* ### Log events ### */
+	// Member join
+	client.on("guildMemberAdd", async member => {
+		const guildConfig = await configHandler.getConfig(member.guild.id);
+
+		if (guildConfig.channels.log.enabled === "true" || guildConfig.channels.log.modules.member === "true") {
+			sendMessage({
+				"commonPlaceholders": false,
+				"channel": guildConfig.channels.log.channelID,
+				"message": embed({
+					"description": `**Member joined**`,
+					"thumbnail": member.user.avatarURL({ "format": "png", "dynamic": true, "size": 512 }),
+					"fields": [
+						["Member",      member.displayName],
+						["ID",          member.id],
+						["Account age", getDuration(member.user.createdAt.getTime())]
+					],
+					"color": "#00ff00",
+					"timestamp": true
+				})
+			});
+		}
+	});
+
+	// Member leave
+	client.on("guildMemberRemove", async member => {
+		const guildConfig = await configHandler.getConfig(member.guild.id);
+
+		if (guildConfig.channels.log.enabled === "true" || guildConfig.channels.log.modules.member === "true") {
+			sendMessage({
+				"commonPlaceholders": false,
+				"channel": guildConfig.channels.log.channelID,
+				"message": embed({
+					"description": `**Member left**`,
+					"thumbnail": member.user.avatarURL({ "format": "png", "dynamic": true, "size": 512 }),
+					"fields": [
+						["Member",         `${member.user.tag}`],
+						["ID",             member.id],
+						["Time in server", getDuration(member.joinedAt.getTime())]
+					],
+					"color": "#ff7700",
+					"timestamp": true
+				})
+			});
+		}
+	});
+
+	// Message deletion
+	client.on("messageDelete", async message => {
+		if (!message.guild) return;
+
+		const guildConfig = await configHandler.getConfig(message.guild.id);
+		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.message === "false") return;
+
+		try {message = await getMessage(message)}
+		catch {return}
+
+		await sleep(2000);
+		let logs = await message.guild.fetchAuditLogs({
+			"limit": 1,
+			"type": "MESSAGE_DELETE"
+		});
+		logs = logs.entries.first();
+
+		let description;
+		if (logs.executor.id === message.author.id) description = stripIndents`
+			User: ${message.author.tag}
+			ID: ${message.author.id}
+			Channel: <#${message.channel.id}>
+		`;
+		else description = stripIndents`
+			By: ${logs.executor.tag}
+			ID: ${logs.executor.id}
+
+			User: ${message.author.tag}
+			ID: ${message.author.id}
+			Channel: <#${message.channel.id}>
+		`;
+
+		sendMessage({
+			"commonPlaceholders": false,
+			"channel": guildConfig.channels.log.channelID,
+			"message": embed({
+				"title":       `Message deleted (${message.author.username})`,
+				"description": description,
+				"thumbnail":   message.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 }),
+				"fields": [
+					["Message Content", message.content]
+				],
+				"color": "#ff0000",
+				"timestamp": true
+			})
 		});
 	});
 
-	function sendMessage(member, options) {
-		client.channels.cache.get(options.channel).send(
-			replacePlaceholders(options.message, commonPlaceholders(member, "member"))
-		);
+	// Message edits
+	client.on("messageUpdate", async (oldMessage, newMessage) => {
+		if (!newMessage.guild) return;
+
+		const guildConfig = await configHandler.getConfig(newMessage.guild.id);
+		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.message === "false") return;
+
+		oldMessage = await getMessage(oldMessage);
+		newMessage = await getMessage(newMessage);
+		if (newMessage.author.bot) return;
+
+		const messageLink = "https://discordapp.com/channels/" +
+		oldMessage.guild.id + "/" +
+		oldMessage.channel.id + "/" +
+		oldMessage.id;
+
+		sendMessage({
+			"commonPlaceholders": false,
+			"channel": guildConfig.channels.log.channelID,
+			"message": embed({
+				"title":       `Message edited (${newMessage.author.username})`,
+				"description": stripIndents`
+					User: ${newMessage.author.tag}
+					ID: ${newMessage.author.id}
+					Channel: <#${newMessage.channel.id}>
+					Message: [Link](${messageLink})
+				`,
+				"thumbnail":   newMessage.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 }),
+				"fields": [
+					["Old Message", oldMessage.content === newMessage.content ? "⚠️ Message too old to check!" : oldMessage.content],
+					["New Message", newMessage.content]
+				],
+				"color": "#ffff00",
+				"timestamp": true
+			})
+		});
+	});
+
+	// Format durations to times
+	function getDuration(then) {
+		const time      = moment.duration((new Date()).getTime() - then);
+		const formatted = time.format("y [years], M [months], d [days], h [hours], m [minutes], s [seconds].");
+		return formatted.replace(/\D0 .*?[,.]/g, "").trim();
+	}
+
+	// Send messages to channels
+	function sendMessage(options, object) {
+		let placeholders = [];
+
+		if (options.commonPlaceholders === undefined) options.commonPlaceholders = true;
+		if (options.commonPlaceholders) placeholders = commonPlaceholders(object, "member");
+		if (options.placeholders) options.message = replacePlaceholders(options.message, placeholders);
+
+		client.channels.cache.get(options.channel).send(options.message);
 	}
 };
