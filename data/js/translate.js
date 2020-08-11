@@ -82,7 +82,7 @@ module.exports = async (message, options) => {
 			return message.channel.send(embed({
 				"author": {
 					"name":    `${message.author.username} (${translated.from}-${translated.to})`,
-					"picture": message.author.displayAvatarURL()
+					"picture": message.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 })
 				},
 				"description": `**${translated.trans_result.dst}**`,
 				"footer":      `Translations from Baidu Translate. (http://cft.li/baiduTL)`
