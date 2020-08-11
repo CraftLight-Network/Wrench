@@ -69,12 +69,12 @@ Many features of the bot can be configured server-side and guild-side.
 `join.message.enabled`: Whether or not the bot sends a message when a user joins. [true / false]  
 `join.message.channelID`: The ID of the channel the welcome message is sent to. [Discord channel ID]  
 `join.message.message`: What the welcome message is. [Any string]  
-&nbsp;<sub>_Placeholders:_
-_`%memberName%`: Name of the member._
-_`%memberTag%`: Name and tag of the member._
-_`%memberID%`: ID of the member._
-_`%server%`: Name of the server._
-_`%serverCount%`: Total members in the server._
+&nbsp;<sub>_Placeholders:_  
+_`%memberName%`: Name of the member._  
+_`%memberTag%`: Name and tag of the member._  
+_`%memberID%`: ID of the member._  
+_`%server%`: Name of the server._  
+_`%serverCount%`: Total members in the server._  
 </sub>  
 `join.role.enabled`: Whether or not the bot gives a role when a user joins. [true / false]  
 `join.role.roleID`: The ID of the role to give to the member. [Discord role ID]  
@@ -83,12 +83,12 @@ _`%serverCount%`: Total members in the server._
 `leave.message.enabled`: Whether or not the bot sends a message when a user leaves. [true / false]  
 `leave.message.channelID`: The ID of the channel the leave message is sent to. [Discord channel ID]  
 `leave.message.message`: What the leave message is. [Any string]  
-&nbsp;<sub>_Placeholders:_
-_`%memberName%`: Name of the member._
-_`%memberTag%`: Name and tag of the member._
-_`%memberID%`: ID of the member._
-_`%server%`: Name of the server._
-_`%serverCount%`: Total members in the server._
+&nbsp;<sub>_Placeholders:_  
+_`%memberName%`: Name of the member._  
+_`%memberTag%`: Name and tag of the member._  
+_`%memberID%`: ID of the member._  
+_`%server%`: Name of the server._  
+_`%serverCount%`: Total members in the server._  
 </sub>  
 
 **Channels**  
