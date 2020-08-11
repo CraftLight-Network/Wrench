@@ -16,7 +16,7 @@ module.exports = class CharactersCommand extends Command {
 				**Notes:**
 				<args>: Required, what the bot will count.
 			`,
-			"aliases":           ["chars", "count"],
+			"aliases":           ["chars", "count", "length"],
 			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
 			"args": [
 				{
