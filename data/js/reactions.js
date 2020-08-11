@@ -11,9 +11,11 @@ module.exports = async (message) => {
 	if (config.reactions.enabled && (!message.guild || guildConfig.misc.reactions === "true")) checkReactions();
 	function checkReactions() {
 		config.reactions.types.forEach(async e => {
+			if (e.flags === undefined) e.flags = "i";
+
 			e.messages = toArray(e.messages, "|");
 			e.emotes   = toArray(e.emotes,   "|");
-			if (!message.content.match(new RegExp(toString(e.regex, "|")))) return;
+			if (!message.content.match(new RegExp(toString(e.regex, "|"), e.flags))) return;
 
 			// Checks
 			if (e.checkPrevious) if (await checkMessages(message, toArray(e.regex, "|"), e.checkPrevious)) return;
