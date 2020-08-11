@@ -154,16 +154,17 @@ module.exports.embedToString = message => {
 		message.embeds.forEach(e => {
 			let es = `Embed: [`;
 
-			if (e.title)       es += e.title       + " | ";
-			if (e.author)      es += e.author      + " | ";
-			if (e.description) es += truncate(
+			es += e.title       ? e.title                       + " | " : "";
+			es += e.author      ? e.author.name                 + " | " : "";
+			es += e.description ? truncate(
 				e.description.replace(/[\r\n]+|  +/gm, ""),
-				60
-			)                                      + " | ";
-			if (e.image)       es += e.image       + " | ";
-			if (e.thumbnail)   es += e.thumbnail   + " | ";
-			if (e.footer)      es += e.footer.text + " | ";
-			if (e.timestamp)   es += e.timestamp   + " | ";
+				75
+			) + " | " : "";
+			es += e.image       ? truncate(e.image.url, 40)     + " | " : "";
+			es += e.thumbnail   ? truncate(e.thumbnail.url, 40) + " | " : "";
+			es += e.footer      ? e.footer.text                 + " | " : "";
+			es += e.timestamp   ? e.timestamp                   + " | " : "";
+			es += e.color       ? e.color                       + " | " : "";
 
 			es += `] `;
 
