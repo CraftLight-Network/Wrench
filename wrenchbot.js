@@ -26,9 +26,20 @@ const { CommandoClient }  = require("discord.js-commando");
 const configHandler       = require("./data/js/configHandler");
 const util                = require("./data/js/util");
 const config              = require("./config");
+const readline            = require("readline");
 const moment              = require("moment");
 const path                = require("path");
 const fs                  = require("fs");
+
+// Console input
+const input = readline.createInterface({
+	"input": process.stdin,
+	"output": process.stdout
+});
+
+input.on("line", i => {
+	if (i === "exit") process.exit(0);
+});
 
 // Register + create command instance
 const client = new CommandoClient({
