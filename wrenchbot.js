@@ -81,9 +81,9 @@ const automod   = require("./data/js/automod");
 const reactions = require("./data/js/reactions");
 
 client.on("ready", () => {
-	log.ok("--------------------------------------------");
-	log.ok(`  WrenchBot START ON: ${moment().format("M/D/YY hh:mm:ss A")}`);
-	log.ok("--------------------------------------------");
+	log.ok("------------------------------------------");
+	log.ok(` WrenchBot START ON: ${moment().format("MM/DD/YY hh:mm:ss A")}`);
+	log.ok("------------------------------------------");
 	log.info(`Name: ${client.user.tag} | ID: ${client.user.id} | ${client.guilds.cache.size} servers`);
 	log.info(`${totals.get("commands")} commands used | ${totals.get("messages")} messages read | ${totals.get("translations")} translations done`);
 
