@@ -23,11 +23,8 @@
 
 // Define and require modules
 const { CommandoClient }  = require("discord.js-commando");
-const replacePlaceholders = require("./data/js/util").replacePlaceholders;
-const checkRole           = require("./data/js/util").checkRole;
-const getMessage          = require("./data/js/util").getMessage;
 const configHandler       = require("./data/js/configHandler");
-const utilInit            = require("./data/js/util").init;
+const util                = require("./data/js/util");
 const config              = require("./config");
 const moment              = require("moment");
 const path                = require("path");
@@ -62,7 +59,7 @@ client.registry
 !fs.existsSync("./data/private/logs") && fs.mkdirSync("./data/private/logs");
 const totals = require("./data/js/enmap").totals;
 
-utilInit(client, totals);
+util.init(client, totals);
 
 // Logger
 const { log, logger } = require("./data/js/logger");
@@ -86,7 +83,7 @@ client.on("ready", () => {
 		// Get a random status
 		function getStatus() {
 			const status = config.status.types[Math.floor(Math.random() * config.status.types.length)];
-			status.name = replacePlaceholders(status.name);
+			status.name = util.replacePlaceholders(status.name);
 			return status;
 		}
 		let status = getStatus();
@@ -102,7 +99,7 @@ client.on("ready", () => {
 });
 
 client.on("message", async message => {
-	message = await getMessage(message);
+	message = await util.getMessage(message);
 
 	// Ignore bots
 	if (message.author.bot) return;
@@ -116,7 +113,7 @@ client.on("message", async message => {
 
 // Run automod and reactions on edited messages
 client.on("messageUpdate", async (oldMessage, message) => {
-	message = await getMessage(message);
+	message = await util.getMessage(message);
 	if (message.author.bot) return;
 
 	reactions(message);
@@ -130,7 +127,7 @@ async function guildEvents(message) {
 		const guildConfig = await configHandler.getConfig(message.guild.id);
 
 		// Run automod and reactions
-		if (guildConfig.automod.enabled === "true" && !checkRole(message, guildConfig.automod.modRoleIDs)) automod(message);
+		if (guildConfig.automod.enabled === "true" && !util.checkRole(message, guildConfig.automod.modRoleIDs)) automod(message);
 
 		// Tag command
 		if (message.content.indexOf(config.prefix.tags) === 0 && !message.content.match(/ /g)) {
@@ -140,8 +137,10 @@ async function guildEvents(message) {
 	}
 }
 
-client.on("commandRun", (command, promise, message) => {
-	log.command(`${(message.guild ? "" : "(DM) ") + message.author.tag} | ${message.content}`);
+client.on("commandRun", async (command, promise, message) => {
+	log.command(`${(message.guild  ? "" : "(DM) ") + message.author.tag} | ${message.content}`);
+	log.complete(`${(message.guild ? "" : "(DM) ") + message.author.tag} | ${message.content} -> ${util.embedToString(await promise)}`);
+
 	totals.inc("commands");
 });
 

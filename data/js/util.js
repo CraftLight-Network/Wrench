@@ -148,6 +148,29 @@ module.exports.commonPlaceholders = (object, mode) => {
 	return placeholders;
 };
 
+module.exports.embedToString = message => {
+	let embeds = "";
+	if (message.embeds.length !== 0) {
+		message.embeds.forEach(e => {
+			let es = `Embed: [`;
+
+			if (e.title)       es += e.title       + " | ";
+			if (e.author)      es += e.author      + " | ";
+			if (e.description) es += e.description + " | ";
+			if (e.image)       es += e.image       + " | ";
+			if (e.thumbnail)   es += e.thumbnail   + " | ";
+			if (e.footer)      es += e.footer.text + " | ";
+			if (e.timestamp)   es += e.timestamp   + " | ";
+
+			es += `] `;
+
+			embeds = embeds += es.replace(/ \| ]/g, "]");
+		});
+	}
+
+	return message.content += embeds;
+};
+
 module.exports.toArray = (string, char) => {
 	if (string === undefined)       return [];
 	if (typeof string === "object") return string;

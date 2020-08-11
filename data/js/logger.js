@@ -19,14 +19,16 @@ const levels = {
 		"ok":        0,
 		"info":      1,
 		"command":   2,
-		"translate": 3,
-		"warning":   4,
-		"error":     5
+		"complete":  3,
+		"translate": 4,
+		"warning":   5,
+		"error":     6
 	},
 	"colors": {
 		"ok":        "green",
 		"info":      "blue",
 		"command":   "cyan",
+		"complete":  "black cyanBG",
 		"translate": "cyan",
 		"warning":   "yellow",
 		"error":     "red"
