@@ -259,6 +259,8 @@ module.exports.logger = function logger(client) {
 
 	// Send messages to channels
 	function sendMessage(options, object) {
+		if (!checkValidChannel(options.channel)) return;
+
 		let placeholders = [];
 
 		if (options.placeholders === undefined) options.placeholders = false;
@@ -269,5 +271,10 @@ module.exports.logger = function logger(client) {
 		if (options.placeholders) options.message = replacePlaceholders(options.message, placeholders);
 
 		client.channels.cache.get(options.channel).send(options.message);
+	}
+
+	function checkValidChannel(channel) {
+		if (client.channels.cache.get(channel) === undefined) return false;
+		else return true;
 	}
 };
