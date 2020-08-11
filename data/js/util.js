@@ -140,7 +140,7 @@ module.exports.commonPlaceholders = (object, mode) => {
 			["%memberName%",  object.displayName],
 			["%memberID%",    object.id],
 			["%memberTag%",   object.user.tag],
-			["%server%",      object.guild],
+			["%server%",      object.guild.name],
 			["%serverCount%", object.guild.memberCount]
 		];
 	}
