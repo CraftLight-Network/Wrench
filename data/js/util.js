@@ -33,7 +33,6 @@ module.exports.embed = options => {
 
 	// Add author
 	if (options.author) {
-		if (options.author.picture === "me") options.author.picture = options.message.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 });
 		embed.setAuthor(options.author.name, options.author.picture);
 	}
 

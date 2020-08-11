@@ -70,6 +70,17 @@ module.exports = class EmbedCommand extends Command {
 		const embedMessage = JSON.parse(embedJSON.match(/{[^]+}/));
 		embedMessage.message = message;
 
+		if (embedMessage.author) {
+			if (!(embedMessage.author instanceof Object)) embedMessage.author = { "name": embedMessage.author };
+
+			if (embedMessage.author.name === "me") {
+				embedMessage.author = {
+					"name":    message.author.username,
+					"picture": message.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 })
+				};
+			}
+		}
+
 		return message.channel.send(embed(embedMessage));
 	}
 };
