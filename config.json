@@ -38,7 +38,8 @@
 			},
 			{
 				"regex": "wrenchbot",
-				"messages": "???"
+				"messages": "???",
+				"checkPrevious": 10
 			}
 		]
 	},
