@@ -4,7 +4,6 @@ const replacePlaceholders = require("./util").replacePlaceholders;
 const commonPlaceholders  = require("./util").commonPlaceholders;
 const getMessage          = require("./util").getMessage;
 const configHandler       = require("./configHandler");
-const sleep               = require("./util").sleep;
 const embed               = require("./util").embed;
 const winston             = require("winston");
 const util                = require("./util");
@@ -179,7 +178,7 @@ module.exports.logger = function logger(client, totals) {
 		try {message = await getMessage(message)}
 		catch {return}
 
-		await sleep(2000);
+		await util.sleep(2000);
 		let logs = await message.guild.fetchAuditLogs({
 			"limit": 1,
 			"type": "MESSAGE_DELETE"
