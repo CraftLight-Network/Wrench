@@ -3,7 +3,7 @@
 	"support": "https://encode42.dev/support",
 	"prefix": {
 		"commands": "]",
-		"tags":		">"
+		"tags": ">"
 	},
 	"reactions": {
 		"enabled": true,
