@@ -97,6 +97,7 @@ module.exports.logger = function logger(client) {
 
 		// Message
 		if (guildConfig.join.message.enabled === "true") sendMessage({
+			"placeholders": true,
 			"channel": guildConfig.join.message.channelID,
 			"message": guildConfig.join.message.message
 		}, member);
@@ -107,24 +108,6 @@ module.exports.logger = function logger(client) {
 				member.roles.add(e);
 			});
 		}
-
-		if (guildConfig.channels.log.enabled === "true" || guildConfig.channels.log.modules.member === "true") {
-			sendMessage({
-				"commonPlaceholders": false,
-				"channel": guildConfig.channels.log.channelID,
-				"message": embed({
-					"description": `**Member joined**`,
-					"thumbnail": member.user.avatarURL({ "format": "png", "dynamic": true, "size": 512 }),
-					"fields": [
-						["Member",      member.displayName],
-						["ID",          member.id],
-						["Account age", getDuration(member.user.createdAt.getTime())]
-					],
-					"color": "#00ff00",
-					"timestamp": true
-				})
-			});
-		}
 	});
 
 	// Leave
@@ -132,6 +115,7 @@ module.exports.logger = function logger(client) {
 		const guildConfig = await configHandler.getConfig(member.guild.id);
 
 		if (guildConfig.leave.message.enabled === "true") sendMessage({
+			"placeholders": true,
 			"channel": guildConfig.leave.message.channelID,
 			"message": guildConfig.leave.message.message
 		}, member);
@@ -144,7 +128,6 @@ module.exports.logger = function logger(client) {
 
 		if (guildConfig.channels.log.enabled === "true" || guildConfig.channels.log.modules.member === "true") {
 			sendMessage({
-				"commonPlaceholders": false,
 				"channel": guildConfig.channels.log.channelID,
 				"message": embed({
 					"description": `**Member joined**`,
@@ -167,7 +150,6 @@ module.exports.logger = function logger(client) {
 
 		if (guildConfig.channels.log.enabled === "true" || guildConfig.channels.log.modules.member === "true") {
 			sendMessage({
-				"commonPlaceholders": false,
 				"channel": guildConfig.channels.log.channelID,
 				"message": embed({
 					"description": `**Member left**`,
@@ -217,7 +199,6 @@ module.exports.logger = function logger(client) {
 		`;
 
 		sendMessage({
-			"commonPlaceholders": false,
 			"channel": guildConfig.channels.log.channelID,
 			"message": embed({
 				"title":       `Message deleted (${message.author.username})`,
@@ -249,7 +230,6 @@ module.exports.logger = function logger(client) {
 		oldMessage.id;
 
 		sendMessage({
-			"commonPlaceholders": false,
 			"channel": guildConfig.channels.log.channelID,
 			"message": embed({
 				"title":       `Message edited (${newMessage.author.username})`,
@@ -281,7 +261,10 @@ module.exports.logger = function logger(client) {
 	function sendMessage(options, object) {
 		let placeholders = [];
 
+		if (options.placeholders === undefined) options.placeholders = false;
+		if (!options.placeholders) options.commonPlaceholders = false;
 		if (options.commonPlaceholders === undefined) options.commonPlaceholders = true;
+
 		if (options.commonPlaceholders) placeholders = commonPlaceholders(object, "member");
 		if (options.placeholders) options.message = replacePlaceholders(options.message, placeholders);
 
