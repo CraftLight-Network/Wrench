@@ -124,7 +124,7 @@ module.exports = async (message) => {
 			"message": message,
 			"author":  {
 				"name":    "Warning",
-				"picture": member.user.avatarURL({ "format": "png", "dynamic": true, "size": 512 })
+				"picture": message.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 })
 			},
 			"fields":  [
 				[`Do not ${warning.name}!`, stripIndents`
