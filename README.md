@@ -2,12 +2,12 @@
 <img src="https://repository-images.githubusercontent.com/160117136/8186cd80-63b0-11e9-88f6-fa3933300bc1" width="200">
 
 ![GitHub top language](https://img.shields.io/github/languages/top/CraftLight-Network/WrenchBot?style=flat-square)
-![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/CraftLight-Network/WrenchBot/latest/develop?label=Commits%20since%20release&style=flat-square)
-![Codacy branch grade](https://img.shields.io/codacy/grade/f924171fe1d64ffab3efd88add8678fa/develop?style=flat-square)
-![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/CraftLight-Network/WrenchBot?style=flat-square)  
+[![GitHub commits since latest release (by date)](https://img.shields.io/github/commits-since/CraftLight-Network/WrenchBot/latest/develop?label=Commits%20since%20release&style=flat-square)](https://github.com/CraftLight-Network/WrenchBot/releases)
+[![Codacy branch grade](https://img.shields.io/codacy/grade/f924171fe1d64ffab3efd88add8678fa/develop?style=flat-square)](https://app.codacy.com/gh/CraftLight-Network/WrenchBot)
+[![Code Climate maintainability](https://img.shields.io/codeclimate/maintainability/CraftLight-Network/WrenchBot?style=flat-square)](https://codeclimate.com/github/CraftLight-Network/WrenchBot)
 
-![Support Discord](https://img.shields.io/discord/646517284453613578?color=7289DA&label=Support&style=flat-square)
-![CraftLight Network Discord](https://img.shields.io/discord/525487377817534484?color=7289DA&label=CraftLight%20Network&style=flat-square)
+[![Support Discord](https://img.shields.io/discord/646517284453613578?color=7289DA&label=Support&style=flat-square)](https://discord.gg/7NQtvXm)
+[![CraftLight Network Discord](https://img.shields.io/discord/525487377817534484?color=7289DA&label=CraftLight%20Network&style=flat-square)](https://discord.gg/ba7WPW4)
 
 ## About
 This bot is used mainly for the CraftLight Network.  
