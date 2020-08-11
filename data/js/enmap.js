@@ -5,21 +5,12 @@ const Enmap   = require("enmap");
 // Per-server settings
 const guildConfig = new Enmap({
 	"name":       "guildConfig",
-	"fetchAll":   true,
-	"autoFetch":  true,
-	"cloneLevel": "deep",
 	"dataDir":    dataDir
 });
 
 // Command counter
 const totals = new Enmap({
 	"name":       "totals",
-	"autoEnsure": {
-		"commands": 0,
-		"messages": 0,
-		"automod":  0
-	},
-	"autoFetch":  true,
 	"fetchAll":   false,
 	"dataDir":    dataDir
 });
@@ -28,8 +19,6 @@ const totals = new Enmap({
 const tags = new Enmap({
 	"name":       "tags",
 	"autoFetch":  false,
-	"fetchAll":   true,
-	"cloneLevel": "deep",
 	"dataDir":    dataDir
 });
 
