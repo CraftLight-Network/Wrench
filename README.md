@@ -69,7 +69,13 @@ Many features of the bot can be configured server-side and guild-side.
 `join.message.enabled`: Whether or not the bot sends a message when a user joins. [true / false]  
 `join.message.channelID`: The ID of the channel the welcome message is sent to. [Discord channel ID]  
 `join.message.message`: What the welcome message is. [Any string]  
-&nbsp;<sub>_Placeholders: `%member%`, `%server%`_</sub>  
+&nbsp;<sub>_Placeholders:_
+_`%memberName%`: Name of the member._
+_`%memberTag%`: Name and tag of the member._
+_`%memberID%`: ID of the member._
+_`%server%`: Name of the server._
+_`%serverCount%`: Total members in the server._
+</sub>  
 `join.role.enabled`: Whether or not the bot gives a role when a user joins. [true / false]  
 `join.role.roleID`: The ID of the role to give to the member. [Discord role ID]  
 
@@ -77,7 +83,13 @@ Many features of the bot can be configured server-side and guild-side.
 `leave.message.enabled`: Whether or not the bot sends a message when a user leaves. [true / false]  
 `leave.message.channelID`: The ID of the channel the leave message is sent to. [Discord channel ID]  
 `leave.message.message`: What the leave message is. [Any string]  
-&nbsp;<sub>_Placeholders: `%member%`, `%server%`_</sub>  
+&nbsp;<sub>_Placeholders:_
+_`%memberName%`: Name of the member._
+_`%memberTag%`: Name and tag of the member._
+_`%memberID%`: ID of the member._
+_`%server%`: Name of the server._
+_`%serverCount%`: Total members in the server._
+</sub>  
 
 **Channels**  
 `channels.advert.enabled`: Whether or not the advertising channel is enabled. [true / false]  
@@ -91,7 +103,7 @@ Many features of the bot can be configured server-side and guild-side.
 `channels.log.enabled`: Whether or not the log channel is enabled. [true / false]  
 `channels.log.channelID`: What channel to send logs in. [Discord channel ID]  
 `channels.log.modules`: What modules the logger will log.  
-Modules: `moderation` (AutoMod), `server` (Region, Role, etc. changes), `member` (Join/Leave, Bans, etc.), `channel` (Channel changes), `emoji`  
+Modules: `moderation` (AutoMod), `server` (Region, Role, etc. changes), `member` (Join/Leave, Bans, etc.), `message` (Edits, deletion), `channel` (Channel changes), `emoji`  
 &nbsp;<sub>_All modules are booleans (true / false)_</sub>  
 
 **Automod**  
