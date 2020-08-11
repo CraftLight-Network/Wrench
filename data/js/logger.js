@@ -255,8 +255,8 @@ module.exports.logger = function logger(client, totals) {
 
 	// Commands ran
 	client.on("commandRun", async (command, promise, message) => {
-		log.command(`${(message.guild  ? "" : "(DM) ") + message.author.tag} | ${message.content}`);
-		log.complete(`${(message.guild ? "" : "(DM) ") + message.author.tag} | ${message.content} -> ${util.embedToString(await promise)}`);
+		log.command(`${(message.guild  ? "" : "(DM) ") + message.author.tag} | ${util.truncate(message.content, 442)}`);
+		log.complete(`${(message.guild ? "" : "(DM) ") + message.author.tag} | ${util.truncate(message.content, 442)} -> ${util.embedToString(await promise)}`);
 
 		totals.inc("commands");
 	});
