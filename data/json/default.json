@@ -14,7 +14,7 @@
         "message": {
             "enabled": "false",
             "channelID": "",
-            "message": "%memberName%#%memberTag% has left %server%."
+            "message": "%memberTag% has left %server%."
         }
     },
 	"channels": {
@@ -41,6 +41,7 @@
 				"moderation": "true",
 				"server": "true",
 				"member": "true",
+				"message": "true",
 				"channel": "true",
 				"emoji": "false"
 			}
