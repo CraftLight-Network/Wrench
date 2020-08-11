@@ -170,7 +170,7 @@ module.exports.logger = function logger(client, totals) {
 
 	// Message deletion
 	client.on("messageDelete", async message => {
-		if (!message.guild) return;
+		if (!message.guild || !message.content) return;
 
 		const guildConfig = await configHandler.getConfig(message.guild.id);
 		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.message === "false") return;
@@ -217,7 +217,8 @@ module.exports.logger = function logger(client, totals) {
 
 	// Message edits
 	client.on("messageUpdate", async (oldMessage, newMessage) => {
-		if (!newMessage.guild) return;
+		if (!oldMessage.content || !newMessage.content || !newMessage.guild) return;
+		if (oldMessage.pinned !== newMessage.pinned) return;
 
 		const guildConfig = await configHandler.getConfig(newMessage.guild.id);
 		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.message === "false") return;
