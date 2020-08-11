@@ -152,23 +152,23 @@ module.exports.embedToString = message => {
 	let embeds = "";
 	if (message.embeds.length !== 0) {
 		message.embeds.forEach(e => {
-			let es = `Embed: [`;
+			let es = [];
 
-			es += e.title       ? e.title                       + " | " : "";
-			es += e.author      ? e.author.name                 + " | " : "";
-			es += e.description ? truncate(
-				e.description.replace(/[\r\n]+|  +/gm, ""),
-				75
-			) + " | " : "";
-			es += e.image       ? truncate(e.image.url, 40)     + " | " : "";
-			es += e.thumbnail   ? truncate(e.thumbnail.url, 40) + " | " : "";
-			es += e.footer      ? e.footer.text                 + " | " : "";
-			es += e.timestamp   ? e.timestamp                   + " | " : "";
-			es += e.color       ? e.color                       + " | " : "";
+			es.push(
+				e.title       ? e.title                       : "",
+				e.author      ? e.author.name                 : "",
+				e.description ? truncate(
+					e.description.replace(/[\r\n]+|  +/gm, ""),
+					75
+				) : "",
+				e.image       ? truncate(e.image.url, 40)     : "",
+				e.thumbnail   ? truncate(e.thumbnail.url, 40) : "",
+				e.footer      ? e.footer.text                 : "",
+				e.timestamp   ? e.timestamp                   : "",
+				e.color       ? e.color                       : ""
+			); es = es.filter(Boolean);
 
-			es += `] `;
-
-			embeds = embeds += es.replace(/ \| ]/g, "]");
+			embeds += `Embed: [${es.join(" | ")}] `;
 		});
 	}
 
