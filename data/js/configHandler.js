@@ -29,12 +29,12 @@ module.exports.addConfig = async (guild, property, value) => {
 	guildConfig.fetchEverything();
 
 	if (!guildConfig.get(guild, property)) return guildConfig.set(guild, [value], property);
-	return guildConfig.pushIn(guild, property, value, true);
+	return guildConfig.push(guild, value, property);
 };
 
 // Remove from the config
 module.exports.removeConfig = async (guild, property, value) => {
-	return guildConfig.removeFrom(guild, property, value);
+	return guildConfig.remove(guild, value, property);
 };
 
 // Reset the config
