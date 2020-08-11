@@ -63,7 +63,7 @@ util.init(client, totals);
 
 // Logger
 const { log, logger } = require("./data/js/logger");
-logger(client);
+logger(client, totals);
 
 // Start modules
 const automod   = require("./data/js/automod");
@@ -136,13 +136,6 @@ async function guildEvents(message) {
 		}
 	}
 }
-
-client.on("commandRun", async (command, promise, message) => {
-	log.command(`${(message.guild  ? "" : "(DM) ") + message.author.tag} | ${message.content}`);
-	log.complete(`${(message.guild ? "" : "(DM) ") + message.author.tag} | ${message.content} -> ${util.embedToString(await promise)}`);
-
-	totals.inc("commands");
-});
 
 // Log the bot in
 const auth = require("./auth");

@@ -7,6 +7,7 @@ const configHandler       = require("./configHandler");
 const sleep               = require("./util").sleep;
 const embed               = require("./util").embed;
 const winston             = require("winston");
+const util                = require("./util");
 require("winston-daily-rotate-file");
 
 // Moment + sleep
@@ -75,7 +76,7 @@ const log = new winston.createLogger({
 winston.addColors(levels.colors);
 
 module.exports.log = log;
-module.exports.logger = function logger(client) {
+module.exports.logger = function logger(client, totals) {
 	/* ### Bot events ### */
 	// Unhandled rejections
 	process.on("unhandledRejection", (reason) => {console.trace(reason)});
@@ -250,6 +251,14 @@ module.exports.logger = function logger(client) {
 				"timestamp": true
 			})
 		});
+	});
+
+	// Commands ran
+	client.on("commandRun", async (command, promise, message) => {
+		log.command(`${(message.guild  ? "" : "(DM) ") + message.author.tag} | ${message.content}`);
+		log.complete(`${(message.guild ? "" : "(DM) ") + message.author.tag} | ${message.content} -> ${util.embedToString(await promise)}`);
+
+		totals.inc("commands");
 	});
 
 	// Format durations to times
