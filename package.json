@@ -37,6 +37,7 @@
     "franc": "^5.0.0",
     "fs": "0.0.1-security",
     "hastebin": "^0.2.1",
+    "install-changed": "^1.1.0",
     "jsonpath": "^1.0.2",
     "limiter": "^1.1.5",
     "lodash": ">=4.17.19",
