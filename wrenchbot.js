@@ -25,6 +25,7 @@
 const { CommandoClient }  = require("discord.js-commando");
 const replacePlaceholders = require("./data/js/util").replacePlaceholders;
 const checkRole           = require("./data/js/util").checkRole;
+const getMessage          = require("./data/js/util").getMessage;
 const configHandler       = require("./data/js/configHandler");
 const utilInit            = require("./data/js/util").init;
 const config              = require("./config");
@@ -37,7 +38,8 @@ const client = new CommandoClient({
 	"owner":                   config.owners,
 	"invite":                  config.support,
 	"commandPrefix":           config.prefix.commands,
-	"commandEditableDuration": 1
+	"commandEditableDuration": 1,
+	"partials":                ["MESSAGE", "CHANNEL", "REACTION", "USER", "GUILD_MEMBER"]
 });
 client.registry
 	.registerDefaultTypes()
@@ -100,6 +102,8 @@ client.on("ready", () => {
 });
 
 client.on("message", async message => {
+	message = await getMessage(message);
+
 	// Ignore bots
 	if (message.author.bot) return;
 
@@ -112,6 +116,7 @@ client.on("message", async message => {
 
 // Run automod and reactions on edited messages
 client.on("messageUpdate", async (oldMessage, message) => {
+	message = await getMessage(message);
 	if (message.author.bot) return;
 
 	reactions(message);

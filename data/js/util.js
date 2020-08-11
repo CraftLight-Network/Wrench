@@ -32,7 +32,7 @@ module.exports.embed = options => {
 
 	// Add author
 	if (options.author) {
-		if (options.author.picture === "me") options.author.picture = options.message.author.displayAvatarURL();
+		if (options.author.picture === "me") options.author.picture = options.message.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 });
 		embed.setAuthor(options.author.name, options.author.picture);
 	}
 
@@ -44,7 +44,7 @@ module.exports.embed = options => {
 
 	// Add fields
 	if (options.fields) {
-		options.fields.some(e => {
+		options.fields.forEach(e => {
 			if (!e[2]) e[2] = false;
 			embed.addField(e[0], e[1], e[2]);
 		});
@@ -52,6 +52,9 @@ module.exports.embed = options => {
 
 	// Add image
 	if (options.image) embed.setImage(options.image);
+
+	// Add timestamp
+	if (options.timestamp) embed.setTimestamp();
 
 	return embed;
 };
@@ -161,4 +164,15 @@ module.exports.toString = (array, char) => {
 module.exports.newIncludes = (string, compare) => {
 	if (!string) return false;
 	return compare.some(c => string.includes(c));
+};
+
+// Get message from partials
+module.exports.getMessage = async message => {
+	if (message.partial) return await message.fetch();
+	else return message;
+};
+
+// Wait before continuing
+module.exports.sleep = ms => {
+	return new Promise(resolve => setTimeout(resolve, ms));
 };
