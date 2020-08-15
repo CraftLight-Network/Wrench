@@ -175,9 +175,11 @@ module.exports.logger = function logger(client, totals) {
 		const guildConfig = await configHandler.getConfig(message.guild.id);
 		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.message === "false") return;
 
+		// Grab the message if the bot can
 		try {message = await getMessage(message)}
 		catch {return}
 
+		// Check audit logs for who deleted the message
 		await util.sleep(2000);
 		let logs = await message.guild.fetchAuditLogs({
 			"limit": 1,
@@ -185,6 +187,7 @@ module.exports.logger = function logger(client, totals) {
 		});
 		logs = logs.entries.first();
 
+		// Return results from audit log
 		let description;
 		if (logs.executor.id === message.author.id && logs.createdAt < (new Date()).getTime() - 2000) description = stripIndents`
 			User: ${message.author.tag}
@@ -200,6 +203,7 @@ module.exports.logger = function logger(client, totals) {
 			Channel: <#${message.channel.id}>
 		`;
 
+		// Send the log
 		sendMessage({
 			"channel": guildConfig.channels.log.channelID,
 			"message": embed({
@@ -217,21 +221,25 @@ module.exports.logger = function logger(client, totals) {
 
 	// Message edits
 	client.on("messageUpdate", async (oldMessage, newMessage) => {
+		// Make sure the message exists, isn't a link, and isn't a pin
 		if (!oldMessage.content || !newMessage.content || !newMessage.guild) return;
 		if (oldMessage.pinned !== newMessage.pinned) return;
 
 		const guildConfig = await configHandler.getConfig(newMessage.guild.id);
 		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.message === "false") return;
 
+		// Grab the messages
 		oldMessage = await getMessage(oldMessage);
 		newMessage = await getMessage(newMessage);
 		if (newMessage.author.bot) return;
 
-		const messageLink = "https://discordapp.com/channels/" +
-		oldMessage.guild.id + "/" +
-		oldMessage.channel.id + "/" +
-		oldMessage.id;
+		// Make sure the update isn't an embed
+		if (oldMessage.embeds.length < newMessage.embeds.length) return;
 
+		// Construct the message link
+		const messageLink = `https://discordapp.com/channels/${oldMessage.guild.id}/${oldMessage.channel.id}/${oldMessage.id}`
+
+		// Send the log
 		sendMessage({
 			"channel": guildConfig.channels.log.channelID,
 			"message": embed({
