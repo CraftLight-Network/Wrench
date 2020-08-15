@@ -186,7 +186,7 @@ module.exports.logger = function logger(client, totals) {
 		logs = logs.entries.first();
 
 		let description;
-		if (logs.executor.id === message.author.id) description = stripIndents`
+		if (logs.executor.id === message.author.id && logs.createdAt < (new Date()).getTime() - 2000) description = stripIndents`
 			User: ${message.author.tag}
 			ID: ${message.author.id}
 			Channel: <#${message.channel.id}>
