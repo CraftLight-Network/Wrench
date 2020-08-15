@@ -237,7 +237,7 @@ module.exports.logger = function logger(client, totals) {
 		if (oldMessage.embeds.length < newMessage.embeds.length) return;
 
 		// Construct the message link
-		const messageLink = `https://discordapp.com/channels/${oldMessage.guild.id}/${oldMessage.channel.id}/${oldMessage.id}`
+		const messageLink = `https://discordapp.com/channels/${oldMessage.guild.id}/${oldMessage.channel.id}/${oldMessage.id}`;
 
 		// Send the log
 		sendMessage({
