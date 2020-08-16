@@ -1,6 +1,6 @@
 // Define and require modules
 const guildConfig   = require("./enmap").guildConfig;
-const defaultConfig = require("../json/default");
+const defaultConfig = require("../json/defaultConfig");
 const merge         = require("merge-json");
 const path          = require("jsonpath");
 const _             = require("lodash");
