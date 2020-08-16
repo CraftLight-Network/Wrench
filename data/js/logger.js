@@ -153,7 +153,8 @@ module.exports.logger = function logger(client, totals) {
 		const guildConfig = await configHandler.getConfig(member.guild.id);
 		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.member === "false") return;
 
-		if (guildConfig.channels.log.enabled === "true" || guildConfig.channels.log.modules.member === "true") {
+		const roles = member.roles.cache.map(r => r.name === "@everyone" ? "" : r.name)
+			.filter(Boolean);
 
 		sendMessage({
 			"channel": guildConfig.channels.log.channelID,
@@ -166,7 +167,7 @@ module.exports.logger = function logger(client, totals) {
 				`,
 				"thumbnail": member.user.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 }),
 				"fields": [
-						["Member",         `${member.user.tag}`],
+					["Roles", roles.length > 0 ? `\`${roles.join("`, `")}\`` : "None"],
 					["Time in server", getDuration(member.joinedAt.getTime())]
 				],
 				"color": "#ff7700",
