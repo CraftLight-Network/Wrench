@@ -51,14 +51,14 @@ module.exports = class ServerInfoCommand extends Command {
 		const embedMessage = { "message": message, "title": `${guild.name} Info:`, "fields": [] };
 
 		// Server icon link/image
-		const iconURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png`;
+		const iconURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png?size=4096`;
 		if (guild.icon) {
 			icon = `[Click](${iconURL})`;
 			embedMessage.thumbnail = iconURL;
 		} else icon = "None";
 
 		// Splash link/image
-		const splashURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.splash}.png`;
+		const splashURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.splash}.png?size=4096`;
 		if (guild.splash) {
 			splash = `[Click](${splashURL})`;
 			embedMessage.image = splashURL;
