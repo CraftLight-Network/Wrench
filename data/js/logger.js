@@ -234,8 +234,8 @@ module.exports.logger = function logger(client, totals) {
 	// Message edits
 	client.on("messageUpdate", async (oldMessage, newMessage) => {
 		// Make sure the message exists, isn't a link, and isn't a pin
-		if (!oldMessage.content || !newMessage.content || !newMessage.guild) return;
-		if (oldMessage.pinned !== newMessage.pinned) return;
+		if (oldMessage.pinned === undefined) oldMessage.pinned = false;
+		if (!newMessage.guild || oldMessage.pinned !== newMessage.pinned) return;
 
 		const guildConfig = await configHandler.getConfig(newMessage.guild.id);
 		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.message === "false") return;
