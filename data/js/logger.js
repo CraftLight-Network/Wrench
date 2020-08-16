@@ -127,45 +127,52 @@ module.exports.logger = function logger(client, totals) {
 	// Member join
 	client.on("guildMemberAdd", async member => {
 		const guildConfig = await configHandler.getConfig(member.guild.id);
+		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.member === "false") return;
 
-		if (guildConfig.channels.log.enabled === "true" || guildConfig.channels.log.modules.member === "true") {
-			sendMessage({
-				"channel": guildConfig.channels.log.channelID,
-				"message": embed({
-					"description": `**Member joined**`,
-					"thumbnail": member.user.avatarURL({ "format": "png", "dynamic": true, "size": 512 }),
-					"fields": [
-						["Member",      member.displayName],
-						["ID",          member.id],
-						["Account age", getDuration(member.user.createdAt.getTime())]
-					],
-					"color": "#00ff00",
-					"timestamp": true
-				})
-			});
-		}
+		sendMessage({
+			"channel": guildConfig.channels.log.channelID,
+			"message": embed({
+				"title": `Member joined (${member.user.username})`,
+				"description": stripIndents`
+					User: <@${member.id}>
+					Tag: ${member.user.tag}
+					ID: ${member.id}
+				`,
+				"thumbnail": member.user.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 }),
+				"fields": [
+					["Account age", getDuration(member.user.createdAt.getTime())]
+				],
+				"color": "#00ff00",
+				"timestamp": true
+			})
+		});
 	});
 
 	// Member leave
 	client.on("guildMemberRemove", async member => {
 		const guildConfig = await configHandler.getConfig(member.guild.id);
+		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.member === "false") return;
 
 		if (guildConfig.channels.log.enabled === "true" || guildConfig.channels.log.modules.member === "true") {
-			sendMessage({
-				"channel": guildConfig.channels.log.channelID,
-				"message": embed({
-					"description": `**Member left**`,
-					"thumbnail": member.user.avatarURL({ "format": "png", "dynamic": true, "size": 512 }),
-					"fields": [
+
+		sendMessage({
+			"channel": guildConfig.channels.log.channelID,
+			"message": embed({
+				"title": `Member left (${member.user.username})`,
+				"description": stripIndents`
+					User: <@${member.id}>
+					Tag: ${member.user.tag}
+					ID: ${member.id}
+				`,
+				"thumbnail": member.user.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 }),
+				"fields": [
 						["Member",         `${member.user.tag}`],
-						["ID",             member.id],
-						["Time in server", getDuration(member.joinedAt.getTime())]
-					],
-					"color": "#ff7700",
-					"timestamp": true
-				})
-			});
-		}
+					["Time in server", getDuration(member.joinedAt.getTime())]
+				],
+				"color": "#ff7700",
+				"timestamp": true
+			})
+		});
 	});
 
 	// Message deletion
@@ -190,16 +197,20 @@ module.exports.logger = function logger(client, totals) {
 		// Return results from audit log
 		let description;
 		if (logs.executor.id === message.author.id && logs.createdAt < (new Date()).getTime() - 2000) description = stripIndents`
-			User: ${message.author.tag}
+			User: <@${message.author.id}>
+			Tag: ${message.author.tag}
 			ID: ${message.author.id}
+
 			Channel: <#${message.channel.id}>
 		`;
 		else description = stripIndents`
 			By: ${logs.executor.tag}
 			ID: ${logs.executor.id}
 
-			User: ${message.author.tag}
+			User: <@${message.author.id}>
+			Tag: ${message.author.tag}
 			ID: ${message.author.id}
+			
 			Channel: <#${message.channel.id}>
 		`;
 
@@ -245,8 +256,10 @@ module.exports.logger = function logger(client, totals) {
 			"message": embed({
 				"title":       `Message edited (${newMessage.author.username})`,
 				"description": stripIndents`
-					User: ${newMessage.author.tag}
+					User: <@${newMessage.author.id}>
+					Tag: ${newMessage.author.tag}
 					ID: ${newMessage.author.id}
+
 					Channel: <#${newMessage.channel.id}>
 					Message: [Link](${messageLink})
 				`,
