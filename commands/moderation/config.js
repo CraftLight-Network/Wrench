@@ -1,5 +1,3 @@
-"use strict";
-
 // Define and require modules
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
@@ -20,7 +18,7 @@ module.exports = class ConfigCommand extends Command {
 			"group": "moderation",
 			"description": "Edit the server configuration.",
 			"details": stripIndents`
-				Run \`${config.prefix.commands}tag <action> (property) (value)\` to use commands.
+				Run \`${config.prefix.commands}config <action> (property) (value)\` to interact with the config.
 				**Notes:**
 				<action>: Required, what to do.
 				(name): Required depending on action, what property to take action on.
