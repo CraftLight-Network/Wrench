@@ -156,23 +156,26 @@ module.exports.logger = function logger(client, totals) {
 		const roles = member.roles.cache.map(r => r.name === "@everyone" ? "" : r.name)
 			.filter(Boolean);
 
+		const embedMessage = {
+			"title": `Member left (${member.user.username})`,
+			"description": stripIndents`
+				User: <@${member.id}>
+				Tag: ${member.user.tag}
+				ID: ${member.id}
+			`,
+			"thumbnail": member.user.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 }),
+			"fields": [
+				["Time in server", getDuration(member.joinedAt.getTime())]
+			],
+			"color": "#ff7700",
+			"timestamp": true
+		};
+
+		if (roles.length > 0) embedMessage.fields.push(["Roles", `\`${roles.join("`, `")}\``]);
+
 		sendMessage({
 			"channel": guildConfig.channels.log.channelID,
-			"message": embed({
-				"title": `Member left (${member.user.username})`,
-				"description": stripIndents`
-					User: <@${member.id}>
-					Tag: ${member.user.tag}
-					ID: ${member.id}
-				`,
-				"thumbnail": member.user.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 }),
-				"fields": [
-					["Roles", roles.length > 0 ? `\`${roles.join("`, `")}\`` : "None"],
-					["Time in server", getDuration(member.joinedAt.getTime())]
-				],
-				"color": "#ff7700",
-				"timestamp": true
-			})
+			"message": embed(embedMessage)
 		});
 	});
 
