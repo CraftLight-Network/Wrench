@@ -46,10 +46,10 @@ module.exports = class CoolnessCommand extends Command {
 		const coolness = seed.int(0, 100);
 
 		// Define the emote to be used
-		let style                = { "emote": "good_shades",  "color": "#00FF00", "bar": "[===============   ]" };
-		if (coolness < 75) style = { "emote": "okay_check",   "color": "#FFFF00", "bar": "[===========       ]" };
-		if (coolness < 50) style = { "emote": "bad_unamused", "color": "#FF7700", "bar": "[=======           ]" };
-		if (coolness < 25) style = { "emote": "cross",        "color": "#FF0000", "bar": "[===               ]" };
+		let style                = { "emote": "good_shades",  "color": "#8ce99a", "bar": "[===============   ]" };
+		if (coolness < 75) style = { "emote": "okay_check",   "color": "#ffe066", "bar": "[===========       ]" };
+		if (coolness < 50) style = { "emote": "bad_unamused", "color": "#fd7e14", "bar": "[=======           ]" };
+		if (coolness < 25) style = { "emote": "cross",        "color": "#f03e3e", "bar": "[===               ]" };
 
 		// Max out/empty percent bar according to values
 		if (coolness > 95) style.bar = "[==================]";

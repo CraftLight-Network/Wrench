@@ -142,7 +142,7 @@ module.exports.logger = function logger(client, totals) {
 				"fields": [
 					["Account age", getDuration(member.user.createdAt.getTime())]
 				],
-				"color": "#00ff00",
+				"color": "#40c057",
 				"timestamp": true
 			})
 		});
@@ -228,7 +228,7 @@ module.exports.logger = function logger(client, totals) {
 				"fields": [
 					["Message Content", message.content]
 				],
-				"color": "#ff0000",
+				"color": "#fa5252",
 				"timestamp": true
 			})
 		});
@@ -272,7 +272,7 @@ module.exports.logger = function logger(client, totals) {
 					["Old Message", oldMessage.content === newMessage.content ? "⚠️ Message too old to check!" : oldMessage.content],
 					["New Message", newMessage.content]
 				],
-				"color": "#ffff00",
+				"color": "#fcc419",
 				"timestamp": true
 			})
 		});

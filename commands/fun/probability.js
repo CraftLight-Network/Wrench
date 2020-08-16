@@ -56,10 +56,10 @@ module.exports = class ProbabilityCommand extends Command {
 		const probability       = seed.int(0, 100);
 
 		// Define the emote to be used
-		let style                   = { "emote": "good_percentage",     "color": "#00FF00", "bar": "[===============   ]" };
-		if (probability < 75) style = { "emote": "okay_percentage",     "color": "#FFFF00", "bar": "[===========       ]" };
-		if (probability < 50) style = { "emote": "bad_percentage",      "color": "#FF7700", "bar": "[=======           ]" };
-		if (probability < 25) style = { "emote": "terrible_percentage", "color": "#FF0000", "bar": "[===               ]" };
+		let style                   = { "emote": "good_percentage",     "color": "#8ce99a", "bar": "[===============   ]" };
+		if (probability < 75) style = { "emote": "okay_percentage",     "color": "#ffe066", "bar": "[===========       ]" };
+		if (probability < 50) style = { "emote": "bad_percentage",      "color": "#fd7e14", "bar": "[=======           ]" };
+		if (probability < 25) style = { "emote": "terrible_percentage", "color": "#f03e3e", "bar": "[===               ]" };
 
 		// Max out/empty percent bar according to values
 		if (probability > 95) style.bar = "[==================]";

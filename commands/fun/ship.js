@@ -55,10 +55,10 @@ module.exports = class ShipCommand extends Command {
 		const ship = seed.int(0, 100);
 
 		// Define the emote to be used
-		let style            = { "emote": "two_hearts",      "color": "#9000FF", "bar": "[===============   ]" };
-		if (ship < 75) style = { "emote": "sparkling_heart", "color": "#FF00FD", "bar": "[===========       ]" };
-		if (ship < 50) style = { "emote": "heart",           "color": "#FF007F", "bar": "[=======           ]" };
-		if (ship < 25) style = { "emote": "broken_heart",    "color": "#FF0000", "bar": "[===               ]" };
+		let style            = { "emote": "two_hearts",      "color": "#9c36b5", "bar": "[===============   ]" };
+		if (ship < 75) style = { "emote": "sparkling_heart", "color": "#da77f2", "bar": "[===========       ]" };
+		if (ship < 50) style = { "emote": "heart",           "color": "#e64980", "bar": "[=======           ]" };
+		if (ship < 25) style = { "emote": "broken_heart",    "color": "#c92a2a", "bar": "[===               ]" };
 
 		// Max out/empty percent bar according to values
 		if (ship > 95) style.bar = "[==================]";
