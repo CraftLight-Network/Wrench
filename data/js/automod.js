@@ -47,7 +47,7 @@ antiSpam.on("spamThresholdWarn", (member) => {
 		"message": member,
 		"author":  {
 			"name":    "Warning",
-			"picture": member.user.avatarURL({ "format": "png", "dynamic": true, "size": 512 })
+			"picture": member.user.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 })
 		},
 		"fields":  [
 			["Do not spam!", stripIndents`
