@@ -51,8 +51,8 @@ module.exports = class ProbabilityCommand extends Command {
 
 	run(message, { topic1, topic2 }) {
 		// RNG based on topics
-		let seed                = random.clone(seedrandom(topic1));
-		if (topic2 !== "") seed = random.clone(seedrandom(seed + topic2));
+		let seed                = random.clone(seedrandom(topic1.toLowerCase()));
+		if (topic2 !== "") seed = random.clone(seedrandom(seed + topic2.toLowerCase()));
 		const probability       = seed.int(0, 100);
 
 		// Define the emote to be used

@@ -51,7 +51,7 @@ module.exports = class ShipCommand extends Command {
 	}
 
 	run(message, { person1, person2 }) {
-		const seed = random.clone(seedrandom(person1 + person2));
+		const seed = random.clone(seedrandom(person1.toLowerCase() + person2.toLowerCase()));
 		const ship = seed.int(0, 100);
 
 		// Define the emote to be used
