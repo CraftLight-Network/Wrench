@@ -2,6 +2,7 @@
 const { stripIndents } = require("common-tags");
 const Embed            = require("discord.js").MessageEmbed;
 const config           = require("../../config");
+const path             = require("jsonpath");
 
 let client, totals;
 module.exports.init = (c, t) => {
@@ -202,4 +203,9 @@ module.exports.getMessage = async message => {
 // Wait before continuing
 module.exports.sleep = ms => {
 	return new Promise(resolve => setTimeout(resolve, ms));
+};
+
+module.exports.checkPropertyExists = (config, property) => {
+	if (path.query(config, `$.${property}`)[0] !== undefined) return true;
+	return false;
 };
