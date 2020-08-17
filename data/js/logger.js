@@ -3,7 +3,7 @@ const { stripIndents }    = require("common-tags");
 const replacePlaceholders = require("./util").replacePlaceholders;
 const commonPlaceholders  = require("./util").commonPlaceholders;
 const getMessage          = require("./util").getMessage;
-const configHandler       = require("./configHandler");
+const Config              = require("./config");
 const embed               = require("./util").embed;
 const winston             = require("winston");
 const util                = require("./util");
@@ -87,15 +87,19 @@ module.exports.logger = function logger(client, totals) {
 
 	// Guild events
 	client.on("guildCreate", guild => {
+		getConfig(guild.id).ensure();
 		log.info(`Added to ${guild.name} (ID: ${guild.id})`);
-		configHandler.ensure(guild);
 	});
-	client.on("guildDelete", guild => log.info(`Removed from ${guild.name} (ID: ${guild.id})`));
+
+	client.on("guildDelete", guild => {
+		getConfig(guild.id).reset();
+		log.info(`Removed from ${guild.name} (ID: ${guild.id})`);
+	});
 
 	/* ### Guild events ### */
 	// Join
 	client.on("guildMemberAdd", async member => {
-		const guildConfig = await configHandler.getConfig(member.guild.id);
+		const guildConfig = await getConfig(member.guild.id);
 
 		// Message
 		if (guildConfig.join.message.enabled === "true") sendMessage({
@@ -114,7 +118,7 @@ module.exports.logger = function logger(client, totals) {
 
 	// Leave
 	client.on("guildMemberRemove", async member => {
-		const guildConfig = await configHandler.getConfig(member.guild.id);
+		const guildConfig = await getConfig(member.guild.id);
 
 		if (guildConfig.leave.message.enabled === "true") sendMessage({
 			"placeholders": true,
@@ -126,7 +130,7 @@ module.exports.logger = function logger(client, totals) {
 	/* ### Log events ### */
 	// Member join
 	client.on("guildMemberAdd", async member => {
-		const guildConfig = await configHandler.getConfig(member.guild.id);
+		const guildConfig = await getConfig(member.guild.id);
 		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.member === "false") return;
 
 		sendMessage({
@@ -150,7 +154,7 @@ module.exports.logger = function logger(client, totals) {
 
 	// Member leave
 	client.on("guildMemberRemove", async member => {
-		const guildConfig = await configHandler.getConfig(member.guild.id);
+		const guildConfig = await getConfig(member.guild.id);
 		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.member === "false") return;
 
 		const roles = member.roles.cache.map(r => r.name === "@everyone" ? "" : r.name)
@@ -183,7 +187,7 @@ module.exports.logger = function logger(client, totals) {
 	client.on("messageDelete", async message => {
 		if (!message.guild || !message.content) return;
 
-		const guildConfig = await configHandler.getConfig(message.guild.id);
+		const guildConfig = await getConfig(message.guild.id);
 		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.message === "false") return;
 
 		// Grab the message if the bot can
@@ -240,7 +244,7 @@ module.exports.logger = function logger(client, totals) {
 		if (oldMessage.pinned === undefined) oldMessage.pinned = false;
 		if (!newMessage.guild || oldMessage.pinned !== newMessage.pinned) return;
 
-		const guildConfig = await configHandler.getConfig(newMessage.guild.id);
+		const guildConfig = await getConfig(newMessage.guild.id);
 		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.message === "false") return;
 
 		// Grab the messages
@@ -312,5 +316,11 @@ module.exports.logger = function logger(client, totals) {
 	function checkValidChannel(channel) {
 		if (client.channels.cache.get(channel) === undefined) return false;
 		else return true;
+	}
+
+	// Get the config
+	async function getConfig(guild) {
+		const config = new Config("guild", guild);
+		return await config.get();
 	}
 };

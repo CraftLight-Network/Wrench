@@ -21,11 +21,20 @@
 \____/
 */
 
+// CREATE PRIVATE DIRS
+// data/private
+// data/private/enmap
+// data/private/logs
+
+// ENMAP ensure
+
+// CHECK IF NOT EXIST: auth
+
 // Define and require modules
 const { CommandoClient }  = require("discord.js-commando");
-const configHandler       = require("./data/js/configHandler");
+const Config              = require("./data/js/config");
 const util                = require("./data/js/util");
-const config              = require("./config");
+const conf                = require("./config");
 const readline            = require("readline");
 const moment              = require("moment");
 const path                = require("path");
@@ -43,9 +52,9 @@ input.on("line", i => {
 
 // Register + create command instance
 const client = new CommandoClient({
-	"owner":                   config.owners,
-	"invite":                  config.support,
-	"commandPrefix":           config.prefix.commands,
+	"owner":                   conf.owners,
+	"invite":                  conf.support,
+	"commandPrefix":           conf.prefix.commands,
 	"commandEditableDuration": 1,
 	"partials":                ["MESSAGE", "CHANNEL", "REACTION", "USER", "GUILD_MEMBER"]
 });
@@ -88,12 +97,12 @@ client.on("ready", () => {
 	log.info(`${totals.get("commands")} commands used | ${totals.get("messages")} messages read | ${totals.get("translations")} translations done`);
 
 	// Set the bots status
-	if (config.status.enabled) {status(); setInterval(status, config.status.timeout)};
+	if (conf.status.enabled) {status(); setInterval(status, conf.status.timeout)};
 
 	function status() {
 		// Get a random status
 		function getStatus() {
-			const status = config.status.types[Math.floor(Math.random() * config.status.types.length)];
+			const status = conf.status.types[Math.floor(Math.random() * conf.status.types.length)];
 			status.name = util.replacePlaceholders(status.name);
 			return status;
 		}
@@ -134,14 +143,14 @@ client.on("messageUpdate", async (oldMessage, message) => {
 async function guildEvents(message) {
 	if (message.guild) {
 		// Get the config
-		configHandler.ensure(message.guild.id);
-		const guildConfig = await configHandler.getConfig(message.guild.id);
+		const config = new Config("guild", message.guild.id);
+		const guildConfig = await config.get();
 
 		// Run automod and reactions
 		if (guildConfig.automod.enabled === "true" && !util.checkRole(message, guildConfig.automod.modRoleIDs)) automod(message);
 
 		// Tag command
-		if (message.content.indexOf(config.prefix.tags) === 0 && !message.content.match(/ /g)) {
+		if (message.content.indexOf(conf.prefix.tags) === 0 && !message.content.match(/ /g)) {
 			const tagCommand = client.registry.commands.find(c => c.name === "tag");
 			tagCommand.run(message, { "action": message.content.slice(1) });
 		}

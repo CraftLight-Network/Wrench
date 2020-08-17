@@ -1,7 +1,7 @@
 // Define and require modules
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const configHandler    = require("../../data/js/configHandler");
+const Config           = require("../../data/js/config");
 const checkRole        = require("../../data/js/util").checkRole;
 const embed            = require("../../data/js/util").embed;
 const config           = require("../../config");
@@ -56,7 +56,8 @@ module.exports = class ConfigCommand extends Command {
 	}
 
 	async run(message, { action, property, value }) {
-		const guildConfig = await configHandler.getConfig(message.guild.id);
+		const config = new Config("guild", message.guild.id);
+		const guildConfig = await config.get();
 
 		// Permission check
 		if (!checkRole(message, guildConfig.automod.modRoleIDs)) return message.reply("You do not have permission to use this command.");
@@ -76,7 +77,7 @@ ${JSON.stringify(guildConfig, null, 2)}
 
 		// Reset command
 		if (action === "reset") {
-			configHandler.reset(message.guild.id);
+			config.reset();
 			return message.reply("Successfully reset the config.");
 		}
 
@@ -90,7 +91,7 @@ ${JSON.stringify(guildConfig, null, 2)}
 		if (action === "set") {
 			if (property === "version") return message.reply("You cannot change `version`.");
 
-			configHandler.setConfig(message.guild.id, property, value);
+			config.set(property, value);
 			return message.reply(`Set ${property} to ${value}.`);
 		}
 
@@ -98,7 +99,7 @@ ${JSON.stringify(guildConfig, null, 2)}
 		if (action === "add") {
 			if (!isArray()) return message.reply("That config property is not an array. Use `set` instead.");
 
-			configHandler.addConfig(message.guild.id, property, value);
+			config.add(property, value);
 			return message.reply(`Added ${value} to ${property}.`);
 		}
 
@@ -106,7 +107,7 @@ ${JSON.stringify(guildConfig, null, 2)}
 		if (action === "remove") {
 			if (!isArray()) return message.reply("That config property is not an array.");
 
-			configHandler.removeConfig(message.guild.id, property, value);
+			config.remove(message.guild.id, property, value);
 			return message.reply(`Removed ${value} from ${property}.`);
 		}
 

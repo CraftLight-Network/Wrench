@@ -5,7 +5,7 @@ const { log } = require("./logger");
 const { stripIndents } = require("common-tags");
 const embed            = require("../../data/js/util").embed;
 const AntiSpam         = require("discord-anti-spam");
-const configHandler    = require("./configHandler");
+const Config           = require("./config");
 const request          = require("async-request");
 
 // Format + update bad links
@@ -60,9 +60,12 @@ antiSpam.on("spamThresholdWarn", (member) => {
 });
 
 module.exports = async (message) => {
-	let guildConfig;
-	if (message.guild) guildConfig = await configHandler.getConfig(message.guild.id);
-	else return;
+	if (!message.guild) return;
+
+	// Get the config
+	const config = new Config("guild", message.guild.id);
+	config.ensure(message.guild.id);
+	const guildConfig = await config.get();
 
 	// Shorter message content
 	const content = message.content;

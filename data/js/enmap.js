@@ -8,6 +8,12 @@ const guildConfig = new Enmap({
 	"dataDir":    dataDir
 });
 
+// Per-server reactions
+const reactionConfig = new Enmap({
+	"name":       "reactionConfig",
+	"dataDir":    dataDir
+});
+
 // Command counter
 const totals = new Enmap({
 	"name":       "totals",
@@ -24,6 +30,7 @@ const tags = new Enmap({
 
 module.exports = {
 	guildConfig,
+	reactionConfig,
 	totals,
 	tags
 };

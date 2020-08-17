@@ -1,16 +1,22 @@
 // Define and require modules
-const configHandler = require("../../data/js/configHandler");
-const config        = require("../../config");
+const Config        = require("./config");
+const botConfig     = require("../../config");
 const toString      = require("./util").toString;
 const toArray       = require("./util").toArray;
 
 module.exports = async (message) => {
 	let guildConfig;
-	if (message.guild) guildConfig = await configHandler.getConfig(message.guild.id);
 
-	if (config.reactions.enabled && (!message.guild || guildConfig.misc.reactions === "true")) checkReactions();
+	// Get the config
+	if (message.guild) {
+		const config = new Config("guild", message.guild.id);
+		config.ensure(message.guild.id);
+		guildConfig = await config.get();
+	}
+
+	if (botConfig.reactions.enabled && (!message.guild || guildConfig.misc.reactions === "true")) checkReactions();
 	function checkReactions() {
-		config.reactions.types.forEach(async e => {
+		botConfig.reactions.types.forEach(async e => {
 			if (e.flags === undefined) e.flags = "i";
 
 			e.messages = toArray(e.messages, "|");
