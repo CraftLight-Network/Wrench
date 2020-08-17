@@ -88,7 +88,7 @@ module.exports = class MinecraftCommand extends Command {
 		// Skin actions
 		if (action === "skin") {
 			// Make sure skin type if valid
-			if (!newIncludes(args, skinTypes)) {args = ""; message.say("Invalid skin type.")};
+			if (!newIncludes(args, skinTypes) && args !== "") {args = ""; message.say("Invalid skin type.")};
 
 			// Undefined skin action
 			if (!args) {
@@ -113,7 +113,7 @@ module.exports = class MinecraftCommand extends Command {
 		// Data actions
 		if (action === "info") {
 			// Make sure info type if valid
-			if (!newIncludes(args, dataTypes)) {args = ""; message.say("Invalid data type.")};
+			if (!newIncludes(args, dataTypes) && args !== "") {args = ""; message.say("Invalid data type.")};
 
 			// Undefined data action
 			if (!args) {
