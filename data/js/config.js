@@ -63,18 +63,17 @@ class Config {
 		return this.config.push(this.guild, value, property);
 	}
 
+	// ?? NOT WORKING
+
 	// Remove from arrays
 	remove(property, value) {
 		this.config.fetch(this.guild);
-
-		console.dir(this.config.remove(this.guild, value, property).get(this.guild).channels.advert)
 		return this.config.remove(this.guild, value, property);
 	};
 
 	// Delete whole values
 	delete(value) {
 		this.config.fetch(this.guild);
-
 		return this.config.delete(this.guild, value);
 	}
 
