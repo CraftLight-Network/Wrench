@@ -14,6 +14,12 @@ const reactionConfig = new Enmap({
 	"dataDir":    dataDir
 });
 
+// Tags
+const tagConfig = new Enmap({
+	"name":       "tags",
+	"dataDir":    dataDir
+});
+
 // Command counter
 const totals = new Enmap({
 	"name":       "totals",
@@ -21,16 +27,9 @@ const totals = new Enmap({
 	"dataDir":    dataDir
 });
 
-// Tags
-const tags = new Enmap({
-	"name":       "tags",
-	"autoFetch":  false,
-	"dataDir":    dataDir
-});
-
 module.exports = {
 	guildConfig,
 	reactionConfig,
-	totals,
-	tags
+	tagConfig,
+	totals
 };

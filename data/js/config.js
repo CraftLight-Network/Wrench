@@ -1,11 +1,16 @@
 // Define and require modules
-const defaultReactions = require("../json/defaultReactions");
-const defaultConfig    = require("../json/defaultConfig");
-const reactionConfig   = require("./enmap").reactionConfig;
-const guildConfig      = require("./enmap").guildConfig;
 const merge            = require("merge-json");
 const path             = require("jsonpath");
 const _                = require("lodash");
+
+// Defaults + configs
+const defaultReactions = require("../json/defaultReactions");
+const defaultConfig    = require("../json/defaultConfig");
+const defaultTags      = require("../json/defaultTags");
+
+const reactionConfig   = require("./enmap").reactionConfig;
+const guildConfig      = require("./enmap").guildConfig;
+const tagConfig        = require("./enmap").tagConfig;
 
 class Config {
 	constructor(config, guild) {
@@ -21,6 +26,11 @@ class Config {
 				this.config = reactionConfig;
 				this.file = defaultReactions;
 				break;
+
+			case "tags":
+				this.config = tagConfig;
+				this.file = defaultTags;
+				break;
 		}
 	}
 
@@ -31,14 +41,14 @@ class Config {
 	// Get the config in JSON
 	async get() {
 		this.ensure();
-		this.config.fetchEverything();
+		this.config.fetch(this.guild);
 
 		return await merge.merge(_.cloneDeep(this.file), await this.config.get(this.guild));
 	}
 
 	// Set config properties
 	async set(property, value) {
-		this.config.fetchEverything();
+		this.config.fetch(this.guild);
 		this.config.evict(`${this.guild}.${property}`);
 
 		if (path.query(await this.get(), `$.${property}`)[0] instanceof Array) this.config.set(this.guild, [value], property);
@@ -46,20 +56,30 @@ class Config {
 	}
 
 	// Add to arrays
-	async add(property, value) {
-		this.config.fetchEverything();
+	add(property, value) {
+		this.config.fetch(this.guild);
 
-		if (!this.config.get(this.guild, property)) return guildConfig.set(this.guild, [value], property);
+		if (!this.config.get(this.guild, property)) return this.config.set(this.guild, [value], property);
 		return this.config.push(this.guild, value, property);
 	}
 
 	// Remove from arrays
-	async remove(property, value) {
-		return this.config.remove(value, property);
+	remove(property, value) {
+		this.config.fetch(this.guild);
+
+		console.dir(this.config.remove(this.guild, value, property).get(this.guild).channels.advert)
+		return this.config.remove(this.guild, value, property);
 	};
 
+	// Delete whole values
+	delete(value) {
+		this.config.fetch(this.guild);
+
+		return this.config.delete(this.guild, value);
+	}
+
 	// Reset the guild's config
-	async reset() {
+	reset() {
 		this.config.delete(this.guild);
 		this.ensure();
 	}
