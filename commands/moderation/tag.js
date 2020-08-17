@@ -3,7 +3,6 @@ const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
 const userInput        = require("../../data/js/util").getUserInput;
 const checkRole        = require("../../data/js/util").checkRole;
-const defaultTags      = require("../../data/json/defaultTags");
 const embed            = require("../../data/js/util").embed;
 const Config           = require("../../data/js/config");
 const util             = require("../../data/js/util");
