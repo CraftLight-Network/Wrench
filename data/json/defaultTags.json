@@ -1,0 +1,12 @@
+{
+	"tags": [
+		{
+			"name":        "default",
+			"description": "This is a default tag."
+		},
+		{
+			"name":        "help",
+			"description": "Type `%prefix%help` for help."
+		}
+	]
+}
