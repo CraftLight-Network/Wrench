@@ -59,11 +59,9 @@
 	},
 	"misc": {
 		"reactions": "true",
-		"roleListener": {
-			"enabled": "true",
-			"messageIDs": [],
-			"emoteIDs": [],
-			"roleIDs": []
+		"vcText": {
+			"enabled": false,
+			"IDs": []
 		}
 	},
 	"version": 1
