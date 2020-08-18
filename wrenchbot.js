@@ -158,5 +158,4 @@ async function guildEvents(message) {
 }
 
 // Log the bot in
-const auth = require("./auth");
-client.login(auth.token);
+client.login(require("./auth").token);
