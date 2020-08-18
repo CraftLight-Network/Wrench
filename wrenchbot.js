@@ -157,5 +157,26 @@ async function guildEvents(message) {
 	}
 }
 
+// VC-Text lockout
+client.on("voiceStateUpdate", async (original, state) => {
+	const config = new Config("guild", state.guild.id);
+	const guildConfig = await config.get();
+
+	if (!guildConfig.misc.vcText.enabled) return;
+
+	if (!original.channelID && state.channelID) {
+		guildConfig.misc.vcText.IDs.forEach(e => {
+			const ids = e.split(",");
+			if (state.channelID === ids[0]) state.member.roles.add(ids[1]);
+		});
+	}
+
+	if (original.channelID && !state.channelID) {
+		guildConfig.misc.vcText.IDs.forEach(e => {
+			const ids = e.split(",");
+			if (original.channelID === ids[0]) state.member.roles.remove(ids[1]);
+		});
+	}
+});
 // Log the bot in
 client.login(require("./auth").token);
