@@ -41,6 +41,9 @@ module.exports = class CoolnessCommand extends Command {
 	}
 
 	run(message, { person }) {
+		// Mention to user
+		if (person.indexOf("<@!") === 0) person = this.client.users.cache.get(person.replace(/<@!(\d+)>/, "$1")).username;
+
 		// RNG based on person and day
 		const seed     = random.clone(seedrandom(person.toLowerCase() + new Date().getDay()));
 		const coolness = seed.int(0, 100);
