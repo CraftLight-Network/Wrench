@@ -42,7 +42,7 @@ module.exports = class CoolnessCommand extends Command {
 
 	run(message, { person }) {
 		// RNG based on person and day
-		const seed     = random.clone(seedrandom(person.toLowerCase() + (date.getDate() - date.getDay())));
+		const seed     = random.clone(seedrandom(person.toLowerCase() + new Date().getDay()));
 		const coolness = seed.int(0, 100);
 
 		// Define the emote to be used
