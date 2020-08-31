@@ -56,7 +56,7 @@ module.exports = class CoolnessCommand extends Command {
 		if (coolness < 50) style = { "emote": "bad_unamused", "color": "#fd7e14", "bar": "[=======           ]" };
 		if (coolness < 25) style = { "emote": "cross",        "color": "#f03e3e", "bar": "[===               ]" };
 
-		// Max out/empty percent bar according to values
+		// Make sure the bar is always "accurate"
 		if (coolness > 95) style.bar = "[==================]";
 		if (coolness < 5)  style.bar = "[                  ]";
 
