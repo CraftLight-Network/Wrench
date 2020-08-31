@@ -44,7 +44,10 @@ module.exports = class CoolnessCommand extends Command {
 	}
 
 	run(message, { person }) {
-		const date = new Date();
+		// RNG based on person and day
+		const date   = new Date();
+		const seed   = random.clone(seedrandom(person.toLowerCase() + date.getMonth().toString() + date.getDate().toString()));
+		let coolness = seed.int(0, 100);
 
 		// RNG based on person and day
 		const seed     = random.clone(seedrandom(person.toLowerCase() + date.getMonth().toString() + date.getDate().toString()));
