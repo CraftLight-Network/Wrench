@@ -2,6 +2,7 @@
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
 const embed            = require("../../data/js/util").embed;
+const util             = require("../../data/js/util");
 const config           = require("../../config");
 const seedrandom       = require("seedrandom");
 const random           = require("random");
@@ -49,9 +50,8 @@ module.exports = class CoolnessCommand extends Command {
 		const seed   = random.clone(seedrandom(person.toLowerCase() + date.getMonth().toString() + date.getDate().toString()));
 		let coolness = seed.int(0, 100);
 
-		// RNG based on person and day
-		const seed     = random.clone(seedrandom(person.toLowerCase() + date.getMonth().toString() + date.getDate().toString()));
-		const coolness = seed.int(0, 100);
+		// Easter-egg
+		if (util.range(parseInt(person), 0, 100)) coolness = parseInt(person);
 
 		// Define the emote to be used
 		let style                = { "emote": "good_shades",  "color": "#8ce99a", "bar": "[===============   ]" };
