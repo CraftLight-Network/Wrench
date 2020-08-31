@@ -209,3 +209,5 @@ module.exports.checkPropertyExists = (config, property) => {
 	if (path.query(config, `$.${property}`)[0] !== undefined) return true;
 	return false;
 };
+
+module.exports.range = (x, min, max) => {return (x - min) * (x - max) <= 0};
