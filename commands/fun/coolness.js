@@ -51,7 +51,18 @@ module.exports = class CoolnessCommand extends Command {
 		let coolness = seed.int(0, 100);
 
 		// Easter-egg
-		if (util.range(parseInt(person), 0, 100)) coolness = parseInt(person);
+		// Detect if a person was specified
+		let int = person.split(" ");
+		if (int.length > 1) {
+			person = int[0];
+			int    = int[1];
+		}
+
+		// Egg payload
+		if (util.range(parseInt(int), 0, 100)) {
+			coolness = parseInt(int);
+			if (person === int[0]) person = message.author.username;
+		}
 
 		// Define the emote to be used
 		let style                = { "emote": "good_shades",  "color": "#8ce99a", "bar": "[===============   ]" };
