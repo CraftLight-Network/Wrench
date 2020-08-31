@@ -5,7 +5,6 @@ const embed            = require("../../data/js/util").embed;
 const config           = require("../../config");
 const seedrandom       = require("seedrandom");
 const random           = require("random");
-const date             = new Date();
 
 module.exports = class CoolnessCommand extends Command {
 	constructor(client) {
