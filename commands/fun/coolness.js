@@ -30,10 +30,7 @@ module.exports = class CoolnessCommand extends Command {
 						if (arg.length < 100) return true;
 						return "Please use under 100 characters!";
 					},
-					"parse": arg => {
-						if (arg.indexOf("<@!") !== 0) return arg;
-						else return this.client.users.cache.get(arg.replace(/<@!(\d+)>/, "$1")).username;
-					}
+					"parse": arg => {return util.translate(arg, "mentions")}
 				}
 			],
 			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
@@ -47,7 +44,7 @@ module.exports = class CoolnessCommand extends Command {
 	run(message, { person }) {
 		// RNG based on person and day
 		const date   = new Date();
-		const seed   = random.clone(seedrandom(person.toLowerCase() + date.getMonth().toString() + date.getDate().toString()));
+		const seed   = random.clone(seedrandom(person.split(" ")[0] + date.getMonth().toString() + date.getDate().toString()));
 		let coolness = seed.int(0, 100);
 
 		// Easter-egg

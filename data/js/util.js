@@ -211,3 +211,14 @@ module.exports.checkPropertyExists = (config, property) => {
 };
 
 module.exports.range = (x, min, max) => {return (x - min) * (x - max) <= 0};
+
+// Replace mentions with users
+module.exports.translate = (message, mode) => {
+	if (mode === "mentions") return mentions();
+
+	function mentions() {
+		const match = message.match(/<@!\d+>/g);
+		if (match) match.forEach(e => message = message.replace(e, client.users.cache.get(e.replace(/[^\d]/g, "")).username));
+		return message;
+	}
+};
