@@ -60,7 +60,7 @@ module.exports = class ShipCommand extends Command {
 		if (ship < 50) style = { "emote": "heart",           "color": "#e64980", "bar": "[=======           ]" };
 		if (ship < 25) style = { "emote": "broken_heart",    "color": "#c92a2a", "bar": "[===               ]" };
 
-		// Max out/empty percent bar according to values
+		// Make sure the bar is always "accurate"
 		if (ship > 95) style.bar = "[==================]";
 		if (ship < 5)  style.bar = "[                  ]";
 

@@ -61,7 +61,7 @@ module.exports = class ProbabilityCommand extends Command {
 		if (probability < 50) style = { "emote": "bad_percentage",      "color": "#fd7e14", "bar": "[=======           ]" };
 		if (probability < 25) style = { "emote": "terrible_percentage", "color": "#f03e3e", "bar": "[===               ]" };
 
-		// Max out/empty percent bar according to values
+		// Make sure the bar is always "accurate"
 		if (probability > 95) style.bar = "[==================]";
 		if (probability < 5)  style.bar = "[                  ]";
 
