@@ -28,6 +28,10 @@ module.exports = class CoolnessCommand extends Command {
 					"validate": arg => {
 						if (arg.length < 150) return true;
 						return "Please use under 150 characters!";
+					},
+					"parse": arg => {
+						if (arg.indexOf("<@!") !== 0) return arg;
+						else return this.client.users.cache.get(arg.replace(/<@!(\d+)>/, "$1")).username;
 					}
 				}
 			],
@@ -42,8 +46,6 @@ module.exports = class CoolnessCommand extends Command {
 	run(message, { person }) {
 		const date = new Date();
 
-		// Mention to user
-		if (person.indexOf("<@!") === 0) person = this.client.users.cache.get(person.replace(/<@!(\d+)>/, "$1")).username;
 
 		// RNG based on person and day
 		const seed     = random.clone(seedrandom(person.toLowerCase() + date.getMonth().toString() + date.getDate().toString()));
