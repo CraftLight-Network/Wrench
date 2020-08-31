@@ -26,8 +26,8 @@ module.exports = class CoolnessCommand extends Command {
 					"default":  message => message.author.username,
 					"type":     "string",
 					"validate": arg => {
-						if (arg.length < 150) return true;
-						return "Please use under 150 characters!";
+						if (arg.length < 100) return true;
+						return "Please use under 100 characters!";
 					},
 					"parse": arg => {
 						if (arg.indexOf("<@!") !== 0) return arg;
@@ -45,7 +45,6 @@ module.exports = class CoolnessCommand extends Command {
 
 	run(message, { person }) {
 		const date = new Date();
-
 
 		// RNG based on person and day
 		const seed     = random.clone(seedrandom(person.toLowerCase() + date.getMonth().toString() + date.getDate().toString()));
