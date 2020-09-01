@@ -51,7 +51,10 @@
 		"enabled": "true",
 		"modRoleIDs": [],
 		"modules": {
-			"spam": "true",
+			"spam": {
+				"enabled": "true",
+				"threshold": "4"
+			},
 			"invites": "true",
 			"badLinks": "true",
 			"caps": "false"

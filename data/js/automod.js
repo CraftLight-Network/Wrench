@@ -71,14 +71,14 @@ module.exports = async (message) => {
 	const content = message.content;
 
 	// Check for spam
-	if (guildConfig.automod.modules.spam === "true") checkSpam();
+	if (guildConfig.automod.modules.spam.enabled === "true") checkSpam();
 	async function checkSpam() {
 		// Make sure there's a message
 		if (content.split("").size !== 0) antiSpam.message(message);
 
 		// Check for unique words
 		const spaceFix = content.split(" ").map(s => s.trim().replace(/[ ]/g, ""));
-		if (spaceFix.length / 4 < [...new Set(spaceFix)].length) return;
+		if (spaceFix.length / parseInt(guildConfig.automod.modules.spam.threshold) < [...new Set(spaceFix)].length) return;
 
 		// Delete and warn
 		await message.delete();
