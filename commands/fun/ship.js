@@ -2,6 +2,7 @@
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
 const embed            = require("../../data/js/util").embed;
+const util             = require("../../data/js/util");
 const config           = require("../../config");
 const seedrandom       = require("seedrandom");
 const random           = require("random");
@@ -29,7 +30,8 @@ module.exports = class ShipCommand extends Command {
 					"validate": arg => {
 						if (arg.length < 150) return true;
 						return "Please use under 150 characters!";
-					}
+					},
+					"parse": arg => {return util.translate(arg, "mentions")}
 				},
 				{
 					"key":      "person2",
@@ -39,7 +41,8 @@ module.exports = class ShipCommand extends Command {
 					"validate": arg => {
 						if (arg.length < 150) return true;
 						return "Please use under 150 characters!";
-					}
+					},
+					"parse": arg => {return util.translate(arg, "mentions")}
 				}
 			],
 			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
