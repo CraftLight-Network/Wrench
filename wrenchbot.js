@@ -26,8 +26,6 @@
 // data/private/enmap
 // data/private/logs
 
-// ENMAP ensure
-
 // CHECK IF NOT EXIST: auth
 
 // Define and require modules

@@ -17,6 +17,11 @@ const reactionConfig = new Enmap({
 // Tags
 const tagConfig = new Enmap({
 	"name":       "tags",
+	"autoEnsure": {
+		"commands": 0,
+		"messages": 0,
+		"automod":  0
+	},
 	"dataDir":    dataDir
 });
 
