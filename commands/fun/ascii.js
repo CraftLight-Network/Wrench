@@ -7,7 +7,7 @@ const config           = require("../../config");
 const hastebin         = require("hastebin");
 const figlet           = require("figlet");
 
-const fonts = ["fonts"].concat(figlet.fontsSync().map(i => {return i.replace(" ", "_").toLowerCase()}));
+const fonts = ["fonts"].concat(figlet.fontsSync().map(i => i.replace(" ", "_").toLowerCase()));
 
 module.exports = class AsciiCommand extends Command {
 	constructor(client) {
