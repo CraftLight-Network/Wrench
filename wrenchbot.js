@@ -176,5 +176,6 @@ client.on("voiceStateUpdate", async (original, state) => {
 		});
 	}
 });
+
 // Log the bot in
 client.login(require("./auth").token);
