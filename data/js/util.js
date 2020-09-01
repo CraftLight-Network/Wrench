@@ -151,7 +151,7 @@ module.exports.commonPlaceholders = (object, mode) => {
 
 module.exports.embedToString = message => {
 	let embeds = "";
-	if (message.embeds.length !== 0) {
+	if (message.embeds !== undefined) {
 		message.embeds.forEach(e => {
 			let es = [];
 
