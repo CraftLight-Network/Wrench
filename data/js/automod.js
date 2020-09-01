@@ -89,7 +89,7 @@ module.exports = async (message) => {
 	if (guildConfig.automod.modules.invites === "true") checkInvites();
 	async function checkInvites() {
 		// Make sure there are invites
-		if (!content.match("discord.gg|discordapp.com/invite")) return;
+		if (!content.match("discord(app)?.(com|gg)(/invite)?")) return;
 
 		// Delete and warn
 		await message.delete();
