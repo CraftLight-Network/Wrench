@@ -3,6 +3,7 @@ const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
 const Config           = require("../../data/js/config");
 const checkRole        = require("../../data/js/util").checkRole;
+const util             = require("../../data/js/util");
 const config           = require("../../config");
 
 module.exports = class PurgeCommand extends Command {
@@ -33,7 +34,8 @@ module.exports = class PurgeCommand extends Command {
 					"key":     "user",
 					"prompt":  "",
 					"default": "",
-					"type":    "string"
+					"type":    "string",
+					"parse": arg => {return util.translate(arg, "mentions")}
 				}
 			],
 			"guildOnly": true,
