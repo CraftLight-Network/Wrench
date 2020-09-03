@@ -15,7 +15,7 @@ module.exports = class PurgeCommand extends Command {
 			"details": stripIndents`
 				Run \`${config.prefix.commands}purge <amount> [user]\` to purge messages.
 				**Notes:**
-				<amount>: Required, how many messages to delete.
+				<amount>: Required, how many messages to delete. Use "\`all\`" to remove all messages.
 				[user]: Optional, what user to delete messages for.
 			`,
 			"args": [
