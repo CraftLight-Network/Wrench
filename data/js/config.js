@@ -13,10 +13,15 @@ const guildConfig      = require("./enmap").guildConfig;
 const tagConfig        = require("./enmap").tagConfig;
 
 class Config {
-	constructor(config, guild) {
+	constructor(config, guild, customConfig, customFile) {
 		this.guild = guild;
 
 		switch (config) {
+			case "custom":
+				this.config = customConfig;
+				this.file   = customFile;
+				break;
+
 			case "guild":
 				this.config = guildConfig;
 				this.file = defaultConfig;
@@ -62,8 +67,6 @@ class Config {
 		if (!this.config.get(this.guild, property)) return this.config.set(this.guild, [value], property);
 		return this.config.push(this.guild, value, property);
 	}
-
-	// ?? NOT WORKING
 
 	// Remove from arrays
 	remove(property, value) {
