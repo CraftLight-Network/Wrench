@@ -24,24 +24,23 @@ class Config {
 
 			case "guild":
 				this.config = guildConfig;
-				this.file = defaultConfig;
+				this.file   = defaultConfig;
 				break;
 
 			case "reactions":
 				this.config = reactionConfig;
-				this.file = defaultReactions;
+				this.file   = defaultReactions;
 				break;
 
 			case "tags":
 				this.config = tagConfig;
-				this.file = defaultTags;
+				this.file   = defaultTags;
 				break;
 		}
 	}
 
-	ensure() {
-		this.config.ensure(this.guild, { "version": this.file.version });
-	}
+	// Make sure the guild exists in the config
+	ensure() {this.config.ensure(this.guild, { "version": this.file.version })}
 
 	// Get the config in JSON
 	async get() {
