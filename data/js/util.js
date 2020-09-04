@@ -188,10 +188,10 @@ module.exports.toString = (array, char) => {
 	else return array.join(char);
 };
 
-// An alternate way of checking if a string includes a statement
+// An better way to check includes on arrays
 module.exports.newIncludes = (string, compare) => {
 	if (!string) return false;
-	return compare.some(c => string.includes(c));
+	return compare.some(c => {return c.includes(string)});
 };
 
 // Get message from partials
