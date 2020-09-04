@@ -21,7 +21,7 @@ module.exports = async (message) => {
 
 			e.messages = util.toArray(e.messages, "|");
 			e.emotes   = util.toArray(e.emotes,   "|");
-			if (!message.content.match(new RegExp(util.toString(e.regex, "|"), e.flags))) return;
+			if (!message.content.match(new RegExp(e.regex, e.flags))) return;
 
 			// Checks
 			if (e.checkPrevious) if (await checkMessages(message, util.toArray(e.regex, "|"), e.checkPrevious)) return;
