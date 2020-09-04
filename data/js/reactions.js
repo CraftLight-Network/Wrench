@@ -1,8 +1,7 @@
 // Define and require modules
 const Config        = require("./config");
 const botConfig     = require("../../config");
-const toString      = require("./util").toString;
-const toArray       = require("./util").toArray;
+const util          = require("./util");
 
 module.exports = async (message) => {
 	let guildConfig;
@@ -18,13 +17,14 @@ module.exports = async (message) => {
 	function checkReactions() {
 		botConfig.reactions.types.forEach(async e => {
 			if (e.flags === undefined) e.flags = "i";
+			if (e.fullWord) e.regex = `\\b${e.regex.replace("|", "\\b|\\b")}\\b`;
 
-			e.messages = toArray(e.messages, "|");
-			e.emotes   = toArray(e.emotes,   "|");
-			if (!message.content.match(new RegExp(toString(e.regex, "|"), e.flags))) return;
+			e.messages = util.toArray(e.messages, "|");
+			e.emotes   = util.toArray(e.emotes,   "|");
+			if (!message.content.match(new RegExp(util.toString(e.regex, "|"), e.flags))) return;
 
 			// Checks
-			if (e.checkPrevious) if (await checkMessages(message, toArray(e.regex, "|"), e.checkPrevious)) return;
+			if (e.checkPrevious) if (await checkMessages(message, util.toArray(e.regex, "|"), e.checkPrevious)) return;
 
 			// Payloads
 			e.messages.forEach(async m => await message.channel.send(m));
@@ -36,9 +36,8 @@ module.exports = async (message) => {
 		let found = false;
 		await message.channel.messages.fetch({ "limit": limit }).then(messages => {
 			messages.delete(message.id);
-			messages.some(msg => {if (checks.includes(msg.content)) found = true;});
+			messages.forEach(m => found = util.newIncludes(m.content, checks));
 		});
-
 		return found;
 	}
 };
