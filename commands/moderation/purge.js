@@ -59,13 +59,17 @@ module.exports = class PurgeCommand extends Command {
 		if (amount === "all") {
 			await message.channel.clone({ "reason": "Channel purged." });
 			message.channel.delete("Channel purged.");
+			return;
 		}
 
 		// Purge some messages
-		if (!user) message.channel.bulkDelete(amount + 1, true);
+		if (!user) {
+			message.channel.bulkDelete(amount + 1, true);
+			return;
+		}
 
 		// Purge messages from user
-		if (amount !== "all" && user) {
+		if (amount !== "all") {
 			const allMessages = await message.channel.messages.fetch({ "limit": amount + 1 });
 			const messages    = allMessages.filter(m => m.author.username === user);
 
