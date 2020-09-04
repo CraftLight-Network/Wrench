@@ -16,21 +16,23 @@
 			"regex": "hello|hi|hey|hiya|heyo|howdy|sup|yo|hola|hallo|bonjour|salut|ciao|konnichiwa",
 			"emotes": ["👋", "🇭", "🇮"],
 			"fullWord": true,
-			"checkPrevious": 4
+			"checkPrevious": 5
 		},
 		{
 			"regex": "goodbye|bye|cya|gtg",
 			"emotes": ["👋", "🇧", "🇾", "🇪"],
 			"fullWord": true,
-			"checkPrevious": 4
+			"checkPrevious": 5
 		},
 		{
 			"regex": "pog",
-			"emotes": "660203799377608704"
+			"emotes": "660203799377608704",
+			"checkPrevious": 3
 		},
 		{
 			"regex": "l[ou]l",
-			"emotes": "660205635777986571"
+			"emotes": "660205635777986571",
+			"checkPrevious": 3
 		},
 		{
 			"regex": "sleep|\\bz+\\b",
