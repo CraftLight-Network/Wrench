@@ -1,12 +1,13 @@
 // Get logger
-const { log } = require("./logger");
+const log = require("./logger").log;
 
 // Define and require modules
 const { stripIndents } = require("common-tags");
 const embed            = require("../../data/js/util").embed;
+const util             = require("../../data/js/util");
 const AntiSpam         = require("discord-anti-spam");
-const Config           = require("./config");
 const request          = require("async-request");
+const Config           = require("./config");
 
 // Format + update bad links
 let badLinks = [];
@@ -16,7 +17,7 @@ async function createBadLinks() {
 
 	// Format the bad links file
 	badLinks = await hosts.body
-		.replace(/#.*|[0-9].[0-9].[0-9].[0-9]\s|^((?!.*\..*).)*$|https|http|:\/\//gmi, "")
+		.replace(/#.*|([0-9]\.){3}[0-9]\s|https?:\/\//gmi, "")
 		.trim()
 		.split("\n")
 		.slice(14)
@@ -42,43 +43,26 @@ const antiSpam = new AntiSpam({
 	"banMessage":           "**{user_tag}** has been banned for spamming."
 });
 
-antiSpam.on("spamThresholdWarn", (member) => {
-	member.send(embed({
-		"message": member,
-		"author":  {
-			"name":    "Warning",
-			"picture": member.user.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 })
-		},
-		"fields":  [
-			["Do not spam!", stripIndents`
-				The server does not want you to spam there.
-				Please change your message or slow down.
-			`]
-		],
-		"footer":  "Action done by AutoMod"
-	}));
-});
+antiSpam.on("spamThresholdWarn", (member) => reply(member, { "name": "spam", "code": "spam" }));
 
 module.exports = async (message) => {
 	if (!message.guild) return;
+	const content = message.content;
 
 	// Get the config
 	const config = new Config("guild", message.guild.id);
-	config.ensure(message.guild.id);
 	const guildConfig = await config.get();
 
-	// Shorter message content
-	const content = message.content;
-
 	// Check for spam
-	if (guildConfig.automod.modules.spam.enabled === "true") checkSpam();
+	if (b(guildConfig.automod.modules.spam.enabled)) checkSpam();
 	async function checkSpam() {
 		// Make sure there's a message
-		if (content.split("").size !== 0) antiSpam.message(message);
+		if (!content) return;
+		antiSpam.message(message);
 
 		// Check for unique words
-		const spaceFix = content.split(" ").map(s => s.trim().replace(/[ ]/g, ""));
-		if (spaceFix.length / parseInt(guildConfig.automod.modules.spam.threshold) < [...new Set(spaceFix)].length) return;
+		const c = content.split(" ").map(s => s.trim().replace(/[ ]/g, ""));
+		if (c.length / parseInt(guildConfig.automod.modules.spam.threshold) < [...new Set(c)].length) return;
 
 		// Delete and warn
 		await message.delete();
@@ -86,7 +70,7 @@ module.exports = async (message) => {
 	}
 
 	// Check for invites
-	if (guildConfig.automod.modules.invites === "true") checkInvites();
+	if (b(guildConfig.automod.modules.invites)) checkInvites();
 	async function checkInvites() {
 		// Make sure there are invites
 		if (!content.match("discord(app)?.(com|gg)(/invite)?")) return;
@@ -97,10 +81,10 @@ module.exports = async (message) => {
 	}
 
 	// Check for bad links
-	if (guildConfig.automod.modules.badLinks === "true") checkBadLinks();
+	if (b(guildConfig.automod.modules.badLinks)) checkBadLinks();
 	async function checkBadLinks() {
 		// Make sure there are bad links
-		if (content === "" || !badLinks.some(l => content.split(" ").includes(l))) return;
+		if (!content || !util.newIncludes(content, badLinks)) return;
 
 		// Delete and warn
 		await message.delete();
@@ -108,35 +92,39 @@ module.exports = async (message) => {
 	}
 
 	// Check for caps
-	if (guildConfig.automod.modules.caps === "true") checkCaps();
+	if (b(guildConfig.automod.modules.caps.enabled)) checkCaps();
 	async function checkCaps() {
-		// Filter out emotes
-		const noEmotes = content.replace(/[\u1000-\uFFFF]+/gu, "");
-
-		// Detect if there are just more than 5 emojis
-		if (noEmotes === "" || noEmotes.replace(/[ A-Z]/g, "").length >= noEmotes.replace(/[ a-z]/g, "").length) return;
+		const upperCase = content.match(/[\p{Lu}]/gu);
+		if (parseInt(guildConfig.automod.modules.caps.threshold.replace(/[^0-9]/, "")) >
+		Math.floor(((upperCase ? upperCase.length : 0) / content.replace(/\s/g, "").length) * 100)) return;
 
 		// Delete and warn
 		await message.delete();
 		reply(message, { "name": "send all caps", "code": "caps" });
 	}
-
-	// Reply function
-	function reply(message, warning) {
-		message.author.send(embed({
-			"message": message,
-			"author":  {
-				"name":    "Warning",
-				"picture": message.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 })
-			},
-			"fields":  [
-				[`Do not ${warning.name}!`, stripIndents`
-					The server ${message.guild.name} does not want you to ${warning.name} there.
-					If this was a mistake, you may edit your message without the ${warning.code}.
-				`],
-				["Original message:", message]
-			],
-			"footer":  "Action made by AutoMod"
-		}));
-	}
 };
+
+// Reply function
+function reply(message, warning) {
+	const embedMessage = {
+		"author":  {
+			"name":    "Warning",
+			"picture": message.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 })
+		},
+		"fields":  [
+			[`Do not ${warning.name}!`, stripIndents`
+				The server ${message.guild.name} does not want you to ${warning.name} there.
+				If this was a mistake, you may edit your message without the ${warning.code}.
+			`],
+			["Original message:", message]
+		],
+		"footer":  "Action made by AutoMod"
+	};
+
+	if (message.content) embedMessage.message = message;
+
+	message.author.send(embed(embedMessage));
+}
+
+// Get rid of '=== "true"'
+function b(string) {return string === "true"}
