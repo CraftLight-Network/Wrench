@@ -219,3 +219,5 @@ module.exports.translate = (message, mode) => {
 		return message;
 	}
 };
+
+module.exports.difference = (x, y) => {return Math.abs(x - y) / ((x + y) / 2)};
