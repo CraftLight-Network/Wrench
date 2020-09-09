@@ -117,7 +117,10 @@ function reply(message, warning) {
 		"footer":  "Action made by AutoMod"
 	};
 
-	if (message.content) embedMessage.message = message;
+	if (message.content) {
+		embedMessage.message = message;
+		embedMessage.author.picture = message.user.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 });
+	}
 
 	message.author.send(embed(embedMessage));
 }
