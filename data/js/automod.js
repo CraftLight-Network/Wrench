@@ -54,8 +54,7 @@ module.exports = async (message) => {
 	const guildConfig = await config.get();
 
 	// Check for spam
-	if (b(guildConfig.automod.modules.spam.enabled)) checkSpam();
-	async function checkSpam() {
+	if (b(guildConfig.automod.modules.spam.enabled)) {
 		// Make sure there's a message
 		if (!content) return;
 		antiSpam.message(message);
@@ -70,8 +69,7 @@ module.exports = async (message) => {
 	}
 
 	// Check for invites
-	if (b(guildConfig.automod.modules.invites)) checkInvites();
-	async function checkInvites() {
+	if (b(guildConfig.automod.modules.invites)) {
 		// Make sure there are invites
 		if (!content.match("discord(app)?.(com|gg)(/invite)?")) return;
 
@@ -81,8 +79,7 @@ module.exports = async (message) => {
 	}
 
 	// Check for bad links
-	if (b(guildConfig.automod.modules.badLinks)) checkBadLinks();
-	async function checkBadLinks() {
+	if (b(guildConfig.automod.modules.badLinks)) {
 		// Make sure there are bad links
 		if (!content || !util.newIncludes(content, badLinks)) return;
 
@@ -92,8 +89,7 @@ module.exports = async (message) => {
 	}
 
 	// Check for caps
-	if (b(guildConfig.automod.modules.caps.enabled)) checkCaps();
-	async function checkCaps() {
+	if (b(guildConfig.automod.modules.caps.enabled)) {
 		const upperCase = content.match(/[\p{Lu}]/gu);
 		if (parseInt(guildConfig.automod.modules.caps.threshold.replace(/[^0-9]/, "")) >
 		Math.floor(((upperCase ? upperCase.length : 0) / content.replace(/\s/g, "").length) * 100)) return;
