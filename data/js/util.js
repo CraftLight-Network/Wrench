@@ -189,7 +189,7 @@ module.exports.toString = (array, char) => {
 };
 
 // An better way to check includes on arrays
-module.exports.newIncludes = (string, compare) => compare.some(c => {return c.includes(string)});
+module.exports.newIncludes = (string, compare) => compare.some(c => string.includes(c));
 
 // Get message from partials
 module.exports.getMessage = async message => {
