@@ -53,15 +53,5 @@
     "wikijs": "^6.0.1",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^3.10.0"
-  },
-  "devDependencies": {
-    "eslint": "^7.8.1",
-    "eslint-config-standard": "^14.1.1",
-    "eslint-plugin-import": "^2.22.0",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^4.2.1",
-    "eslint-plugin-security": "^1.4.0",
-    "eslint-plugin-standard": "^4.0.1",
-    "eslint-plugin-vuln-regex-detector": "^1.0.4"
   }
 }
