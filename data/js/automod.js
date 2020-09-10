@@ -83,7 +83,7 @@ module.exports = async (message) => {
 
 		// Check for unique words
 		const c = content.split(" ").map(s => s.trim().replace(/[ ]/g, ""));
-		if (c.length / parseInt(guildConfig.automod.modules.spam.threshold) < [...new Set(c)].length) return;
+		if (c.length / parseInt(guildConfig.automod.modules.spam.threshold, 10) < [...new Set(c)].length) return;
 
 		// Delete and warn
 		await message.delete();
