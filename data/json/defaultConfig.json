@@ -60,6 +60,10 @@
 			"caps": {
 				"enabled": "false",
 				"threshold": "77%"
+			},
+			"blacklisted": {
+				"enabled": "true",
+				"words": []
 			}
 		}
 	},

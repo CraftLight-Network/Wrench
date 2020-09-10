@@ -10,13 +10,13 @@ const request          = require("async-request");
 const Config           = require("./config");
 
 // Format + update bad links
-let badLinks = [];
+let bad = [];
 async function createBadLinks() {
 	// Grab the latest Unified HOSTS (Unified + Gambling + Fakenews + Porn)
 	let hosts = await request("http://sbc.io/hosts/alternates/fakenews-gambling-porn/hosts");
 
 	// Format the bad links file
-	badLinks = await hosts.body
+	bad = await hosts.body
 		.replace(/#.*|([0-9]\.){3}[0-9]\s|https?:\/\//gmi, "")
 		.trim()
 		.split("\n")
@@ -47,16 +47,38 @@ antiSpam.on("spamThresholdWarn", (member) => reply(member, { "name": "spam", "co
 
 module.exports = async (message) => {
 	if (!message.guild) return;
+
+	// Make sure there's a message
 	const content = message.content;
+	if (!content) return;
 
 	// Get the config
 	const config = new Config("guild", message.guild.id);
 	const guildConfig = await config.get();
 
-	// Check for spam
-	if (b(guildConfig.automod.modules.spam.enabled)) {
-		// Make sure there's a message
-		if (!content) return;
+	// Blacklisted words
+	if (b(guildConfig.automod.modules.spam.enabled)) blacklisted();
+	async function blacklisted() {
+		if (!util.newIncludes(content, guildConfig.automod.modules.blacklisted.words)) return;
+
+		// Delete and warn
+		await message.delete();
+		reply(message, { "name": "send blacklisted words", "code": "blacklisted words" });
+	}
+
+	// Invite detection
+	if (b(guildConfig.automod.modules.invites)) invites();
+	async function invites() {
+		if (!content.match("discord(app)?.(com|gg)(/invite)?")) return;
+
+		// Delete and warn
+		await message.delete();
+		reply(message, { "name": "send invite links", "code": "invite" });
+	}
+
+	// SPAM SPAM SPAM
+	if (b(guildConfig.automod.modules.spam.enabled)) spam();
+	async function spam() {
 		antiSpam.message(message);
 
 		// Check for unique words
@@ -66,30 +88,21 @@ module.exports = async (message) => {
 		// Delete and warn
 		await message.delete();
 		reply(message, { "name": "spam", "code": "spam" });
-	}
+	};
 
-	// Check for invites
-	if (b(guildConfig.automod.modules.invites)) {
-		// Make sure there are invites
-		if (!content.match("discord(app)?.(com|gg)(/invite)?")) return;
-
-		// Delete and warn
-		await message.delete();
-		reply(message, { "name": "send invite links", "code": "invite" });
-	}
-
-	// Check for bad links
-	if (b(guildConfig.automod.modules.badLinks)) {
-		// Make sure there are bad links
-		if (!content || !util.newIncludes(content, badLinks)) return;
+	// Bad links
+	if (b(guildConfig.automod.modules.badLinks)) badLinks();
+	async function badLinks() {
+		if (!util.newIncludes(content, bad)) return;
 
 		// Delete and warn
 		await message.delete();
 		reply(message, { "name": "send bad links", "code": "link" });
 	}
 
-	// Check for caps
-	if (b(guildConfig.automod.modules.caps.enabled)) {
+	// CAPS threshold
+	if (b(guildConfig.automod.modules.caps.enabled)) caps();
+	async function caps() {
 		const upperCase = content.match(/[\p{Lu}]/gu);
 		if (parseInt(guildConfig.automod.modules.caps.threshold.replace(/[^0-9]/, "")) >
 		Math.floor(((upperCase ? upperCase.length : 0) / content.replace(/\s/g, "").length) * 100)) return;
@@ -103,10 +116,7 @@ module.exports = async (message) => {
 // Reply function
 function reply(message, warning) {
 	const embedMessage = {
-		"author":  {
-			"name":    "Warning",
-			"picture": message.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 })
-		},
+		"author":  { "name": "Warning" },
 		"fields":  [
 			[`Do not ${warning.name}!`, stripIndents`
 				The server ${message.guild.name} does not want you to ${warning.name} there.
@@ -118,9 +128,9 @@ function reply(message, warning) {
 	};
 
 	if (message.content) {
-		embedMessage.message = message;
-		embedMessage.author.picture = message.user.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 });
-	}
+		embedMessage.message           = message;
+		embedMessage.author.picture    = message.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 });
+	} else embedMessage.author.picture = message.user.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 });
 
 	message.author.send(embed(embedMessage));
 }
