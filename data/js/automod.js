@@ -59,7 +59,7 @@ module.exports = async (message) => {
 	// Blacklisted words
 	if (b(guildConfig.automod.modules.spam.enabled)) blacklisted();
 	async function blacklisted() {
-		if (!util.newIncludes(content, guildConfig.automod.modules.blacklisted.words)) return;
+		if (!util.check(content, guildConfig.automod.modules.blacklisted.words)) return;
 
 		// Delete and warn
 		await message.delete();
@@ -93,7 +93,7 @@ module.exports = async (message) => {
 	// Bad links
 	if (b(guildConfig.automod.modules.badLinks)) badLinks();
 	async function badLinks() {
-		if (!util.newIncludes(content, bad)) return;
+		if (!util.check(content, bad)) return;
 
 		// Delete and warn
 		await message.delete();

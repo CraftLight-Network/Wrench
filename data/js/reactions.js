@@ -19,14 +19,15 @@ module.exports = async (message) => {
 		const reactions = _.cloneDeep(botConfig.reactions.types);
 		reactions.forEach(async e => {
 			if (e.flags === undefined) e.flags = "i";
-			if (e.fullWord) e.regex = `\\b${e.regex.replace(/\|/g, "\\b|\\b")}\\b`;
+			if (e.fullWord) e.regex = new RegExp(`\\b${e.regex.replace(/\|/g, "\\b|\\b")}`, e.flags);
+			else e.regex = new RegExp(e.regex, e.flags);
 
 			e.messages = util.toArray(e.messages, "|");
 			e.emotes   = util.toArray(e.emotes,   "|");
-			if (!message.content.match(new RegExp(e.regex, e.flags))) return;
+			if (!message.content.match(e.regex)) return;
 
 			// Checks
-			if (e.checkPrevious) if (await checkMessages(message, util.toArray(e.regex, "|"), e.checkPrevious)) return;
+			if (e.checkPrevious) if (await checkMessages(message, e.regex, e.checkPrevious)) return;
 
 			// Payloads
 			e.messages.forEach(async m => await message.channel.send(m));
@@ -34,13 +35,12 @@ module.exports = async (message) => {
 		});
 	}
 
-	async function checkMessages(message, checks, limit) {
+	async function checkMessages(message, regex, limit) {
 		let found = false;
-		console.log(checks);
-		await message.channel.messages.fetch({ "limit": limit }).then(messages => {
-			messages.delete(message.id);
-			messages.forEach(m => found = util.newIncludes(m.content, checks));
-		});
+		const messages = await message.channel.messages.fetch({ "limit": limit });
+
+		messages.delete(message.id);
+		messages.forEach(m => {if (util.check(m.content, regex)) found = true;});
 		return found;
 	}
 };

@@ -188,8 +188,17 @@ module.exports.toString = (array, char) => {
 	else return array.join(char);
 };
 
-// An better way to check includes on arrays
-module.exports.newIncludes = (string, compare) => compare.some(c => string.includes(c));
+// Check if a string includes content from an array
+module.exports.check = (string, compare) => {
+	let found = false;
+	if (Array.isArray(compare)) {
+		compare.forEach(c => {
+			if (string.match(new RegExp(c, "gi"))) found = true;
+		});
+	} else if (string.match(compare)) found = true;
+
+	return found;
+};
 
 // Get message from partials
 module.exports.getMessage = async message => {
