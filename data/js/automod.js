@@ -104,7 +104,7 @@ module.exports = async (message) => {
 	if (b(guildConfig.automod.modules.caps.enabled)) caps();
 	async function caps() {
 		const upperCase = content.match(/[\p{Lu}]/gu);
-		if (parseInt(guildConfig.automod.modules.caps.threshold.replace(/[^0-9]/, "")) >
+		if (parseInt(guildConfig.automod.modules.caps.threshold.replace(/[^0-9]/, ""), 10) >
 		Math.floor(((upperCase ? upperCase.length : 0) / content.replace(/\s/g, "").length) * 100)) return;
 
 		// Delete and warn
