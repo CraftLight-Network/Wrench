@@ -129,8 +129,17 @@ client.on("message", async message => {
 	totals.inc("messages");
 });
 
+// Message edit event
+client.on("messageUpdate", async (oldMessage, newMessage) => {
+	oldMessage = await util.getMessage(oldMessage);
+	newMessage = await util.getMessage(newMessage);
+
+	if (oldMessage.content === newMessage.content) return;
+	client.emit("messageEdit", oldMessage, newMessage);
+});
+
 // Run automod and reactions on edited messages
-client.on("messageUpdate", async (oldMessage, message) => {
+client.on("messageEdit", async (oldMessage, message) => {
 	message = await util.getMessage(message);
 	if (message.author.bot) return;
 
