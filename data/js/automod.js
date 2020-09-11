@@ -95,7 +95,7 @@ module.exports = async (message) => {
 	// Bad links
 	if (valid && b(guildConfig.automod.modules.badLinks)) await badLinks();
 	async function badLinks() {
-		if (!util.check(content, bad)) return;
+		if (!content.split(" ").some(c => bad.includes(c))) return;
 
 		// Delete and warn
 		await message.delete();

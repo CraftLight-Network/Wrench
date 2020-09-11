@@ -36,11 +36,9 @@ module.exports = async (message) => {
 	}
 
 	async function checkMessages(message, regex, limit) {
-		let found = false;
 		const messages = await message.channel.messages.fetch({ "limit": limit });
 
 		messages.delete(message.id);
-		messages.forEach(m => {if (util.check(m.content, regex)) found = true;});
-		return found;
+		return messages.some(m => util.check(m.content, regex));
 	}
 };
