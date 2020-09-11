@@ -60,7 +60,8 @@ module.exports = async (message) => {
 	// Blacklisted words
 	if (b(guildConfig.automod.modules.spam.enabled)) await blacklisted();
 	async function blacklisted() {
-		if (!util.check(content, guildConfig.automod.modules.blacklisted.words)) return;
+		if (!util.check(content,
+			new RegExp(util.toString(guildConfig.automod.modules.blacklisted.words, "|", "i")))) return;
 
 		// Delete and warn
 		await message.delete();
