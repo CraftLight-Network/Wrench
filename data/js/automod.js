@@ -45,6 +45,7 @@ const antiSpam = new AntiSpam({
 
 antiSpam.on("spamThresholdWarn", (member) => reply(member, { "name": "spam", "code": "spam" }));
 
+let valid = true;
 module.exports = async (message) => {
 	if (!message.guild) return;
 
@@ -57,7 +58,7 @@ module.exports = async (message) => {
 	const guildConfig = await config.get();
 
 	// Blacklisted words
-	if (b(guildConfig.automod.modules.spam.enabled)) blacklisted();
+	if (b(guildConfig.automod.modules.spam.enabled)) await blacklisted();
 	async function blacklisted() {
 		if (!util.check(content, guildConfig.automod.modules.blacklisted.words)) return;
 
@@ -67,7 +68,7 @@ module.exports = async (message) => {
 	}
 
 	// Invite detection
-	if (b(guildConfig.automod.modules.invites)) invites();
+	if (valid && b(guildConfig.automod.modules.invites)) await invites();
 	async function invites() {
 		if (!content.match("discord(app)?.(com|gg)(/invite)?")) return;
 
@@ -77,7 +78,7 @@ module.exports = async (message) => {
 	}
 
 	// SPAM SPAM SPAM
-	if (b(guildConfig.automod.modules.spam.enabled)) spam();
+	if (valid && b(guildConfig.automod.modules.spam.enabled)) await spam();
 	async function spam() {
 		antiSpam.message(message);
 
@@ -91,7 +92,7 @@ module.exports = async (message) => {
 	};
 
 	// Bad links
-	if (b(guildConfig.automod.modules.badLinks)) badLinks();
+	if (valid && b(guildConfig.automod.modules.badLinks)) await badLinks();
 	async function badLinks() {
 		if (!util.check(content, bad)) return;
 
@@ -101,7 +102,7 @@ module.exports = async (message) => {
 	}
 
 	// CAPS threshold
-	if (b(guildConfig.automod.modules.caps.enabled)) caps();
+	if (valid && b(guildConfig.automod.modules.caps.enabled)) await caps();
 	async function caps() {
 		const upperCase = content.match(/[\p{Lu}]/gu);
 		if (parseInt(guildConfig.automod.modules.caps.threshold.replace(/[^0-9]/, ""), 10) >
@@ -115,6 +116,8 @@ module.exports = async (message) => {
 
 // Reply function
 function reply(message, warning) {
+	valid = false;
+
 	const embedMessage = {
 		"author":  { "name": "Warning" },
 		"fields":  [
