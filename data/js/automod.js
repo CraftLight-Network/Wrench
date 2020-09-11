@@ -58,7 +58,7 @@ module.exports = async (message) => {
 	const guildConfig = await config.get();
 
 	// Blacklisted words
-	if (b(guildConfig.automod.modules.spam.enabled)) await blacklisted();
+	if (b(guildConfig.automod.modules.blacklisted.enabled)) await blacklisted();
 	async function blacklisted() {
 		if (!util.check(content,
 			new RegExp(util.toString(guildConfig.automod.modules.blacklisted.words, "|", "i")))) return;

@@ -62,7 +62,7 @@
 				"threshold": "77%"
 			},
 			"blacklisted": {
-				"enabled": "true",
+				"enabled": "false",
 				"words": []
 			}
 		}
