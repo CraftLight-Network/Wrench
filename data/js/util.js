@@ -10,10 +10,6 @@ module.exports.init = (c, t) => {
 	totals = t;
 };
 
-// Truncate string
-function truncate(input, length) {return input.length > length ? input.slice(0, length - 1).trim() + "..." : input}
-module.exports.truncate = truncate;
-
 // Embedded messages
 module.exports.embed = options => {
 	// Convert member to message
@@ -103,15 +99,6 @@ module.exports.checkRole = (message, roles) => {
 	return true;
 };
 
-// Remove command from message
-module.exports.removeCommand = (message, command) => message.replace(`${config.prefix.commands}${command.name} `, "");
-
-// Test if a message is a command
-module.exports.isCommand = (message, command) => {
-	if (message.content.charAt(0) === config.prefix.commands) message.content = message.content.slice(1, message.content.length);
-	if (message.content === command) return true;
-};
-
 module.exports.replacePlaceholders = (message, custom) => {
 	// Pre-set placeholders
 	const placeholders = {
@@ -176,48 +163,6 @@ module.exports.embedToString = message => {
 	return message.content += embeds;
 };
 
-module.exports.toArray = (string, char) => {
-	if (string === undefined)       return [];
-	if (typeof string === "object") return string;
-	else return string.split(char);
-};
-
-module.exports.toString = (array, char) => {
-	if (array === undefined)       return "";
-	if (typeof array === "string") return array;
-	else return array.join(char);
-};
-
-// Check if a string includes content from an array
-module.exports.check = (string, compare) => {
-	let found = false;
-	if (Array.isArray(compare)) {
-		compare.forEach(c => {
-			if (string.match(new RegExp(c, "gi"))) found = true;
-		});
-	} else if (string.match(compare)) found = true;
-
-	return found;
-};
-
-// Get message from partials
-module.exports.getMessage = async message => {
-	if (message.partial) return await message.fetch();
-	else return message;
-};
-
-// Wait before continuing
-module.exports.sleep = ms => {
-	return new Promise(resolve => setTimeout(resolve, ms));
-};
-
-module.exports.checkPropertyExists = (config, property) => {
-	if (path.query(config, `$.${property}`)[0] !== undefined) return true;
-	return false;
-};
-
-module.exports.range = (x, min, max) => {return (x - min) * (x - max) <= 0};
-
 // Replace mentions with users
 module.exports.translate = (message, mode) => {
 	if (mode === "mentions") return mentions();
@@ -229,4 +174,54 @@ module.exports.translate = (message, mode) => {
 	}
 };
 
+// Check if a string includes content from an array
+module.exports.check = (string, compare) => {
+	let found = false;
+	if (Array.isArray(compare)) {
+		compare.some(c => string.match(new RegExp(c, "gi")));
+	} else if (string.match(compare)) found = true;
+
+	return found;
+};
+
+// Get message from partials
+module.exports.getMessage = async message => {
+	if (message.partial) return await message.fetch();
+	else return message;
+};
+
+// Misc.
+module.exports.isCommand = (message, command) => {
+	if (message.content.charAt(0) === config.prefix.commands) message.content = message.content.slice(1, message.content.length);
+	if (message.content === command) return true;
+};
+
+module.exports.removeCommand = (message, command) => message.replace(`${config.prefix.commands}${command.name} `, "");
+
+module.exports.checkPropertyExists = (config, property) => {
+	if (path.query(config, `$.${property}`)[0] !== undefined) return true;
+	return false;
+};
+
+function truncate(input, length) {return input.length > length ? input.slice(0, length - 1).trim() + "..." : input}
+module.exports.truncate = truncate;
+
+module.exports.toArray = (string, char) => {
+	if (string === undefined)  return [];
+	if (Array.isArray(string)) return string;
+	else return string.split(char);
+};
+
+module.exports.toString = (array, char) => {
+	if (array === undefined)   return "";
+	if (!Array.isArray(array)) return array;
+	else return array.join(char);
+};
+
+module.exports.sleep = ms => {
+	return new Promise(resolve => setTimeout(resolve, ms));
+};
+
+// Math based exports
+module.exports.range = (x, min, max) => {return (x - min) * (x - max) <= 0};
 module.exports.difference = (x, y) => {return Math.abs(x - y) / ((x + y) / 2)};
