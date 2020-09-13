@@ -3,7 +3,6 @@ const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
 const userInput        = require("../../data/js/util").getUserInput;
 const embed            = require("../../data/js/util").embed;
-const util             = require("../../data/js/util");
 const request          = require("async-request");
 const config           = require("../../config");
 const random           = require("random");
@@ -71,7 +70,8 @@ module.exports = class MinecraftCommand extends Command {
 		let uuid;
 		if (player.length <= 16) {
 			const playerRequest = await request(`https://api.mojang.com/users/profiles/minecraft/${player}`);
-			player = JSON.parse(playerRequest.body);
+			try {player = JSON.parse(playerRequest.body)}
+			catch {}
 
 			if (!player) return message.reply("That player does not exist. Please enter a valid in-game name or UUID.");
 			uuid = player.id;
