@@ -69,8 +69,8 @@ module.exports = class TagCommand extends Command {
 		await tagConfig.tags.forEach(tag => names.push(tag.name));
 
 		// Send tag if not command
-		if (!util.newIncludes(action, actions)) {
-			if (message.content.charAt(0) !== conf.prefix.tags) if (!util.newIncludes(action, names)) return message.reply(`The tag \`${action}\` does not exist.`);
+		if (!util.check(action, actions)) {
+			if (message.content.charAt(0) !== conf.prefix.tags) if (!util.check(action, names)) return message.reply(`The tag \`${action}\` does not exist.`);
 
 			tagConfig.tags.forEach(tag => {
 				if (action !== tag.name) return;
