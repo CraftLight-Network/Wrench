@@ -3,6 +3,7 @@ const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
 const userInput        = require("../../data/js/util").getUserInput;
 const embed            = require("../../data/js/util").embed;
+const util             = require("../../data/js/util");
 const request          = require("async-request");
 const config           = require("../../config");
 const random           = require("random");
@@ -70,20 +71,17 @@ module.exports = class MinecraftCommand extends Command {
 		let uuid;
 		if (player.length <= 16) {
 			const playerRequest = await request(`https://api.mojang.com/users/profiles/minecraft/${player}`);
-			try {player = JSON.parse(playerRequest.body)}
-			catch {}
-
-			if (!player) return message.reply("That player does not exist. Please enter a valid in-game name or UUID.");
-			uuid = player.id;
+			uuid = util.safeJSON(playerRequest.body).id;
 		} else {
-			uuid = player
-				.toLowerCase()
-				.replace(/[^0-9a-z]/g, "");
+			uuid = player.toLowerCase().replace(/[^0-9a-z]/g, "");
 		}
 
 		// Get name of user
 		const nameRequest = await request(`https://api.mojang.com/user/profiles/${uuid}/names`);
-		const name = JSON.parse(nameRequest.body).reverse();
+
+		let name = util.safeJSON(nameRequest.body);
+		if (!name[0]) return message.reply("That player does not exist. Please enter a valid in-game name or UUID.");
+		else name = name.reverse();
 
 		// Skin actions
 		if (action === "skin") {
