@@ -184,6 +184,13 @@ module.exports.check = (string, compare) => {
 	return found;
 };
 
+module.exports.safeJSON = json => {
+	let output = {};
+	try {output = JSON.parse(json)} catch {}
+
+	return output;
+};
+
 // Get message from partials
 module.exports.getMessage = async message => {
 	if (message.partial) return await message.fetch();
