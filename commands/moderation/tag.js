@@ -5,7 +5,6 @@ const userInput        = require("../../data/js/util").getUserInput;
 const checkRole        = require("../../data/js/util").checkRole;
 const embed            = require("../../data/js/util").embed;
 const Config           = require("../../data/js/config");
-const util             = require("../../data/js/util");
 const conf             = require("../../config");
 
 const actions = ["<tag name>", "view", "add", "remove", "reset"];
