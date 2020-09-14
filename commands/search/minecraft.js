@@ -144,7 +144,7 @@ module.exports = class MinecraftCommand extends Command {
 				});
 				embedMessage.description += "```";
 
-				return message.channel.send(embed(embedMessage, message));
+				return message.channel.send(embed(embedMessage));
 			}
 			// Grab UUID or name
 			if (args === "uuid" || args === "name") {
