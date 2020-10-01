@@ -245,6 +245,8 @@ module.exports.sleep = ms => {
 	return new Promise(resolve => setTimeout(resolve, ms));
 };
 
+module.exports.firstUpper = s => {return s.charAt(0).toUpperCase() + s.slice(1)};
+
 // Math based exports
 module.exports.range = (x, min, max) => {return (x - min) * (x - max) <= 0};
 module.exports.difference = (x, y) => {return Math.abs(x - y) / ((x + y) / 2)};
