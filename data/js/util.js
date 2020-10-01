@@ -10,7 +10,23 @@ module.exports.init = (c, t) => {
 	totals = t;
 };
 
-// Embedded messages
+/**
+ * Construct a message embed.
+ * @param {object}   options                                - Options for the embed.
+ * @param {Message}  [options.message]                      - Provides extra data for embed info.
+ * @param {Array}    [options.attachments]                  - Files (or links) attached to the embed.
+ * @param {string}   [options.author]                       - Author of the embed.
+ * @param {string}   [options.title]                        - Title of the embed.
+ * @param {string}   [options.url]                          - Clickable URL of the title.
+ * @param {string}   [options.thumbnail]                    - URL or attachment for right-hand image.
+ * @param {string}   [options.description]                  - Description of the embed.
+ * @param {fields}   [options.fields]                       - Fields to add to the description.
+ * @param {string}   [options.image]                        - URL or attachment for the bottom image.
+ * @param {Boolean}  [options.timestamp=false]              - Show the footer timestamp.
+ * @param {string}   [options.footer="Requested by {USER}"] - Footer of the embed.
+ * @param {string}   [options.color=#e3e3e3]              - HEX color to show on side stripe.
+ * @example embed({ "title": "Hello World", "footer": ":)" });
+ */
 module.exports.embed = options => {
 	// Convert member to message
 	if (options.message && !options.message.content && options.message.username) options.message.author = options.message;
