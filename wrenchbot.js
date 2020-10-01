@@ -31,7 +31,6 @@
 // Define and require modules
 const { CommandoClient }  = require("discord.js-commando");
 const Config              = require("./data/js/config");
-const util                = require("./data/js/util");
 const conf                = require("./config");
 const readline            = require("readline");
 const moment              = require("moment");
@@ -58,6 +57,7 @@ const client = new CommandoClient({
 });
 client.registry
 	.registerDefaultTypes()
+	.registerDefaultGroups()
 	.registerGroups([
 		["search",     "Search"],
 		["image",      "Image"],
@@ -65,19 +65,15 @@ client.registry
 		["moderation", "Moderation"],
 		["misc",       "Misc"]
 	])
-	.registerDefaultGroups()
-	.registerDefaultCommands({
-		"unknownCommand": false,
-		"_eval": false
-	})
+	.registerDefaultCommands({ "unknownCommand": false })
 	.registerCommandsIn(path.join(__dirname, "commands"));
+
+client.registry.commands.find(c => c.name === "utilities").inject();
 
 // Get Enmap
 !fs.existsSync("./data/private")      && fs.mkdirSync("./data/private");
 !fs.existsSync("./data/private/logs") && fs.mkdirSync("./data/private/logs");
 const totals = require("./data/js/enmap").totals;
-
-util.init(client, totals);
 
 // Logger
 const { log, logger } = require("./data/js/logger");
@@ -101,7 +97,7 @@ client.on("ready", () => {
 		// Get a random status
 		function getStatus() {
 			const status = conf.status.types[Math.floor(Math.random() * conf.status.types.length)];
-			status.name = util.replacePlaceholders(status.name);
+			status.name = client.placeholders(status.name);
 			return status;
 		}
 		let status = getStatus();
@@ -117,7 +113,7 @@ client.on("ready", () => {
 });
 
 client.on("message", async message => {
-	message = await util.getMessage(message);
+	message = await client.getMessage(message);
 
 	// Ignore bots
 	if (message.author.bot) return;
@@ -131,8 +127,8 @@ client.on("message", async message => {
 
 // Message edit event
 client.on("messageUpdate", async (oldMessage, newMessage) => {
-	oldMessage = await util.getMessage(oldMessage);
-	newMessage = await util.getMessage(newMessage);
+	oldMessage = await client.getMessage(oldMessage);
+	newMessage = await client.getMessage(newMessage);
 
 	if (oldMessage.content === newMessage.content) return;
 	client.emit("messageEdit", oldMessage, newMessage);
@@ -140,7 +136,7 @@ client.on("messageUpdate", async (oldMessage, newMessage) => {
 
 // Run automod and reactions on edited messages
 client.on("messageEdit", async (oldMessage, message) => {
-	message = await util.getMessage(message);
+	message = await client.getMessage(message);
 	if (message.author.bot) return;
 
 	reactions(message);
@@ -154,7 +150,7 @@ async function guildEvents(message) {
 		const guildConfig = await config.get();
 
 		// Run automod and reactions
-		if (guildConfig.automod.enabled === "true" && !util.checkRole(message, guildConfig.automod.modRoleIDs)) automod(message);
+		if (guildConfig.automod.enabled === "true" && !client.checkRole(message, guildConfig.automod.modRoleIDs)) automod(message);
 
 		// Tag command
 		if (message.content.indexOf(conf.prefix.tags) === 0 && !message.content.match(/ /g)) {

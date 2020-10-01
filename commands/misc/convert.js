@@ -1,8 +1,6 @@
 // Define and require modules
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const embed            = require("../../data/js/util").embed;
-const util             = require("../../data/js/util");
 const config           = require("../../config");
 
 const u = {
@@ -106,10 +104,10 @@ module.exports = class ConvertCommand extends Command {
 
 			e.to.some(i => {
 				if (!i.aliases.includes(to)) return false;
-				return message.channel.send(embed({
+				return message.channel.send(this.client.embed({
 					"message": message,
-					"title": `${util.firstUpper(e.aliases[1])} to ${util.firstUpper(i.aliases[1])} conversion:`,
-					"description": `${i.function(unit).toFixed(2)} ${util.firstUpper(i.aliases[0])}`
+					"title": `${this.client.firstUpper(e.aliases[1])} to ${this.client.firstUpper(i.aliases[1])} conversion:`,
+					"description": `${i.function(unit).toFixed(2)} ${this.client.firstUpper(i.aliases[0])}`
 				}));
 			});
 		});

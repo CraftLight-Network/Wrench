@@ -1,9 +1,6 @@
 // Define and require modules
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const userInput        = require("../../data/js/util").getUserInput;
-const checkRole        = require("../../data/js/util").checkRole;
-const embed            = require("../../data/js/util").embed;
 const Config           = require("../../data/js/config");
 const conf             = require("../../config");
 
@@ -91,11 +88,11 @@ ${JSON.stringify(tagConfig, null, 2)}
 \`\`\`
 			`; else embedMessage.description = names.length > 0 ? `\`${names.join("`, `")}\`` : "**None**";
 
-			return message.channel.send(embed(embedMessage));
+			return message.channel.send(this.client.embed(embedMessage));
 		}
 
 		// Permission check
-		if (!checkRole(message, guildConfig.automod.modRoleIDs)) return message.reply("You do not have permission to use this command.");
+		if (!this.client.checkRole(message, guildConfig.automod.modRoleIDs)) return message.reply("You do not have permission to use this command.");
 
 		// Reset command
 		if (action === "reset") {
@@ -104,7 +101,7 @@ ${JSON.stringify(tagConfig, null, 2)}
 		}
 
 		// Get the property if not set
-		if (!property) property = await userInput(message, { "question": "What is the name of the tag?" });
+		if (!property) property = await this.client.userInput(message, { "question": "What is the name of the tag?" });
 		if (property === "cancel") return message.reply("Cancelled command.");
 
 		// Sanitize property
@@ -113,7 +110,7 @@ ${JSON.stringify(tagConfig, null, 2)}
 		// Add command
 		if (action === "add") {
 			// Get the value if not set
-			if (!value) value = await userInput(message, { "question": "What is the content of the tag?" });
+			if (!value) value = await this.client.userInput(message, { "question": "What is the content of the tag?" });
 			if (value === "cancel") return message.reply("Cancelled command.");
 
 			configTags.add("tags", {

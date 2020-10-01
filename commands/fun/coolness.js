@@ -1,8 +1,6 @@
 // Define and require modules
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const embed            = require("../../data/js/util").embed;
-const util             = require("../../data/js/util");
 const config           = require("../../config");
 const seedrandom       = require("seedrandom");
 const random           = require("random");
@@ -30,7 +28,7 @@ module.exports = class CoolnessCommand extends Command {
 						if (arg.length < 100) return true;
 						return "Please use under 100 characters!";
 					},
-					"parse": arg => {return util.translate(arg, "mentions")}
+					"parse": arg => {return this.client.translate(arg, "mentions")}
 				}
 			],
 			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
@@ -56,7 +54,7 @@ module.exports = class CoolnessCommand extends Command {
 		}
 
 		// Egg payload
-		if (util.range(parseInt(int), 0, 100)) {
+		if (this.client.range(parseInt(int), 0, 100)) {
 			coolness = parseInt(int);
 			if (person === int[0]) person = message.author.username;
 		}
@@ -72,7 +70,7 @@ module.exports = class CoolnessCommand extends Command {
 		if (coolness < 5)  style.bar = "[                  ]";
 
 		// Send the coolness
-		return message.channel.send(embed({
+		return message.channel.send(this.client.embed({
 			"message":     message,
 			"attachments": [`data/img/emotes/${style.emote}.png`],
 			"title":       "Coolness results:",

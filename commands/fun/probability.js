@@ -1,7 +1,6 @@
 // Define and require modules
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const embed            = require("../../data/js/util").embed;
 const config           = require("../../config");
 const seedrandom       = require("seedrandom");
 const random           = require("random");
@@ -74,7 +73,7 @@ module.exports = class ProbabilityCommand extends Command {
 		}
 
 		// Send the probability
-		return message.channel.send(embed({
+		return message.channel.send(this.client.embed({
 			"message":     message,
 			"attachments": [`data/img/emotes/${style.emote}.png`],
 			"title":       "Probability results:",

@@ -2,8 +2,6 @@
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
 const Config           = require("../../data/js/config");
-const checkRole        = require("../../data/js/util").checkRole;
-const embed            = require("../../data/js/util").embed;
 const config           = require("../../config");
 const path             = require("jsonpath");
 
@@ -60,11 +58,11 @@ module.exports = class ConfigCommand extends Command {
 		const guildConfig = await config.get();
 
 		// Permission check
-		if (!checkRole(message, guildConfig.automod.modRoleIDs)) return message.reply("You do not have permission to use this command.");
+		if (!this.client.checkRole(message, guildConfig.automod.modRoleIDs)) return message.reply("You do not have permission to use this command.");
 
 		// View command
 		if (action === "view") {
-			return message.channel.send(embed({
+			return message.channel.send(this.client.embed({
 				"message":     message,
 				"title":       `${message.guild.name}'s config:`,
 				"description": `

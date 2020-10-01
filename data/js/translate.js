@@ -2,7 +2,6 @@
 const { log } = require("./logger");
 
 // Define and require modules
-const embed       = require("../../data/js/util").embed;
 const TokenBucket = require("limiter").TokenBucket;
 const translator  = require("baidu-translate-api");
 const similar     = require("string-similarity");
@@ -79,7 +78,7 @@ module.exports = async (message, options) => {
 			totals.inc("translations");
 			log.translate(`${message.author.tag} | ${translate} -> ${translated.trans_result.dst} (${translated.from}-${translated.to})`);
 
-			return message.channel.send(embed({
+			return message.channel.send(this.client.embed({
 				"author": {
 					"name":    `${message.author.username} (${translated.from}-${translated.to})`,
 					"picture": message.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 })

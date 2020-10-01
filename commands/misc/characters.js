@@ -1,7 +1,6 @@
 // Define and require modules
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const embed            = require("../../data/js/util").embed;
 const config           = require("../../config");
 
 module.exports = class CharactersCommand extends Command {
@@ -33,6 +32,6 @@ module.exports = class CharactersCommand extends Command {
 	}
 
 	run(message, { toCount }) {
-		return message.channel.send(embed({ "message": message, "title": "Character Count:", "description": toCount.length }));
+		return message.channel.send(this.client.embed({ "message": message, "title": "Character Count:", "description": toCount.length }));
 	}
 };

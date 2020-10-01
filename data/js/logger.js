@@ -1,12 +1,7 @@
 // Define and require modules
 const { stripIndents }    = require("common-tags");
-const replacePlaceholders = require("./util").replacePlaceholders;
-const commonPlaceholders  = require("./util").commonPlaceholders;
-const getMessage          = require("./util").getMessage;
 const Config              = require("./config");
-const embed               = require("./util").embed;
 const winston             = require("winston");
-const util                = require("./util");
 require("winston-daily-rotate-file");
 
 // Moment + sleep
@@ -135,7 +130,7 @@ module.exports.logger = function logger(client, totals) {
 
 		sendMessage({
 			"channel": guildConfig.channels.log.channelID,
-			"message": embed({
+			"message": client.embed({
 				"title": `Member joined (${member.user.username})`,
 				"description": stripIndents`
 					User: <@${member.id}>
@@ -179,7 +174,7 @@ module.exports.logger = function logger(client, totals) {
 
 		sendMessage({
 			"channel": guildConfig.channels.log.channelID,
-			"message": embed(embedMessage)
+			"message": client.embed(embedMessage)
 		});
 	});
 
@@ -191,11 +186,11 @@ module.exports.logger = function logger(client, totals) {
 		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.message === "false") return;
 
 		// Grab the message if the bot can
-		try {message = await getMessage(message)}
+		try {message = await client.getMessage(message)}
 		catch {return}
 
 		// Check audit logs for who deleted the message
-		await util.sleep(2000);
+		await client.sleep(2000);
 		let logs = await message.guild.fetchAuditLogs({
 			"limit": 1,
 			"type": "MESSAGE_DELETE"
@@ -225,7 +220,7 @@ module.exports.logger = function logger(client, totals) {
 		// Send the log
 		sendMessage({
 			"channel": guildConfig.channels.log.channelID,
-			"message": embed({
+			"message": client.embed({
 				"title":       `Message deleted (${message.author.username})`,
 				"description": description,
 				"thumbnail":   message.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 }),
@@ -248,8 +243,8 @@ module.exports.logger = function logger(client, totals) {
 		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.message === "false") return;
 
 		// Grab the messages
-		oldMessage = await getMessage(oldMessage);
-		newMessage = await getMessage(newMessage);
+		oldMessage = await client.getMessage(oldMessage);
+		newMessage = await client.getMessage(newMessage);
 		if (newMessage.author.bot) return;
 
 		// Make sure the update isn't an embed
@@ -261,7 +256,7 @@ module.exports.logger = function logger(client, totals) {
 		// Send the log
 		sendMessage({
 			"channel": guildConfig.channels.log.channelID,
-			"message": embed({
+			"message": client.embed({
 				"title":       `Message edited (${newMessage.author.username})`,
 				"description": stripIndents`
 					User: <@${newMessage.author.id}>
@@ -284,11 +279,11 @@ module.exports.logger = function logger(client, totals) {
 
 	// Commands ran
 	client.on("commandRun", async (command, promise, message) => {
-		log.command(`${(message.guild  ? "" : "(DM) ") + message.author.tag} | ${util.truncate(message.content, 442)}`);
+		log.command(`${(message.guild  ? "" : "(DM) ") + message.author.tag} | ${client.truncate(message.content, 442)}`);
 
 		const complete = await promise;
 		if (complete)
-			log.complete(`${(message.guild ? "" : "(DM) ") + message.author.tag} | ${util.truncate(message.content, 442)} -> ${util.embedToString(await promise)}`);
+			log.complete(`${(message.guild ? "" : "(DM) ") + message.author.tag} | ${client.truncate(message.content, 442)} -> ${client.embedToString(await promise)}`);
 
 		totals.inc("commands");
 	});
@@ -310,8 +305,8 @@ module.exports.logger = function logger(client, totals) {
 		if (!options.placeholders) options.commonPlaceholders = false;
 		if (options.commonPlaceholders === undefined) options.commonPlaceholders = true;
 
-		if (options.commonPlaceholders) placeholders = commonPlaceholders(object, "member");
-		if (options.placeholders) options.message = replacePlaceholders(options.message, placeholders);
+		if (options.commonPlaceholders) placeholders = client.commonPlaceholders(object, "member");
+		if (options.placeholders) options.message = client.placeholders(options.message, placeholders);
 
 		client.channels.cache.get(options.channel).send(options.message);
 	}

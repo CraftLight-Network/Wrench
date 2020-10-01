@@ -2,8 +2,6 @@
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
 const Config           = require("../../data/js/config");
-const checkRole        = require("../../data/js/util").checkRole;
-const util             = require("../../data/js/util");
 const config           = require("../../config");
 
 module.exports = class PurgeCommand extends Command {
@@ -35,7 +33,7 @@ module.exports = class PurgeCommand extends Command {
 					"prompt":  "",
 					"default": "",
 					"type":    "string",
-					"parse": arg => {return util.translate(arg, "mentions")}
+					"parse": arg => {return this.client.translate(arg, "mentions")}
 				}
 			],
 			"guildOnly": true,
@@ -53,7 +51,7 @@ module.exports = class PurgeCommand extends Command {
 		const guildConfig = await config.get();
 
 		// Permission check
-		if (!checkRole(message, guildConfig.automod.modRoleIDs)) return message.reply("You do not have permission to use this command.");
+		if (!this.client.checkRole(message, guildConfig.automod.modRoleIDs)) return message.reply("You do not have permission to use this command.");
 
 		// Purge entire channel
 		if (amount === "all") {

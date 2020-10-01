@@ -1,8 +1,6 @@
 // Define and require modules
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const truncate         = require("../../data/js/util").truncate;
-const embed            = require("../../data/js/util").embed;
 const wikipedia        = require("wikijs").default;
 const config           = require("../../config");
 
@@ -51,12 +49,12 @@ module.exports = class WikipediaCommand extends Command {
 			if (summary.match(/may refer to:/)) {
 				embedMessage.description = stripIndents`
 					**Multiple results found:**
-					${truncate((await result.links()).join(", "), 250)}
+					${this.client.truncate((await result.links()).join(", "), 250)}
 				`;
-			} else {embedMessage.description = truncate(summary, 250)}
+			} else {embedMessage.description = this.client.truncate(summary, 250)}
 
 			// Send the article
-			return message.channel.send(embed(embedMessage));
+			return message.channel.send(this.client.embed(embedMessage));
 		}).catch(() => {message.reply(`I cannot find any article related to ${toSearch}.`)});
 	}
 };

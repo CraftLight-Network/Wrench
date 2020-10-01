@@ -1,7 +1,6 @@
 // Define and require modules
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const embed            = require("../../data/js/util").embed;
 const config           = require("../../config");
 const moment           = require("moment");
 
@@ -102,6 +101,6 @@ module.exports = class ServerInfoCommand extends Command {
 		);
 
 		// Send the info
-		return message.channel.send(embed(embedMessage));
+		return message.channel.send(this.client.embed(embedMessage));
 	}
 };

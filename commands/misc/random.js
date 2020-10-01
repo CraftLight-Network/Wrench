@@ -1,7 +1,6 @@
 // Define and require modules
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const embed            = require("../../data/js/util.js").embed;
 const config           = require("../../config");
 const random           = require("random");
 
@@ -44,6 +43,6 @@ module.exports = class RandomCommand extends Command {
 		if (min > max) [min, max] = [max, min];
 
 		// Send the number
-		return message.channel.send(embed({ "message": message, "title": `Random Number ${min} - ${max}:`, "description": random.int(min, max) }));
+		return message.channel.send(this.client.embed({ "message": message, "title": `Random Number ${min} - ${max}:`, "description": random.int(min, max) }));
 	}
 };

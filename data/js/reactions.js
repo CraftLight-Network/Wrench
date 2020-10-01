@@ -1,7 +1,6 @@
 // Define and require modules
 const botConfig     = require("../../config");
 const Config        = require("./config");
-const util          = require("./util");
 const _             = require("lodash");
 
 module.exports = async (message) => {
@@ -22,8 +21,8 @@ module.exports = async (message) => {
 			if (e.fullWord) e.regex = new RegExp(`\\b${e.regex.replace(/\|/g, "\\b|\\b")}`, e.flags);
 			else e.regex = new RegExp(e.regex, e.flags);
 
-			e.messages = util.toArray(e.messages, "|");
-			e.emotes   = util.toArray(e.emotes,   "|");
+			e.messages = message.client.toArray(e.messages, "|");
+			e.emotes   = message.client.toArray(e.emotes,   "|");
 			if (!message.content.match(e.regex)) return;
 
 			// Checks
@@ -39,6 +38,6 @@ module.exports = async (message) => {
 		const messages = await message.channel.messages.fetch({ "limit": limit });
 
 		messages.delete(message.id);
-		return messages.some(m => util.check(m.content, regex));
+		return messages.some(m => message.client.check(m.content, regex));
 	}
 };

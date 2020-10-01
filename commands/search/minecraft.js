@@ -1,9 +1,6 @@
 // Define and require modules
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const userInput        = require("../../data/js/util").getUserInput;
-const embed            = require("../../data/js/util").embed;
-const util             = require("../../data/js/util");
 const request          = require("async-request");
 const config           = require("../../config");
 const random           = require("random");
@@ -61,7 +58,7 @@ module.exports = class MinecraftCommand extends Command {
 
 	async run(message, { action, player, args }) {
 		// Get player variable if not defined
-		if (!player) player = await userInput(message, { "question": "What is the in-game name or UUID of the player?" });
+		if (!player) player = await this.client.userInput(message, { "question": "What is the in-game name or UUID of the player?" });
 		if (player === "cancel") return message.reply("Cancelled command.");
 
 		// Get a random number to fix cache issues
@@ -71,7 +68,7 @@ module.exports = class MinecraftCommand extends Command {
 		let uuid;
 		if (player.length <= 16) {
 			const playerRequest = await request(`https://api.mojang.com/users/profiles/minecraft/${player}`);
-			uuid = util.safeJSON(playerRequest.body).id;
+			uuid = this.client.safeJSON(playerRequest.body).id;
 		} else {
 			uuid = player.toLowerCase().replace(/[^0-9a-z]/g, "");
 		}
@@ -79,7 +76,7 @@ module.exports = class MinecraftCommand extends Command {
 		// Get name of user
 		const nameRequest = await request(`https://api.mojang.com/user/profiles/${uuid}/names`);
 
-		let name = util.safeJSON(nameRequest.body);
+		let name = this.client.safeJSON(nameRequest.body);
 		if (!name[0]) return message.reply("That player does not exist. Please enter a valid in-game name or UUID.");
 		else name = name.reverse();
 
@@ -90,7 +87,7 @@ module.exports = class MinecraftCommand extends Command {
 
 			// Undefined skin action
 			if (!args) {
-				args = await userInput(message, {
+				args = await this.client.userInput(message, {
 					"question": `How would you like the skin? (\`${skinTypes.join("`, `")}\`)`,
 					"validate": {
 						"name":  "skin type",
@@ -100,7 +97,7 @@ module.exports = class MinecraftCommand extends Command {
 			}
 			if (args === "cancel") return message.reply("Cancelled command.");
 
-			return message.channel.send(embed({
+			return message.channel.send(this.client.embed({
 				"message":    message,
 				"title":     `${name[0].name}'s skin (${args})`,
 				"thumbnail": `https://visage.surgeplay.com/face/16/${uuid}.png?${number}`,
@@ -115,7 +112,7 @@ module.exports = class MinecraftCommand extends Command {
 
 			// Undefined data action
 			if (!args) {
-				args = await userInput(message, {
+				args = await this.client.userInput(message, {
 					"question": `What info would you like to grab? (\`${dataTypes.join("`, `")}\`)`,
 					"validate": {
 						"name":  "data type",
@@ -144,11 +141,11 @@ module.exports = class MinecraftCommand extends Command {
 				});
 				embedMessage.description += "```";
 
-				return message.channel.send(embed(embedMessage));
+				return message.channel.send(this.client.embed(embedMessage));
 			}
 			// Grab UUID or name
 			if (args === "uuid" || args === "name") {
-				return message.channel.send(embed({
+				return message.channel.send(this.client.embed({
 					"message":     message,
 					"title":      `${name[0].name}'s name + UUID`,
 					"thumbnail":   `https://visage.surgeplay.com/face/16/${uuid}.png?${number}`,

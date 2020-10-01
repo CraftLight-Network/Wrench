@@ -3,8 +3,6 @@ const log = require("./logger").log;
 
 // Define and require modules
 const { stripIndents } = require("common-tags");
-const embed            = require("../../data/js/util").embed;
-const util             = require("../../data/js/util");
 const AntiSpam         = require("discord-anti-spam");
 const request          = require("async-request");
 const Config           = require("./config");
@@ -60,8 +58,8 @@ module.exports = async (message) => {
 	// Blacklisted words
 	if (b(guildConfig.automod.modules.blacklisted.enabled)) await blacklisted();
 	async function blacklisted() {
-		if (!util.check(content,
-			new RegExp(util.toString(guildConfig.automod.modules.blacklisted.words, "|", "i")))) return;
+		if (!message.client.check(content,
+			new RegExp(message.client.toString(guildConfig.automod.modules.blacklisted.words, "|", "i")))) return;
 
 		// Delete and warn
 		await message.delete();
@@ -136,7 +134,7 @@ function reply(message, warning) {
 		embedMessage.author.picture    = message.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 });
 	} else embedMessage.author.picture = message.user.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 });
 
-	message.author.send(embed(embedMessage));
+	message.author.send(message.client.embed(embedMessage));
 }
 
 // Get rid of '=== "true"'
