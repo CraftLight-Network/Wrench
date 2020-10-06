@@ -30,7 +30,7 @@
 
 // Define and require modules
 const { CommandoClient }  = require("discord.js-commando");
-const Config              = require("./data/js/config");
+
 const conf                = require("./config");
 const readline            = require("readline");
 const moment              = require("moment");
@@ -47,7 +47,15 @@ input.on("line", i => {
 	if (i === "exit") process.exit(0);
 });
 
+createFolder = (...dirs) => {
+	dirs.forEach(dir => {
+		if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+	});
+}
+createFolder("./data/private", "./data/private/enmap", "./data/private/logs");
+
 // Register + create command instance
+const Config = require("./data/js/config");
 const client = new CommandoClient({
 	"owner":                   conf.owners,
 	"invite":                  conf.support,
