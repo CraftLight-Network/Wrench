@@ -47,7 +47,7 @@ input.on("line", i => {
 	if (i === "exit") process.exit(0);
 });
 
-createFolder = (...dirs) => {
+function createFolder(...dirs) {
 	dirs.forEach(dir => {
 		if (!fs.existsSync(dir)) fs.mkdirSync(dir);
 	});
