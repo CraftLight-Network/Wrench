@@ -1,0 +1,54 @@
+{
+	"listeners": [
+		{
+			"messageID": "",
+			"reactions": [
+				{
+					"reactionID": "",
+					"roleIDs": []
+				}
+			]
+		}
+	],
+	"messages": [
+		{
+			"enabled": "true",
+			"regex": "hello|hi|hey|hiya|heyo|howdy|sup|yo|hola|hallo|bonjour|salut|ciao|konnichiwa",
+			"emotes": ["👋", "🇭", "🇮"],
+			"fullWord": true,
+			"checkPrevious": 5
+		},
+		{
+			"enabled": "true",
+			"regex": "goodbye|bye|cya|gtg",
+			"emotes": ["👋", "🇧", "🇾", "🇪"],
+			"fullWord": true,
+			"checkPrevious": 5
+		},
+		{
+			"enabled": "true",
+			"regex": "pog",
+			"emotes": "660203799377608704",
+			"checkPrevious": 3
+		},
+		{
+			"enabled": "true",
+			"regex": "l[ou]l",
+			"emotes": "660205635777986571",
+			"checkPrevious": 3
+		},
+		{
+			"enabled": "true",
+			"regex": "sleep|\\bz+\\b",
+			"emotes": "660205776744480789",
+			"checkPrevious": 4
+		},
+		{
+			"enabled": "true",
+			"regex": "wrenchbot",
+			"messages": "???",
+			"checkPrevious": 10
+		}
+	],
+	"version": "1"
+}

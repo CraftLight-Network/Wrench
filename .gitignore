@@ -1,18 +1,14 @@
 # Node stuff
-.npm
-.node_repl_history
-node_modules/
+/.npm
+/node_modules
 
-# General files
-.env
+# OS files
 .DS_Store
 Thumbs.db
 desktop.ini
-HOSTS.txt
+/.vscode
 
 # Private files
-data/private
 auth.json
-
-# Owner commands
-commands/staff/cc-rules.js
+/data/private
+packagehash.txt

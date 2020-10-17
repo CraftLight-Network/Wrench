@@ -1,23 +1,16 @@
-**Title**<br/>
-Set your title to "[BUG/ERROR] (Insert issue)"
+## What is the bug?
+What does the bug do?
+This should include a detailed response on exactly what the bug does.
 
-**Describe the bug/error**<br/>
-What does the bug/error do?
+## Error message/expected result
+Does the bug produce an error message?
+What is meant to happen?
 
-**Bug/Error message**<br/>
-What is the message the bug/error is sending?
-
-**To Reproduce**<br/>
+## To Reproduce 
 Steps to reproduce the behavior:
 1. Use command ...
 2. Type ...
 3. ...
 
-**Effects**<br/>
-What does this bug/error effect?
-
-**Screenshots**<br/>
-If applicable, add screenshots to help explain your problem.
-
-**Additional information**<br/>
-Add any other information about the bug/error.
+## Screenshots (Optional)
+If you have any screenshots to help explain this bug, feel free to add them!

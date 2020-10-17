@@ -1,47 +1,40 @@
-const Enmap = require("enmap");
+// Define and require modules
+const dataDir = "./data/private/enmap";
+const Enmap   = require("enmap");
+
+// Per-server settings
+const guildConfig = new Enmap({
+	"name":       "guildConfig",
+	"dataDir":    dataDir
+});
+
+// Per-server reactions
+const reactionConfig = new Enmap({
+	"name":       "reactionConfig",
+	"dataDir":    dataDir
+});
+
+// Tags
+const tagConfig = new Enmap({
+	"name":       "tags",
+	"autoEnsure": {
+		"commands": 0,
+		"messages": 0,
+		"automod":  0
+	},
+	"dataDir":    dataDir
+});
 
 // Command counter
-const commandsRead = new Enmap({
-	name: "commands-read",
-	autoFetch: true,
-	fetchAll: false,
-	dataDir: "./data/private/enmap"
-});
-// Message counter
-const messagesRead = new Enmap({
-	name: "messages-read",
-	autoFetch: true,
-	fetchAll: false,
-	dataDir: "./data/private/enmap"
-});
-// Translation counter
-const translationsDone = new Enmap({
-	name: "translations-done",
-	autoFetch: true,
-	fetchAll: false,
-	dataDir: "./data/private/enmap"
-});
-// Per-server settings
-const settings = new Enmap({
-	name: "settings",
-	fetchAll: false,
-	autoFetch: true,
-	cloneLevel: 'deep',
-	dataDir: "./data/private/enmap"
-});
-// Last subreddit used
-const lastSub = new Enmap({
-	name: "lastSub",
-	fetchAll: false,
-	autoFetch: true,
-	cloneLevel: 'deep',
-	dataDir: "./data/private/enmap"
+const totals = new Enmap({
+	"name":       "totals",
+	"fetchAll":   false,
+	"dataDir":    dataDir
 });
 
 module.exports = {
-	commandsRead,
-	messagesRead,
-	translationsDone,
-	settings,
-	lastSub
+	guildConfig,
+	reactionConfig,
+	tagConfig,
+	totals
 };

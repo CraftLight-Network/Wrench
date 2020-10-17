@@ -1,6 +1,71 @@
 {
-	"owners": [ "272466470510788608", "194041725730160640" ],
-	"prefix": "]",
-	"translator": "enabled",
-	"provider": "baidu"
+	"owners": [ "272466470510788608" ],
+	"support": "https://encode42.dev/support",
+	"prefix": {
+		"commands": "]",
+		"tags": ">"
+	},
+	"reactions": {
+		"enabled": true,
+		"types": [
+			{
+				"regex": "hello|hi|hey|hiya|heyo|howdy|sup|yo|hola|hallo|bonjour|salut|ciao|konnichiwa",
+				"emotes": ["👋", "🇭", "🇮"],
+				"fullWord": true,
+				"checkPrevious": 5
+			},
+			{
+				"regex": "goodbye|bye|cya|gtg",
+				"emotes": ["👋", "🇧", "🇾", "🇪"],
+				"fullWord": true,
+				"checkPrevious": 5
+			},
+			{
+				"regex": "pog",
+				"emotes": "660203799377608704",
+				"checkPrevious": 3
+			},
+			{
+				"regex": "l[ou]l",
+				"emotes": "660205635777986571",
+				"checkPrevious": 3
+			},
+			{
+				"regex": "sleep|\\bz+\\b",
+				"emotes": "660205776744480789",
+				"checkPrevious": 4
+			},
+			{
+				"regex": "wrenchbot",
+				"messages": "???",
+				"checkPrevious": 10
+			}
+		]
+	},
+	"status": {
+		"enabled": true,
+		"timeout": 30000,
+		"types": [
+			{
+				"type": "WATCHING",
+				"name": "you."
+			},
+			{
+				"type": "WATCHING",
+				"name": "%total_servers% servers."
+			},
+			{
+				"type": "PLAYING",
+				"name": "a game."
+			},
+			{
+				"type": "LISTENING",
+				"name": "%prefix%help"
+			},
+			{
+				"type": "LISTENING",
+				"name": "everyone."
+			}
+		]
+	}
 }

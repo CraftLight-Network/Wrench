@@ -1,60 +1,81 @@
-const { Command } = require('discord.js-commando');
-const { Random, MersenneTwister19937 } = require("random-js");
-const { stripIndents } = require('common-tags');
+// Define and require modules
+const { Command }      = require("discord.js-commando");
+const { stripIndents } = require("common-tags");
+const config           = require("../../config");
+const seedrandom       = require("seedrandom");
+const random           = require("random");
 
-module.exports = class shipCommand extends Command {
+module.exports = class ShipCommand extends Command {
 	constructor(client) {
 		super(client, {
-			name: 'ship',
-			aliases: ['relation', 'relationship', 'love'],
-			group: 'fun',
-			memberName: 'ship',
-			description: 'Determines the love between two users.',
-			guildOnly: true,
-			args: [
+			"name":        "ship",
+			"memberName":  "ship",
+			"group":       "fun",
+			"description": "Calculate the compatibility between two users.",
+			"details": stripIndents`
+				Run \`${config.prefix.commands}ship [person1] [person2]\` to calculate compatibility.
+				**Notes:**
+				[person1]: Required, first person to calculate.
+				[person2]: Required, second person to calculate.
+				Valid format: \`@User#0000\`, \`User\`.
+				Arguments must be under 25 characters.
+			`,
+			"args": [
 				{
-					key: 'first',
-					label: 'first user',
-					prompt: 'Who is the first user in the ship?',
-					type: 'user'
+					"key":      "person1",
+					"prompt":   "Who is the first person you would like to ship?",
+					"type":     "string",
+					"validate": arg => {
+						if (arg.length < 150) return true;
+						return "Please use under 150 characters!";
+					},
+					"parse": arg => {return this.client.translate(arg, "mentions")}
 				},
 				{
-					key: 'second',
-					label: 'second user',
-					prompt: 'Who is the second user in the ship?',
-					type: 'user',
-					default: msg => msg.author
+					"key":      "person2",
+					"prompt":   "",
+					"default":  message => message.author.username,
+					"type":     "string",
+					"validate": arg => {
+						if (arg.length < 150) return true;
+						return "Please use under 150 characters!";
+					},
+					"parse": arg => {return this.client.translate(arg, "mentions")}
 				}
-			]
+			],
+			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
+			"throttling": {
+				"usages":   2,
+				"duration": 5
+			}
 		});
 	}
 
-	run(msg, { first, second }) {
-	    const date = new Date();
-	    const day = date.getDay();
-	    const month = date.getMonth() + 1;
-	    let color;
-	    let emoji;
-	    
-		if (first.id === second.id) return msg.reply('You can\'t ship yourself. It never works out.');
-		const botText = first.id === this.client.user.id || second.id === this.client.user.id
-			? `But ${first.id === msg.author.id || second.id === msg.author.id ? 'you\'re' : 'they\'re'} not a robot. So, it doesn't work out.`
-			: '';
-		
-		const random = new Random(MersenneTwister19937.seed(Math.abs(first.id - second.id)));
-		const randomDate = new Random(MersenneTwister19937.seed(Math.abs(month - day)));
-		const level = (random.integer(0, 100) - randomDate.integer(0, 15));
-		if (level < 30) {color = 0xFF0000; emoji = "❌"}
-		if (level >= 30) {color = 0xFF7700; emoji = "💔"}
-		if (level >= 50) {color = 0xFFFF00; emoji = "❤"}
-		if (level >= 75) {color = 0x7FFF00; emoji = "💓"}
-		if (level >= 90) {color = 0x00FF00; emoji = "💕"}
-		
-		return msg.embed({
-			color: color,
-			description: stripIndents`
-				${first.id === this.client.user.id ? 'Me' : first.username} and ${second.id === this.client.user.id ? 'me' : second.username} have a compatability of... **${level}%**! ${botText} ${emoji}
-			`
-		});
+	run(message, { person1, person2 }) {
+		const seed = random.clone(seedrandom(person1.toLowerCase() + person2.toLowerCase()));
+		const ship = seed.int(0, 100);
+
+		// Define the emote to be used
+		let style            = { "emote": "two_hearts",      "color": "#9c36b5", "bar": "[===============   ]" };
+		if (ship < 75) style = { "emote": "sparkling_heart", "color": "#da77f2", "bar": "[===========       ]" };
+		if (ship < 50) style = { "emote": "heart",           "color": "#e64980", "bar": "[=======           ]" };
+		if (ship < 25) style = { "emote": "broken_heart",    "color": "#c92a2a", "bar": "[===               ]" };
+
+		// Make sure the bar is always "accurate"
+		if (ship > 95) style.bar = "[==================]";
+		if (ship < 5)  style.bar = "[                  ]";
+
+		// Send the ship
+		return message.channel.send(this.client.embed({
+			"message":     message,
+			"attachments": [`data/img/emotes/${style.emote}.png`],
+			"title":       "Ship results:",
+			"description": stripIndents`
+				**${person1} and ${person2} are ${ship}% compatible.**
+				\`${style.bar}\`
+			`,
+			"thumbnail":   `attachment://${style.emote}.png`,
+			"color":       style.color
+		}));
 	}
 };

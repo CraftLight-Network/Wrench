@@ -1,17 +1,8 @@
-### Note:<br/>
-A similar pull request may have been made already!<br/>
-Please check the [pull requests](../) to make sure.<br/>
-For more information, see the `CONTRIBUTING` guide.
-***
-**Title**<br/>
-Set your title to "[PULL REQUEST] (Insert request)"
+## Summary
+We need to know *why* you want to merge your code.  
+Example:
 
-**Summary**<br/>
-This pull request fixes/adds (Insert bugs/features)
-
-**Reasons**<br/>
-Why this pull request should be merged.
-
-**Issue Number (Optional)**<br/>
-Fixes #(Issue number)
-
+```md
+This pull request fixes #3 where the client crashed when typing the phrase, "crash"
+To fix the issue, I removed the functionality to crash the client when the phrase is typed.
+```

@@ -1,217 +1,324 @@
-module.exports.logger = function logger(client, log, settings, defaultSettings) {
-	const { RichEmbed } = require('discord.js');
-	
-	client.on('disconnect', event => {log.ERROR(`[DISCONNECT] ${event.code}`);process.exit(0)}); // Notify the console that the bot has disconnected
-	process.on('unhandledRejection', (err, p) => {log.ERROR(`Rejected Promise: ${p} / Rejection: ${err}`);}); // Unhandled Rejection
-	client.on('error', err => log.ERROR(err)); // Errors
-	client.on('warn', warn => log.WARN(warn)); // Warnings
-	client.on('log', log => log.CONSOLE(log)); // Logs
-	
-	// Notify the console that a new server is using the bot
-	client.on("guildCreate", guild => {log.INFO(`Added in a new server: ${guild.name} (id: ${guild.id})`); settings.ensure(guild.id)});
-	
-	// Notify the console that a server removed the bot
-	client.on("guildDelete", guild => {log.INFO(`Removed from server: ${guild.name} (id: ${guild.id})`); settings.delete(guild.id)});
-	
-	// Events when a user is added
-	client.on("guildMemberAdd", member => {
-		settings.ensure(member.guild.id, defaultSettings);
-		settings.fetchEverything();
-		
-		if (settings.get(member.guild.id, "welcome") !== 'none') {
-			if (!member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "welcome"))) return;
-			
-			let welcomeMessage = settings.get(member.guild.id, "welcomeMessage");
-			welcomeMessage = welcomeMessage.replace("{{user}}", `<@${member.user.id}>`);
-			welcomeMessage = welcomeMessage.replace("{{id}}", member.user.id);
-			
-			member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "welcome")).send(welcomeMessage).catch(console.error);
-		}
-		
-		if (settings.get(member.guild.id, "joinRole") !== 'none') {
-			if (!member.guild.roles.find(role => role.name == settings.get(member.guild.id, "joinRole"))) return;
-			
-			member.addRole(member.guild.roles.find(role => role.name == settings.get(member.guild.id, "joinRole")).id).catch(console.error);
-		}
-		
-		if (settings.get(member.guild.id, "log") !== 'none') {
-			if (!member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "log"))) return;
-		
-			const embed = new RichEmbed()
-			.setFooter(`${new Date().toLocaleString("en-US")} UTC`)
-			.setDescription(`**<@${member.user.id}>**`)
-			.setAuthor('Member joined', member.user.displayAvatarURL)
-			.setColor(0x00FF00);
-			member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "log")).send(embed).catch(console.error);
+// Define and require modules
+const { stripIndents }    = require("common-tags");
+const Config              = require("./config");
+const winston             = require("winston");
+require("winston-daily-rotate-file");
+
+// Moment + sleep
+const moment = require("moment");
+require("moment-duration-format");
+
+// Make the Winston logger
+const levels = {
+	"levels": {
+		"ok":        0,
+		"info":      1,
+		"command":   2,
+		"complete":  3,
+		"translate": 4,
+		"warning":   5,
+		"error":     6
+	},
+	"colors": {
+		"ok":        "green",
+		"info":      "blue",
+		"command":   "cyan",
+		"complete":  "black cyanBG",
+		"translate": "cyan",
+		"warning":   "yellow",
+		"error":     "red"
+	}
+};
+
+const format = {
+	"base": winston.format.combine(
+		winston.format.timestamp({ "format": "M/D/YY h:mm:ss A" }),
+		winston.format.printf(({ level, message, label, timestamp }) => {return `${timestamp} | ${level}: ${message}`})
+	),
+	get "console"() {
+		return winston.format.combine(
+			winston.format.colorize(),
+			this.base
+		);
+	},
+	get "file"() {
+		return winston.format.combine(
+			this.base
+		);
+	}
+};
+
+// eslint-disable-next-line new-cap
+const log = new winston.createLogger({
+	"level":       "error",
+	"levels":      levels.levels,
+	"exitOnError": false,
+	"transports": [
+		new winston.transports.Console({ "format": format.console }),
+		new winston.transports.DailyRotateFile({
+			"format":        format.file,
+			"filename":      "data/private/logs/%DATE%.log",
+			"datePattern":   "M-D-YY",
+			"createSymlink": true,
+			"symlinkName":   "data/private/logs/latest.log",
+			"zippedArchive": true,
+			"frequency":     "1d",
+			"maxFiles":      "31d"
+		})
+	]
+});
+winston.addColors(levels.colors);
+
+module.exports.log = log;
+module.exports.logger = function logger(client, totals) {
+	/* ### Bot events ### */
+	// Unhandled rejections
+	process.on("unhandledRejection", (reason) => {console.trace(reason)});
+	process.on("unhandledError",     (reason) => {console.trace(reason)});
+
+	// Connection events
+	client.on("reconnecting", () => log.info("Reconnecting to Discord..."));
+	client.on("resume",       () => log.ok("Reconnected to Discord."));
+
+	// Guild events
+	client.on("guildCreate", guild => {
+		getConfig(guild.id).ensure();
+		log.info(`Added to ${guild.name} (ID: ${guild.id})`);
+	});
+
+	client.on("guildDelete", guild => {
+		getConfig(guild.id).reset();
+		log.info(`Removed from ${guild.name} (ID: ${guild.id})`);
+	});
+
+	/* ### Guild events ### */
+	// Join
+	client.on("guildMemberAdd", async member => {
+		const guildConfig = await getConfig(member.guild.id);
+
+		// Message
+		if (guildConfig.join.message.enabled === "true") sendMessage({
+			"placeholders": true,
+			"channel": guildConfig.join.message.channelID,
+			"message": guildConfig.join.message.message
+		}, member);
+
+		// Role
+		if (guildConfig.join.role.enabled === "true") {
+			guildConfig.join.role.roleIDs.forEach(e => {
+				member.roles.add(e);
+			});
 		}
 	});
-	
-	// Events when a user is removed
-	client.on("guildMemberRemove", member => {
-		settings.ensure(member.guild.id, defaultSettings);
-		settings.fetchEverything();
-		
-		if (settings.get(member.guild.id, "leave") !== 'none') {
-			if (!member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "leave"))) return;
-		
-			let leaveMessage = settings.get(member.guild.id, "leaveMessage");
-			leaveMessage = leaveMessage.replace("{{user}}", `<@${member.user.id}>`);
-			leaveMessage = leaveMessage.replace("{{id}}", member.user.id);
-			
-			member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "leave")).send(leaveMessage).catch(console.error);
-		}
-		
-		if (settings.get(member.guild.id, "log") !== 'none') {
-			if (!member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "log"))) return; 
-		
-			const embed = new RichEmbed()
-			.setFooter(`${new Date().toLocaleString("en-US")} UTC`)
-			.setDescription(`**<@${member.user.id}>**`)
-			.setAuthor('Member left', member.user.displayAvatarURL)
-			.setColor(0xFF0000);
-			member.guild.channels.find(channel => channel.name == settings.get(member.guild.id, "log")).send(embed).catch(console.error);
-		}
+
+	// Leave
+	client.on("guildMemberRemove", async member => {
+		const guildConfig = await getConfig(member.guild.id);
+
+		if (guildConfig.leave.message.enabled === "true") sendMessage({
+			"placeholders": true,
+			"channel": guildConfig.leave.message.channelID,
+			"message": guildConfig.leave.message.message
+		}, member);
 	});
-	
-	// Log bans
-	client.on("guildBanAdd", async (guild, member) => {
-		if (settings.get(guild.id, "log") !== 'none') {
-			if (!guild.channels.find(channel => channel.name == settings.get(guild.id, "log"))) return; 
-			
-			const user = await guild.fetchAuditLogs({type: 'MEMBER_BAN_ADD'}).then(audit => audit.entries.first());
-		
-			const embed = new RichEmbed()
-			.setFooter(`${new Date().toLocaleString("en-US")} UTC`)
-			.setDescription(`By: **<@${user.executor.id}>**\n\nUser: **<@${member.id}>**`)
-			.setAuthor('Member banned', user.executor.displayAvatarURL)
-			.setColor(0xFF0000);
-			guild.channels.find(channel => channel.name == settings.get(guild.id, "log")).send(embed).catch(console.error);
-		}
+
+	/* ### Log events ### */
+	// Member join
+	client.on("guildMemberAdd", async member => {
+		const guildConfig = await getConfig(member.guild.id);
+		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.member === "false") return;
+
+		sendMessage({
+			"channel": guildConfig.channels.log.channelID,
+			"message": client.embed({
+				"title": `Member joined (${member.user.username})`,
+				"description": stripIndents`
+					User: <@${member.id}>
+					Tag: ${member.user.tag}
+					ID: ${member.id}
+				`,
+				"thumbnail": member.user.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 }),
+				"fields": [
+					["Account age", getDuration(member.user.createdAt.getTime())]
+				],
+				"color": "#40c057",
+				"timestamp": true
+			})
+		});
 	});
-	
-	client.on("guildBanRemove", async (guild, member) => {
-		if (settings.get(guild.id, "log") !== 'none') {
-			if (!guild.channels.find(channel => channel.name == settings.get(guild.id, "log"))) return; 
-			
-			const user = await guild.fetchAuditLogs({type: 'MEMBER_BAN_REMOVE'}).then(audit => audit.entries.first());
-		
-			const embed = new RichEmbed()
-			.setFooter(`${new Date().toLocaleString("en-US")} UTC`)
-			.setDescription(`By: **<@${user.executor.id}>**\n\nUser: **<@${member.id}>**`)
-			.setAuthor('Member unbanned', user.executor.displayAvatarURL)
-			.setColor(0x00FF00);
-			guild.channels.find(channel => channel.name == settings.get(guild.id, "log")).send(embed).catch(console.error);
-		}
+
+	// Member leave
+	client.on("guildMemberRemove", async member => {
+		const guildConfig = await getConfig(member.guild.id);
+		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.member === "false") return;
+
+		const roles = member.roles.cache.map(r => r.name === "@everyone" ? "" : r.name)
+			.filter(Boolean);
+
+		const embedMessage = {
+			"title": `Member left (${member.user.username})`,
+			"description": stripIndents`
+				User: <@${member.id}>
+				Tag: ${member.user.tag}
+				ID: ${member.id}
+			`,
+			"thumbnail": member.user.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 }),
+			"fields": [
+				["Time in server", getDuration(member.joinedAt.getTime())]
+			],
+			"color": "#ff7700",
+			"timestamp": true
+		};
+
+		if (roles.length > 0) embedMessage.fields.push(["Roles", `\`${roles.join("`, `")}\``]);
+
+		sendMessage({
+			"channel": guildConfig.channels.log.channelID,
+			"message": client.embed(embedMessage)
+		});
 	});
-	
-	// Log deleted messages
-	client.on("messageDelete", async (message) => {
-		if (settings.get(message.guild.id, "log") !== 'none') {
-			const msg = `${message}`; // Stringify the message (lazy)
-			if (!message.guild.channels.find(channel => channel.name == settings.get(message.guild.id, "log"))) return;
-			if (message.author.id === client.user.id) return;
+
+	// Message deletion
+	client.on("messageDelete", async message => {
+		if (!message.guild || !message.content) return;
+
+		const guildConfig = await getConfig(message.guild.id);
+		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.message === "false") return;
+
+		// Grab the message if the bot can
+		try {message = await client.getMessage(message)}
+		catch {return}
+
+		// Check audit logs for who deleted the message
+		await client.sleep(2000);
+		let logs = await message.guild.fetchAuditLogs({
+			"limit": 1,
+			"type": "MESSAGE_DELETE"
+		});
+		logs = logs.entries.first();
+
+		// Return results from audit log
+		let description;
+		if (logs.executor.id === message.author.id && logs.createdAt < (new Date()).getTime() - 2000) description = stripIndents`
+			User: <@${message.author.id}>
+			Tag: ${message.author.tag}
+			ID: ${message.author.id}
+
+			Channel: <#${message.channel.id}>
+		`;
+		else description = stripIndents`
+			By: ${logs.executor.tag}
+			ID: ${logs.executor.id}
+
+			User: <@${message.author.id}>
+			Tag: ${message.author.tag}
+			ID: ${message.author.id}
 			
-			const user = await message.guild.fetchAuditLogs({type: 'MESSAGE_DELETE'}).then(audit => audit.entries.first())
-			if (user.executor.id === client.user.id) return;
-			
-			const embed = new RichEmbed()
-			.setFooter(`${new Date().toLocaleString("en-US")} UTC`)
-			.setDescription(`By: **<@${user.executor.id}>**\n\nIn: **<#${message.channel.id}>**`)
-			.setAuthor('Message deleted', user.executor.displayAvatarURL)
-			.setColor(0xFF0000);
-			if (message.author.id !== user.executor.id) {embed.description += `\nAuthor: **<@${message.author.id}>**`}
-			
-			embed.description += `\nContent: **${msg.substring(0, 750)}**`
-			if (msg.length > 750) {embed.description += " **...**"}
-			
-			message.guild.channels.find(channel => channel.name == settings.get(message.guild.id, "log")).send(embed).catch(console.error);
-		}
+			Channel: <#${message.channel.id}>
+		`;
+
+		// Send the log
+		sendMessage({
+			"channel": guildConfig.channels.log.channelID,
+			"message": client.embed({
+				"title":       `Message deleted (${message.author.username})`,
+				"description": description,
+				"thumbnail":   message.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 }),
+				"fields": [
+					["Message Content", message.content]
+				],
+				"color": "#fa5252",
+				"timestamp": true
+			})
+		});
 	});
-	
-	// Log edited messages
-	
-	// Log channel creation
-	client.on("channelCreate", async (channel) => {
-		if (settings.get(channel.guild.id, "log") !== 'none') {
-			if (!channel.guild.channels.find(channel => channel.name == settings.get(channel.guild.id, "log"))) return;
-			
-			const user = await channel.guild.fetchAuditLogs({type: 'CHANNEL_CREATE'}).then(audit => audit.entries.first())
-			
-			const embed = new RichEmbed()
-			.setFooter(`${new Date().toLocaleString("en-US")} UTC`)
-			.setDescription(`By: **<@${user.executor.id}>**\n\nChannel: **<#${channel.id}>**`)
-			.setAuthor('Channel created', user.executor.displayAvatarURL)
-			.setColor(0x00FF00);
-			if (channel.parent !== null) {embed.description += `\nCategory: **${channel.parent}**`}
-			
-			channel.guild.channels.find(channel => channel.name == settings.get(channel.guild.id, "log")).send(embed).catch(console.error);
-		}
+
+	// Message edits
+	client.on("messageEdit", async (oldMessage, newMessage) => {
+		// Make sure the message exists, isn't a link, and isn't a pin
+		if (oldMessage.pinned === undefined) oldMessage.pinned = false;
+		if (!newMessage.guild || oldMessage.pinned !== newMessage.pinned) return;
+
+		const guildConfig = await getConfig(newMessage.guild.id);
+		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.message === "false") return;
+
+		// Grab the messages
+		oldMessage = await client.getMessage(oldMessage);
+		newMessage = await client.getMessage(newMessage);
+		if (newMessage.author.bot) return;
+
+		// Make sure the update isn't an embed
+		if (oldMessage.embeds.length < newMessage.embeds.length) return;
+
+		// Construct the message link
+		const messageLink = `https://discordapp.com/channels/${oldMessage.guild.id}/${oldMessage.channel.id}/${oldMessage.id}`;
+
+		// Send the log
+		sendMessage({
+			"channel": guildConfig.channels.log.channelID,
+			"message": client.embed({
+				"title":       `Message edited (${newMessage.author.username})`,
+				"description": stripIndents`
+					User: <@${newMessage.author.id}>
+					Tag: ${newMessage.author.tag}
+					ID: ${newMessage.author.id}
+
+					Channel: <#${newMessage.channel.id}>
+					Message: [Link](${messageLink})
+				`,
+				"thumbnail":   newMessage.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 }),
+				"fields": [
+					["Old Message", oldMessage.content === newMessage.content ? "⚠️ Message too old to check!" : oldMessage.content],
+					["New Message", newMessage.content]
+				],
+				"color": "#fcc419",
+				"timestamp": true
+			})
+		});
 	});
-	
-	// Log channel creation
-	client.on("channelDelete", async (channel) => {
-		if (settings.get(channel.guild.id, "log") !== 'none') {
-			if (!channel.guild.channels.find(channel => channel.name == settings.get(channel.guild.id, "log"))) return;
-			
-			const user = await channel.guild.fetchAuditLogs({type: 'CHANNEL_DELETE'}).then(audit => audit.entries.first())
-			
-			const embed = new RichEmbed()
-			.setFooter(`${new Date().toLocaleString("en-US")} UTC`)
-			.setDescription(`By: **<@${user.executor.id}>**\n\nChannel: **#${channel.name}**`)
-			.setAuthor('Channel deleted', user.executor.displayAvatarURL)
-			.setColor(0xFF0000);
-			if (channel.parent !== null) {embed.description += `\nCategory: **${channel.parent}**`}
-			
-			channel.guild.channels.find(channel => channel.name == settings.get(channel.guild.id, "log")).send(embed).catch(console.error);
-		}
+
+	// Commands ran
+	client.on("commandRun", async (command, promise, message) => {
+		log.command(`${(message.guild  ? "" : "(DM) ") + message.author.tag} | ${client.truncate(message.content, 442)}`);
+
+		const complete = await promise;
+		if (complete)
+			log.complete(`${(message.guild ? "" : "(DM) ") + message.author.tag} | ${client.truncate(message.content, 442)} -> ${client.embedToString(await promise)}`);
+
+		totals.inc("commands");
 	});
-	
-	// Log emojis
-	client.on("emojiCreate", async (emoji) => {
-		if (settings.get(emoji.guild.id, "log") !== 'none') {
-			if (!emoji.guild.channels.find(channel => channel.name == settings.get(emoji.guild.id, "log"))) return;
-			
-			const user = await emoji.guild.fetchAuditLogs({type: 'EMOJI_CREATE'}).then(audit => audit.entries.first())
-			
-			const embed = new RichEmbed()
-			.setFooter(`${new Date().toLocaleString("en-US")} UTC`)
-			.setDescription(`By: **<@${user.executor.id}>**\n\nName: **${emoji.name}**\nEmoji: <:${emoji.name}:${emoji.id}>`)
-			.setAuthor('Emoji added', user.executor.displayAvatarURL)
-			.setColor(0x00FF00);
-	
-			emoji.guild.channels.find(channel => channel.name == settings.get(emoji.guild.id, "log")).send(embed).catch(console.error);
-		}
-	});
-	
-	client.on("emojiDelete", async (emoji) => {
-		if (settings.get(emoji.guild.id, "log") !== 'none') {
-			if (!emoji.guild.channels.find(channel => channel.name == settings.get(emoji.guild.id, "log"))) return;
-			
-			const user = await emoji.guild.fetchAuditLogs({type: 'EMOJI_DELETE'}).then(audit => audit.entries.first())
-			
-			const embed = new RichEmbed()
-			.setFooter(`${new Date().toLocaleString("en-US")} UTC`)
-			.setDescription(`By: **<@${user.executor.id}>**\n\nName: **${emoji.name}**\nEmoji: **https://cdn.discordapp.com/emojis/${emoji.id}.png**`)
-			.setAuthor('Emoji removed', user.executor.displayAvatarURL)
-			.setColor(0xFF0000);
-	
-			emoji.guild.channels.find(channel => channel.name == settings.get(emoji.guild.id, "log")).send(embed).catch(console.error);
-		}
-	});
-	
-	client.on("emojiUpdate", async (emoji, newEmoji) => {
-		if (settings.get(emoji.guild.id, "log") !== 'none') {
-			if (!emoji.guild.channels.find(channel => channel.name == settings.get(emoji.guild.id, "log"))) return;
-			
-			const user = await emoji.guild.fetchAuditLogs({type: 'EMOJI_UPDATE'}).then(audit => audit.entries.first())
-			
-			const embed = new RichEmbed()
-			.setFooter(`${new Date().toLocaleString("en-US")} UTC`)
-			.setDescription(`By: **<@${user.executor.id}>**\n\nBefore: **${emoji.name}**\nAfter: **${newEmoji.name}**\nEmoji: <:${emoji.name}:${emoji.id}>`)
-			.setAuthor('Emoji updated', user.executor.displayAvatarURL)
-			.setColor(0x2F5EA3);
-	
-			emoji.guild.channels.find(channel => channel.name == settings.get(emoji.guild.id, "log")).send(embed).catch(console.error);
-		}
-	});
+
+	// Format durations to times
+	function getDuration(then) {
+		const time      = moment.duration((new Date()).getTime() - then);
+		const formatted = time.format("y [years], M [months], d [days], h [hours], m [minutes], s [seconds].");
+		return formatted.replace(/\D0 .*?[,.]/g, "").trim();
+	}
+
+	// Send messages to channels
+	function sendMessage(options, object) {
+		if (!checkValidChannel(options.channel)) return;
+
+		let placeholders = [];
+
+		if (options.placeholders === undefined) options.placeholders = false;
+		if (!options.placeholders) options.commonPlaceholders = false;
+		if (options.commonPlaceholders === undefined) options.commonPlaceholders = true;
+
+		if (options.commonPlaceholders) placeholders = client.commonPlaceholders(object, "member");
+		if (options.placeholders) options.message = client.placeholders(options.message, placeholders);
+
+		client.channels.cache.get(options.channel).send(options.message);
+	}
+
+	function checkValidChannel(channel) {
+		if (client.channels.cache.get(channel) === undefined) return false;
+		else return true;
+	}
+
+	// Get the config
+	async function getConfig(guild) {
+		const config = new Config("guild", guild);
+		return await config.get();
+	}
 };

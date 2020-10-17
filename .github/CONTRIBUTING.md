@@ -1,13 +1,20 @@
 # Contributing
-If you want to contribute to this bot, please discuss with edude@edude.xyz through social media, email, etc.
+Thanks for being interested in the project!  
+Before contributing, make sure to read this file.
 
-## Pull request
-1. Ensure there are no major vulnerabilities. This includes DoS, SQL Injection, and other types of attacks.
-2. Make sure to show and describe what you have changed or added.
-3. Don't change any minor files, such as .gitignore, unless needed.
-4. I (Edude42) will review the request and will merge it if approved.
+When contributing, please make sure your changes follow the below guidelines. If possible, notify the owners of this repository about changes you are making.  
+If you do not follow these guidelines, your requests may be denied or require further work on the request.
 
-## Requirements
-1. Your addition must actually do something. If it just changes the order of code, it most likely won't be accepted.
-2. Commands must be properly written with tabs as the delimiter, and must not do any malicious actions.
-3. Do **NOT** include any personal information in anything you change. Make sure not to push your token or password.
+## DOs
+- Follow the formatting! The repository may include files or packages that will help check your code.
+- Make sure to describe what you have done with detail so reviewers know exactly what to check.
+- Test your changes extensively. We don't want broken changes added to the repository!
+- Keep to the style of the rest of the code. Avoid comments that don't fit, code that doesn't look right, etc.
+
+## DON'Ts
+- Changes you make must not be malicious or code-breaking.
+- Avoid any offensive, religious, or controversial code or comments.
+- **MAKE SURE TO CLEAR ANY PERSONAL INFORMATION!** Make sure to remove tokens, emails, etc.
+
+## REQUIREMENTS
+1. `DOs` and `DON'Ts` are completely followed.
