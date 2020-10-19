@@ -21,16 +21,10 @@
 \____/
 */
 
-// CREATE PRIVATE DIRS
-// data/private
-// data/private/enmap
-// data/private/logs
-
 // CHECK IF NOT EXIST: auth
 
 // Define and require modules
 const { CommandoClient }  = require("discord.js-commando");
-
 const conf                = require("./config");
 const readline            = require("readline");
 const moment              = require("moment");
@@ -47,6 +41,7 @@ input.on("line", i => {
 	if (i === "exit") process.exit(0);
 });
 
+// Create private folders
 function createFolder(...dirs) {
 	dirs.forEach(dir => {
 		if (!fs.existsSync(dir)) fs.mkdirSync(dir);
@@ -73,8 +68,8 @@ client.registry
 		["moderation", "Moderation"],
 		["misc",       "Misc"]
 	])
-	.registerDefaultCommands({ "unknownCommand": false })
-	.registerCommandsIn(path.join(__dirname, "commands"));
+	.registerCommandsIn(path.join(__dirname, "commands"))
+	.registerDefaultCommands({ "unknownCommand": false });
 
 client.registry.commands.find(c => c.name === "utilities").inject();
 
