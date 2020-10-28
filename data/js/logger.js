@@ -235,20 +235,10 @@ module.exports.logger = function logger(client, totals) {
 
 	// Message edits
 	client.on("messageEdit", async (oldMessage, newMessage) => {
-		// Make sure the message exists, isn't a link, and isn't a pin
-		if (oldMessage.pinned === undefined) oldMessage.pinned = false;
-		if (!newMessage.guild || oldMessage.pinned !== newMessage.pinned) return;
+		if (!newMessage.guild || newMessage.author.bot) return;
 
 		const guildConfig = await getConfig(newMessage.guild.id);
 		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.message === "false") return;
-
-		// Grab the messages
-		oldMessage = await client.getMessage(oldMessage);
-		newMessage = await client.getMessage(newMessage);
-		if (newMessage.author.bot) return;
-
-		// Make sure the update isn't an embed
-		if (oldMessage.embeds.length < newMessage.embeds.length) return;
 
 		// Construct the message link
 		const messageLink = `https://discord.com/channels/${oldMessage.guild.id}/${oldMessage.channel.id}/${oldMessage.id}`;

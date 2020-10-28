@@ -147,7 +147,9 @@ client.on("messageUpdate", async (oldMessage, newMessage) => {
 	oldMessage = await client.getMessage(oldMessage);
 	newMessage = await client.getMessage(newMessage);
 
-	if (oldMessage.content === newMessage.content) return;
+	if (oldMessage.content       === newMessage.content ||
+		oldMessage.pinned        !== newMessage.pinned  ||
+		oldMessage.embeds.length !== newMessage.embeds.length) return;
 	client.emit("messageEdit", oldMessage, newMessage);
 });
 
