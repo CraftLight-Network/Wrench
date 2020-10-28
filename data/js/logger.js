@@ -201,7 +201,7 @@ module.exports.logger = function logger(client, totals) {
 		let description;
 		if (message.author.id !== logs.executor.id &&
 			message.author.id === logs.target.id   &&
-			logs.createdAt > new Date().getTime() - 2000) description = stripIndents`
+			logs.createdAt > new Date().getTime() - 20000) description = stripIndents`
 			By: <@${logs.executor.id}>
 			Tag: ${logs.executor.tag}
 			ID: ${logs.executor.id}
