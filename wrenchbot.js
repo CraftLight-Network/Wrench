@@ -71,8 +71,6 @@ client.registry
 	.registerCommandsIn(path.join(__dirname, "commands"))
 	.registerDefaultCommands({ "unknownCommand": false });
 
-client.registry.commands.find(c => c.name === "utilities").inject();
-
 // Get Enmap
 !fs.existsSync("./data/private")      && fs.mkdirSync("./data/private");
 !fs.existsSync("./data/private/logs") && fs.mkdirSync("./data/private/logs");
@@ -81,6 +79,22 @@ const totals = require("./data/js/enmap").totals;
 // Logger
 const { log, logger } = require("./data/js/logger");
 logger(client, totals);
+
+// Get utilities
+listen(["./data/js/util.js"]);
+
+function listen(files) {
+	files.forEach(f => {
+		require(f).run(client);
+		fs.watchFile(f, () => {
+			log.info(`${f} was changed! Updating...`);
+			delete require.cache[require.resolve(f)];
+
+			try {require(f).run(client)}
+			catch (e) {log.error(`There was an error updating the file! ${e}`)}
+		});
+	});
+}
 
 // Start modules
 const automod   = require("./data/js/automod");

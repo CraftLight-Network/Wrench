@@ -47,7 +47,8 @@
 		"security/detect-non-literal-regexp": "off",
 		"security/detect-object-injection": "off",
 		"security/detect-unsafe-regex": "off",
-		"security/detect-non-literal-fs-filename": "off"
+		"security/detect-non-literal-fs-filename": "off",
+		"security/detect-non-literal-require": "off"
 	},
 	"ignorePatterns": ["!node_modules/*"]
 }
