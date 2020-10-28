@@ -258,7 +258,7 @@ module.exports.logger = function logger(client, totals) {
 				`,
 				"thumbnail":   newMessage.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 }),
 				"fields": [
-					["Old Message", oldMessage.content === newMessage.content ? "⚠️ Message too old to check!" : client.truncate(oldMessage.content, 1024)]
+					["Old Message", client.truncate(oldMessage.content, 1024)]
 				],
 				"color": "#fcc419",
 				"timestamp": true
