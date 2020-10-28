@@ -105,7 +105,7 @@ ${JSON.stringify(guildConfig, null, 2)}
 		if (action === "remove") {
 			if (!isArray()) return message.reply("That config property is not an array.");
 
-			config.remove(message.guild.id, property, value);
+			config.remove(property, value);
 			return message.reply(`Removed ${value} from ${property}.`);
 		}
 
