@@ -251,7 +251,7 @@ module.exports.logger = function logger(client, totals) {
 		if (oldMessage.embeds.length < newMessage.embeds.length) return;
 
 		// Construct the message link
-		const messageLink = `https://discordapp.com/channels/${oldMessage.guild.id}/${oldMessage.channel.id}/${oldMessage.id}`;
+		const messageLink = `https://discord.com/channels/${oldMessage.guild.id}/${oldMessage.channel.id}/${oldMessage.id}`;
 
 		// Send the log
 		sendMessage({
@@ -268,8 +268,7 @@ module.exports.logger = function logger(client, totals) {
 				`,
 				"thumbnail":   newMessage.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 }),
 				"fields": [
-					["Old Message", oldMessage.content === newMessage.content ? "⚠️ Message too old to check!" : oldMessage.content],
-					["New Message", newMessage.content]
+					["Old Message", oldMessage.content === newMessage.content ? "⚠️ Message too old to check!" : client.truncate(oldMessage.content, 1024)]
 				],
 				"color": "#fcc419",
 				"timestamp": true
