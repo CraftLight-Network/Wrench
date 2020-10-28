@@ -199,14 +199,7 @@ module.exports.logger = function logger(client, totals) {
 
 		// Return results from audit log
 		let description;
-		if (logs.executor.id === message.author.id && logs.createdAt < (new Date()).getTime() - 2000) description = stripIndents`
-			User: <@${message.author.id}>
-			Tag: ${message.author.tag}
-			ID: ${message.author.id}
-
-			Channel: <#${message.channel.id}>
-		`;
-		else description = stripIndents`
+		if (logs.executor.id !== message.author.id && logs.createdAt < (new Date()).getTime() - 2000) description = stripIndents`
 			By: ${logs.executor.tag}
 			ID: ${logs.executor.id}
 
@@ -214,6 +207,13 @@ module.exports.logger = function logger(client, totals) {
 			Tag: ${message.author.tag}
 			ID: ${message.author.id}
 			
+			Channel: <#${message.channel.id}>
+		`;
+		else description = stripIndents`
+			User: <@${message.author.id}>
+			Tag: ${message.author.tag}
+			ID: ${message.author.id}
+
 			Channel: <#${message.channel.id}>
 		`;
 
