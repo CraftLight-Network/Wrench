@@ -56,10 +56,10 @@ module.exports = class ShipCommand extends Command {
 		const ship = seed.int(0, 100);
 
 		// Define the emote to be used
-		let style            = { "emote": "two_hearts",      "color": "#9c36b5", "bar": "[===============   ]" };
-		if (ship < 75) style = { "emote": "sparkling_heart", "color": "#da77f2", "bar": "[===========       ]" };
-		if (ship < 50) style = { "emote": "heart",           "color": "#e64980", "bar": "[=======           ]" };
-		if (ship < 25) style = { "emote": "broken_heart",    "color": "#c92a2a", "bar": "[===               ]" };
+		let style            = { "emote": "good", "color": "#9c36b5", "bar": "[===============   ]" };
+		if (ship < 75) style = { "emote": "fine", "color": "#da77f2", "bar": "[===========       ]" };
+		if (ship < 50) style = { "emote": "fair", "color": "#e64980", "bar": "[=======           ]" };
+		if (ship < 25) style = { "emote": "bad",  "color": "#c92a2a", "bar": "[===               ]" };
 
 		// Make sure the bar is always "accurate"
 		if (ship > 95) style.bar = "[==================]";
@@ -68,7 +68,7 @@ module.exports = class ShipCommand extends Command {
 		// Send the ship
 		return message.channel.send(this.client.embed({
 			"message":     message,
-			"attachments": [`data/img/emotes/${style.emote}.png`],
+			"attachments": [`data/img/emotes/ship/${style.emote}.png`],
 			"title":       "Ship results:",
 			"description": stripIndents`
 				**${person1} and ${person2} are ${ship}% compatible.**

@@ -60,10 +60,10 @@ module.exports = class CoolnessCommand extends Command {
 		}
 
 		// Define the emote to be used
-		let style                = { "emote": "good_shades",  "color": "#8ce99a", "bar": "[===============   ]" };
-		if (coolness < 75) style = { "emote": "okay_check",   "color": "#ffe066", "bar": "[===========       ]" };
-		if (coolness < 50) style = { "emote": "bad_unamused", "color": "#fd7e14", "bar": "[=======           ]" };
-		if (coolness < 25) style = { "emote": "cross",        "color": "#f03e3e", "bar": "[===               ]" };
+		let style                = { "emote": "good", "color": "#8ce99a", "bar": "[===============   ]" };
+		if (coolness < 75) style = { "emote": "fine", "color": "#ffe066", "bar": "[===========       ]" };
+		if (coolness < 50) style = { "emote": "fair", "color": "#fd7e14", "bar": "[=======           ]" };
+		if (coolness < 25) style = { "emote": "bad",  "color": "#f03e3e", "bar": "[===               ]" };
 
 		// Make sure the bar is always "accurate"
 		if (coolness > 95) style.bar = "[==================]";
@@ -72,7 +72,7 @@ module.exports = class CoolnessCommand extends Command {
 		// Send the coolness
 		return message.channel.send(this.client.embed({
 			"message":     message,
-			"attachments": [`data/img/emotes/${style.emote}.png`],
+			"attachments": [`data/img/emotes/coolness/${style.emote}.png`],
 			"title":       "Coolness results:",
 			"description": stripIndents`
 				**${person} is ${coolness}% cool.**
