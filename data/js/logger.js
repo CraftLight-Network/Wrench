@@ -201,7 +201,8 @@ module.exports.logger = function logger(client, totals) {
 		// Return results from audit log
 		let description;
 		if (logs.executor.id !== logs.target.id && logs.createdAt < (new Date()).getTime() - 2000) description = stripIndents`
-			By: ${logs.executor.tag}
+			By: <@${logs.executor.id}>
+			Tag: ${logs.executor.tag}
 			ID: ${logs.executor.id}
 
 			User: <@${message.author.id}>
