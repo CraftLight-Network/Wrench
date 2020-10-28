@@ -5,8 +5,6 @@ const config           = require("../../config");
 const moment           = require("moment");
 
 const actions = ["standard", "advanced", "all"];
-const verificationLevel = ["None", "Low", "Medium", "(╯°□°）╯︵ ┻━┻", "┻━┻ ﾐヽ(ಠ益ಠ)ノ彡┻━┻"];
-const explicitContentFilter = ["Off", "On (No Role)", "On (All)"];
 
 module.exports = class ServerInfoCommand extends Command {
 	constructor(client) {
@@ -43,21 +41,21 @@ module.exports = class ServerInfoCommand extends Command {
 		const guild = message.guild;
 		let defaultMessageNotifications, icon, splash;
 
+		const iconURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png?size=4096`;
+		const splashURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.splash}.png?size=4096`;
+
 		// Notifications
 		if (guild.defaultMessageNotifications === "MENTIONS") defaultMessageNotifications = "@mentions";
-		else defaultMessageNotifications = "All";
+		else                                                  defaultMessageNotifications = "All";
 
 		const embedMessage = { "message": message, "title": `${guild.name} Info:`, "fields": [] };
 
-		// Server icon link/image
-		const iconURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png?size=4096`;
+		// Server icon & splash image
 		if (guild.icon) {
 			icon = `[Click](${iconURL})`;
 			embedMessage.thumbnail = iconURL;
 		} else icon = "None";
 
-		// Splash link/image
-		const splashURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.splash}.png?size=4096`;
 		if (guild.splash) {
 			splash = `[Click](${splashURL})`;
 			embedMessage.image = splashURL;
@@ -66,41 +64,40 @@ module.exports = class ServerInfoCommand extends Command {
 		// "All" level
 		if (actions.indexOf(action) > 0) {
 			embedMessage.fields.push(
-				["name",        guild.name, true],
-				["ID",          guild.id, true],
-				["Owner",       guild.owner, true],
+				["name",        guild.name,                                                true],
+				["ID",          guild.id,                                                  true],
+				["Owner",       guild.owner,                                               true],
 				["Created on",  moment(guild.createdTimestamp).format("M/D/YY h:mm:ss A"), true],
-				["AFK Channel", guild.afkChannel ? guild.afkChannel : "None", true],
-				["AFK Timeout", guild.afkChannel ? guild.afkTimeout : "None", true],
-				["Region",      guild.region, true],
-				["Icon",        icon, true],
-				["Splash",      splash, true]
+				["AFK Channel", guild.afkChannel ? guild.afkChannel : "None",              true],
+				["AFK Timeout", guild.afkChannel ? guild.afkTimeout : "None",              true],
+				["Region",      guild.region,                                              true],
+				["Icon",        icon,                                                      true],
+				["Splash",      splash,                                                    true]
 			);
 		}
 
 		// "Advanced" level
 		if (actions.indexOf(action) > 1) {
 			embedMessage.fields.push(
-				["Verification",    verificationLevel[guild.verificationLevel], true],
-				["2FA Requirement", guild.mfaLevel ? "On" : "Off", true],
-				["Content Filter",  explicitContentFilter[guild.explicitContentFilter], true],
-				["Verified",        guild.verified ? "Yes" : "No", true],
+				["Verification",    guild.verificationLevel,                            true],
+				["2FA Requirement", guild.mfaLevel      ? "On" : "Off",                 true],
+				["Content Filter",  guild.explicitContentFilter,                        true],
+				["Verified",        guild.verified      ? "Yes" : "No",                 true],
 				["System Channel",  guild.systemChannel ? guild.systemChannel : "None", true],
-				["Notifications",   defaultMessageNotifications, true]
+				["Notifications",   defaultMessageNotifications,                        true]
 			);
 		}
 
 		// Default/standard level
 		embedMessage.fields.push(
-			["Channels",    guild.channels.size, true],
-			["Emojis",      guild.emojis.size, true],
-			["Roles",       guild.roles.size, true],
-			["Members",     guild.members.filter(member => !member.user.bot).size, true],
-			["Bots",        guild.members.filter(member => member.user.bot).size, true],
-			["Total users", guild.memberCount, true]
+			["Channels",    guild.channels.cache.size,                                   true],
+			["Emojis",      guild.emojis.cache.size,                                     true],
+			["Roles",       guild.roles.cache.size,                                      true],
+			["Members",     guild.members.cache.filter(member => !member.user.bot).size, true],
+			["Bots",        guild.members.cache.filter(member =>  member.user.bot).size, true],
+			["Total users", guild.memberCount,                                           true]
 		);
 
-		// Send the info
 		return message.channel.send(this.client.embed(embedMessage));
 	}
 };
