@@ -180,25 +180,18 @@ async function guildEvents(message) {
 }
 
 // VC-Text lockout
-client.on("voiceStateUpdate", async (original, state) => {
-	const config = new Config("guild", state.guild.id);
+client.on("voiceStateUpdate", async (from, to) => {
+	const config = new Config("guild", to.guild.id);
 	const guildConfig = await config.get();
 
 	if (!guildConfig.misc.vcText.enabled) return;
 
-	if (!original.channelID && state.channelID) {
-		guildConfig.misc.vcText.IDs.forEach(e => {
-			const ids = e.split(",");
-			if (state.channelID === ids[0]) state.member.roles.add(ids[1]);
-		});
-	}
+	guildConfig.misc.vcText.IDs.forEach(e => {
+		const ids = e.split(",");
 
-	if (original.channelID && !state.channelID) {
-		guildConfig.misc.vcText.IDs.forEach(e => {
-			const ids = e.split(",");
-			if (original.channelID === ids[0]) state.member.roles.remove(ids[1]);
-		});
-	}
+		if (to.channelID === ids[0]) to.member.roles.add(ids[1]);
+		else if (to.member.roles.cache.has(ids[1])) to.member.roles.remove(ids[1]);
+	});
 });
 
 // Log the bot in
