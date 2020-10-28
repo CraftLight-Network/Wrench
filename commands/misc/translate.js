@@ -1,8 +1,14 @@
 // Define and require modules
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const translate        = require("../../data/js/translate");
+const TokenBucket      = require("limiter").TokenBucket;
+const translator       = require("baidu-translate-api");
+const totals           = require("../../data/js/enmap").totals;
 const config           = require("../../config");
+
+// Ratelimits
+const monthBucket = new TokenBucket("10000000", "month", null);
+const dayBucket   = new TokenBucket("322580", "day", null);
 
 const languages = [
 	"auto", "zh", "en", "yue", "wyw",
@@ -58,6 +64,20 @@ module.exports = class TranslateCommand extends Command {
 	}
 
 	run(message, { from, to, translation }) {
-		translate(message, { "command": true, "from": from, "to": to, "translation": translation });
+		if (!monthBucket.tryRemoveTokens(message.content.length)) return;
+		if (!dayBucket.tryRemoveTokens(message.content.length))   return;
+
+		// Translate the message
+		translator(translation, { "from": from, "to": to }).then(translated => {
+			totals.inc("translations");
+			return message.channel.send(this.client.embed({
+				"author": {
+					"name":    `${message.author.username} (${translated.from}-${translated.to})`,
+					"picture": message.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 })
+				},
+				"description": `**${translated.trans_result.dst}**`,
+				"footer":      "Translations from Baidu Translate."
+			}));
+		}).catch(() => {});
 	}
 };
