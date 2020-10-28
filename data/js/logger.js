@@ -196,10 +196,11 @@ module.exports.logger = function logger(client, totals) {
 			"type": "MESSAGE_DELETE"
 		});
 		logs = logs.entries.first();
+		if (message.author.id !== logs.target.id) return;
 
 		// Return results from audit log
 		let description;
-		if (logs.executor.id !== message.author.id && logs.createdAt < (new Date()).getTime() - 2000) description = stripIndents`
+		if (logs.executor.id !== logs.target.id && logs.createdAt < (new Date()).getTime() - 2000) description = stripIndents`
 			By: ${logs.executor.tag}
 			ID: ${logs.executor.id}
 
