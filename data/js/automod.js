@@ -115,26 +115,28 @@ module.exports = async (message) => {
 
 // Reply function
 function reply(message, warning) {
+	const isMember = !message.author;
 	valid = false;
 
 	const embedMessage = {
 		"author":  { "name": "Warning" },
 		"fields":  [
 			[`Do not ${warning.name}!`, stripIndents`
-				The server ${message.guild.name} does not want you to ${warning.name} there.
+				The server ${isMember ? "" : message.guild.name} does not want you to ${warning.name} there.
 				If this was a mistake, you may edit your message without the ${warning.code}.
-			`],
-			["Original message:", message]
+			`]
 		],
 		"footer":  "Action made by AutoMod"
 	};
 
-	if (message.content) {
+	if (!isMember) embedMessage.fields.push(["Original message:", message]);
+
+	if (!isMember) {
 		embedMessage.message           = message;
 		embedMessage.author.picture    = message.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 });
-	} else embedMessage.author.picture = message.user.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 });
+	} else embedMessage.author.picture = message.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 });
 
-	message.author.send(message.client.embed(embedMessage));
+	message.send(message.client.embed(embedMessage));
 }
 
 // Get rid of '=== "true"'
