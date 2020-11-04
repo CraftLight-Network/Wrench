@@ -129,13 +129,16 @@ function reply(message, warning) {
 		"footer":  "Action made by AutoMod"
 	};
 
-	if (!isMember) embedMessage.fields.push(["Original message:", message]);
-
 	if (!isMember) {
+		embedMessage.fields.push(["Original message:", message]);
+
 		embedMessage.message           = message;
 		embedMessage.author.picture    = message.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 });
-	} else embedMessage.author.picture = message.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 });
 
+		return message.author.send(message.client.embed(embedMessage));
+	}
+
+	embedMessage.author.picture = message.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 });
 	message.send(message.client.embed(embedMessage));
 }
 
