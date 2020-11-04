@@ -186,9 +186,9 @@ client.on("voiceJoinLeave", async (from, to) => {
 	const config = new Config("guild", to.guild.id);
 	const guildConfig = await config.get();
 
-	if (!guildConfig.misc.voicechat.enabled) return;
+	if (!guildConfig.misc.vcText.enabled) return;
 
-	guildConfig.misc.voicechat.ID.forEach(e => {
+	guildConfig.misc.vcText.IDs.forEach(e => {
 		const ids = e.split(",");
 
 		if (to.channelID === ids[0]) to.member.roles.add(ids[1]);
