@@ -68,7 +68,7 @@ module.exports = class MinecraftCommand extends Command {
 		let uuid;
 		if (player.length <= 16) {
 			const playerRequest = await request(`https://api.mojang.com/users/profiles/minecraft/${player}`);
-			uuid = this.client.safeJSON(playerRequest.body).id;
+			uuid = this.client.parseJSON(playerRequest.body).id;
 		} else {
 			uuid = player.toLowerCase().replace(/[^0-9a-z]/g, "");
 		}
@@ -76,7 +76,7 @@ module.exports = class MinecraftCommand extends Command {
 		// Get name of user
 		const nameRequest = await request(`https://api.mojang.com/user/profiles/${uuid}/names`);
 
-		let name = this.client.safeJSON(nameRequest.body);
+		let name = this.client.parseJSON(nameRequest.body);
 		if (!name[0]) return message.reply("That player does not exist. Please enter a valid in-game name or UUID.");
 		else name = name.reverse();
 
