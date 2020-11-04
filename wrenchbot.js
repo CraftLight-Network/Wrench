@@ -179,14 +179,18 @@ async function guildEvents(message) {
 	}
 }
 
-// VC-Text lockout
-client.on("voiceStateUpdate", async (from, to) => {
+// Emit voice channel join/leave events
+client.on("voiceStateUpdate", (from, to) => {
+	if (from.channelID !== to.channelID) client.emit("voiceJoinLeave", from, to);
+});
+
+client.on("voiceJoinLeave", async (from, to) => {
 	const config = new Config("guild", to.guild.id);
 	const guildConfig = await config.get();
 
-	if (!guildConfig.misc.vcText.enabled) return;
+	if (!guildConfig.misc.voicechat.enabled) return;
 
-	guildConfig.misc.vcText.IDs.forEach(e => {
+	guildConfig.misc.voicechat.ID.forEach(e => {
 		const ids = e.split(",");
 
 		if (to.channelID === ids[0]) to.member.roles.add(ids[1]);
