@@ -72,8 +72,6 @@ client.registry
 	.registerDefaultCommands({ "unknownCommand": false });
 
 // Get Enmap
-!fs.existsSync("./data/private")      && fs.mkdirSync("./data/private");
-!fs.existsSync("./data/private/logs") && fs.mkdirSync("./data/private/logs");
 const totals = require("./data/js/enmap").totals;
 
 // Logger
