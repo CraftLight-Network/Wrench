@@ -71,6 +71,23 @@ client.registry
 	.registerCommandsIn(path.join(__dirname, "commands"))
 	.registerDefaultCommands({ "unknownCommand": false });
 
+// Create voice channel join/leave event
+client.on("voiceStateUpdate", (from, to) => {
+	if (from.channelID !== to.channelID) client.emit("voiceJoinLeave", from, to);
+});
+
+// Create message edit event
+client.on("messageUpdate", async (oldMessage, newMessage) => {
+	oldMessage = await client.getMessage(oldMessage);
+	newMessage = await client.getMessage(newMessage);
+
+	// Make sure the edit is really an edit
+	if (oldMessage.content       === newMessage.content ||
+		oldMessage.pinned        !== newMessage.pinned  ||
+		oldMessage.embeds.length !== newMessage.embeds.length) return;
+	client.emit("messageEdit", oldMessage, newMessage);
+});
+
 // Get Enmap
 const totals = require("./data/js/enmap").totals;
 
@@ -108,22 +125,22 @@ client.on("ready", () => {
 	// Set the bots status
 	if (conf.status.enabled) {status(); setInterval(status, conf.status.timeout)};
 
-	function status() {
-		// Get a random status
-		function getStatus() {
-			const status = conf.status.types[Math.floor(Math.random() * conf.status.types.length)];
-			status.name = client.placeholders(status.name);
-			return status;
-		}
-		let status = getStatus();
-		if (client.user.presence.activities[0]) {
-			while (status.name === client.user.presence.activities[0].name) {
-				status = getStatus();
-			}
-		}
+	async function status() {
+		// Get the status
+		let status = await getStatus();
+
+		// Re-roll if repeat
+		if (client.user.presence.activities[0])
+			while (status.name === client.user.presence.activities[0].name) status = await getStatus();
 
 		// Set the status
 		client.user.setActivity(status.name, { "type": status.type, "url": status.url });
+	}
+
+	// Get a random status
+	async function getStatus() {
+		const status = conf.status.types[Math.floor(Math.random() * conf.status.types.length)];
+		return status.name = await client.placeholders(status.name);
 	}
 });
 
@@ -133,6 +150,7 @@ client.on("message", async message => {
 	// Ignore bots
 	if (message.author.bot) return;
 
+	// Run events
 	reactions(message);
 	guildEvents(message);
 
@@ -140,29 +158,19 @@ client.on("message", async message => {
 	totals.inc("messages");
 });
 
-// Message edit event
-client.on("messageUpdate", async (oldMessage, newMessage) => {
-	oldMessage = await client.getMessage(oldMessage);
-	newMessage = await client.getMessage(newMessage);
-
-	if (oldMessage.content       === newMessage.content ||
-		oldMessage.pinned        !== newMessage.pinned  ||
-		oldMessage.embeds.length !== newMessage.embeds.length) return;
-	client.emit("messageEdit", oldMessage, newMessage);
-});
-
 // Run automod and reactions on edited messages
 client.on("messageEdit", async (oldMessage, message) => {
 	message = await client.getMessage(message);
 	if (message.author.bot) return;
 
+	// Run events
 	reactions(message);
 	guildEvents(message);
 });
 
+// Guild-only events
 async function guildEvents(message) {
 	if (message.guild) {
-		// Get the config
 		const config = new Config("guild", message.guild.id);
 		const guildConfig = await config.get();
 
@@ -170,31 +178,29 @@ async function guildEvents(message) {
 		if (guildConfig.automod.enabled === "true" && !client.checkRole(message, guildConfig.automod.modRoleIDs)) automod(message);
 
 		// Tag command
-		if (message.content.indexOf(conf.prefix.tags) === 0 && !message.content.match(/ /g)) {
+		if (message.content.indexOf(conf.prefix.tags) === 0 && message.content.includes(" ")) {
 			const tagCommand = client.registry.commands.find(c => c.name === "tag");
 			tagCommand.run(message, { "action": message.content.slice(1) });
 		}
 	}
 }
 
-// Emit voice channel join/leave events
-client.on("voiceStateUpdate", (from, to) => {
-	if (from.channelID !== to.channelID) client.emit("voiceJoinLeave", from, to);
-});
-
+// Voice chat text channel role
 client.on("voiceJoinLeave", async (from, to) => {
 	const config = new Config("guild", to.guild.id);
 	const guildConfig = await config.get();
 
 	if (!guildConfig.misc.vcText.enabled) return;
 
+	// Get each channel/role ID
 	guildConfig.misc.vcText.IDs.forEach(e => {
 		const ids = e.split(",");
 
+		// Add/remove role
 		if (to.channelID === ids[0]) to.member.roles.add(ids[1]);
 		else if (to.member.roles.cache.has(ids[1])) to.member.roles.remove(ids[1]);
 	});
 });
 
-// Log the bot in
+// Finally, log it in
 client.login(require("./auth").token);

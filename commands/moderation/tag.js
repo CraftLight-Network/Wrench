@@ -53,7 +53,6 @@ module.exports = class TagCommand extends Command {
 	}
 
 	async run(message, { action, property, value }) {
-		// Get the config
 		const config = new Config("guild", message.guild.id);
 		const guildConfig = await config.get();
 
