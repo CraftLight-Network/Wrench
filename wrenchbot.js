@@ -21,10 +21,9 @@
 \____/
 */
 
-// CHECK IF NOT EXIST: auth
-
 // Define and require modules
 const { CommandoClient }  = require("discord.js-commando");
+const { stripIndents }    = require("common-tags");
 const conf                = require("./config");
 const readline            = require("readline");
 const moment              = require("moment");
@@ -40,6 +39,16 @@ const input = readline.createInterface({
 input.on("line", i => {
 	if (i === "exit") process.exit(0);
 });
+
+// Check if the auth file exists
+if (!fs.existsSync("./auth.json")) {
+	console.error(stripIndents`
+		The file \"auth.json\" does not exist! This is required in order to login to your bot.
+		Please refer to README.md for steps on how to get your token.
+	`);
+
+	process.exit(1);
+}
 
 // Create private folders
 function createFolder(...dirs) {
