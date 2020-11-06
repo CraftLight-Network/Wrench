@@ -23,16 +23,16 @@
   "dependencies": {
     "array-average": "^0.1.2",
     "async-request": "^1.2.0",
-    "baidu-translate-api": "^0.4.1",
+    "baidu-translate-api": "^0.4.3",
     "better-sqlite-pool": "^0.2.3",
     "binstring": "^0.2.1",
     "center-align": "^1.0.1",
     "common-tags": "^1.8.0",
     "cron": "^1.8.2",
     "discord-anti-spam": "^2.4.1",
-    "discord.js": "^12.3.1",
+    "discord.js": "^12.4.1",
     "discord.js-commando": "github:discordjs/Commando",
-    "enmap": "^5.7.1",
+    "enmap": "^5.8.0",
     "figlet": "^1.5.0",
     "franc": "^5.0.0",
     "fs": "0.0.1-security",
@@ -43,9 +43,9 @@
     "lodash": "^4.17.20",
     "merge-json": "0.1.0-b.3",
     "minimist": "^1.2.5",
-    "moment": "^2.27.0",
+    "moment": "^2.29.1",
     "moment-duration-format": "^2.3.2",
-    "pm2": "^4.4.1",
+    "pm2": "^4.5.0",
     "random": "^2.2.0",
     "request": "^2.88.2",
     "string-similarity": "^4.0.2",
@@ -53,5 +53,8 @@
     "wikijs": "^6.0.1",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^3.10.0"
+  },
+  "engines": {
+    "node": "14.x"
   }
 }

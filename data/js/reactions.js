@@ -5,11 +5,8 @@ const _             = require("lodash");
 
 module.exports = async (message) => {
 	let guildConfig;
-
-	// Get the config
 	if (message.guild) {
 		const config = new Config("guild", message.guild.id);
-		config.ensure(message.guild.id);
 		guildConfig = await config.get();
 	}
 

@@ -55,10 +55,10 @@ module.exports = class ProbabilityCommand extends Command {
 		const probability       = seed.int(0, 100);
 
 		// Define the emote to be used
-		let style                   = { "emote": "good_percentage",     "color": "#8ce99a", "bar": "[===============   ]" };
-		if (probability < 75) style = { "emote": "okay_percentage",     "color": "#ffe066", "bar": "[===========       ]" };
-		if (probability < 50) style = { "emote": "bad_percentage",      "color": "#fd7e14", "bar": "[=======           ]" };
-		if (probability < 25) style = { "emote": "terrible_percentage", "color": "#f03e3e", "bar": "[===               ]" };
+		let style                   = { "emote": "good", "color": "#8ce99a", "bar": "[===============   ]" };
+		if (probability < 75) style = { "emote": "fine", "color": "#ffe066", "bar": "[===========       ]" };
+		if (probability < 50) style = { "emote": "fair", "color": "#fd7e14", "bar": "[=======           ]" };
+		if (probability < 25) style = { "emote": "bad",  "color": "#f03e3e", "bar": "[===               ]" };
 
 		// Make sure the bar is always "accurate"
 		if (probability > 95) style.bar = "[==================]";
@@ -75,7 +75,7 @@ module.exports = class ProbabilityCommand extends Command {
 		// Send the probability
 		return message.channel.send(this.client.embed({
 			"message":     message,
-			"attachments": [`data/img/emotes/${style.emote}.png`],
+			"attachments": [`data/img/emotes/probability/${style.emote}.png`],
 			"title":       "Probability results:",
 			"description": stripIndents`
 				**The probability of ${topic1}${topic2 ? `${topic3 ? `, ${topic3.join(", ")}, ` : " "}and ${topic2.join()} ` : ""}is ${probability}%.**

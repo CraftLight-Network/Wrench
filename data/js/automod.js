@@ -1,19 +1,17 @@
-// Get logger
-const log = require("./logger").log;
-
 // Define and require modules
 const { stripIndents } = require("common-tags");
 const AntiSpam         = require("discord-anti-spam");
 const request          = require("async-request");
+const log              = require("./logger").log;
 const Config           = require("./config");
 
-// Format + update bad links
-let bad = [];
+// Download and format bad links
+let bad = []; createBadLinks();
 async function createBadLinks() {
 	// Grab the latest Unified HOSTS (Unified + Gambling + Fakenews + Porn)
 	let hosts = await request("http://sbc.io/hosts/alternates/fakenews-gambling-porn/hosts");
 
-	// Format the bad links file
+	// Sanitize and format
 	bad = await hosts.body
 		.replace(/#.*|([0-9]\.){3}[0-9]\s|https?:\/\//gmi, "")
 		.trim()
@@ -23,10 +21,10 @@ async function createBadLinks() {
 		.filter(Boolean);
 
 	log.info("Bad links array is ready!");
-	hosts = "";
+	hosts = ""; // Clear downloaded file
 }
-createBadLinks();
 
+// Discord AntiSpam settings
 const antiSpam = new AntiSpam({
 	"warnThreshold":        5,
 	"kickThreshold":        8,
@@ -47,32 +45,23 @@ let valid = true;
 module.exports = async (message) => {
 	if (!message.guild) return;
 
-	// Make sure there's a message
-	const content = message.content;
-	if (!content) return;
-
-	// Get the config
 	const config = new Config("guild", message.guild.id);
 	const guildConfig = await config.get();
 
 	// Blacklisted words
 	if (b(guildConfig.automod.modules.blacklisted.enabled)) await blacklisted();
 	async function blacklisted() {
-		if (!message.client.check(content,
+		if (!message.client.check(message.content,
 			new RegExp(message.client.toString(guildConfig.automod.modules.blacklisted.words, "|", "i")))) return;
 
-		// Delete and warn
-		await message.delete();
 		reply(message, { "name": "send blacklisted words", "code": "blacklisted words" });
 	}
 
 	// Invite detection
-	if (valid && b(guildConfig.automod.modules.invites)) await invites();
+	if (valid && guildConfig.automod.modules.invites.enabled) await invites();
 	async function invites() {
-		if (!content.match("discord(app)?.(com|gg)(/invite)?")) return;
+		if (!message.content.match(/discord(app)?.(com\/invite|gg)/)) return;
 
-		// Delete and warn
-		await message.delete();
 		reply(message, { "name": "send invite links", "code": "invite" });
 	}
 
@@ -82,59 +71,60 @@ module.exports = async (message) => {
 		antiSpam.message(message);
 
 		// Check for unique words
-		const c = content.split(" ").map(s => s.trim().replace(/[ ]/g, ""));
+		const c = message.content.split(" ").map(s => s.trim().replace(/[ ]/g, ""));
 		if (c.length / parseInt(guildConfig.automod.modules.spam.threshold, 10) < [...new Set(c)].length) return;
 
-		// Delete and warn
-		await message.delete();
 		reply(message, { "name": "spam", "code": "spam" });
 	};
 
 	// Bad links
 	if (valid && b(guildConfig.automod.modules.badLinks)) await badLinks();
 	async function badLinks() {
-		if (!content.split(" ").some(c => bad.includes(c))) return;
+		if (!message.content.split(" ").some(c => bad.includes(c))) return;
 
 		// Delete and warn
-		await message.delete();
 		reply(message, { "name": "send bad links", "code": "link" });
 	}
 
 	// CAPS threshold
 	if (valid && b(guildConfig.automod.modules.caps.enabled)) await caps();
 	async function caps() {
-		const upperCase = content.match(/[\p{Lu}]/gu);
+		const upperCase = message.content.match(/[\p{Lu}]/gu);
 		if (parseInt(guildConfig.automod.modules.caps.threshold.replace(/[^0-9]/, ""), 10) >
-		Math.floor(((upperCase ? upperCase.length : 0) / content.replace(/\s/g, "").length) * 100)) return;
+		Math.floor(((upperCase ? upperCase.length : 0) / message.content.replace(/\s/g, "").length) * 100)) return;
 
-		// Delete and warn
-		await message.delete();
 		reply(message, { "name": "send all caps", "code": "caps" });
 	}
 };
 
 // Reply function
 function reply(message, warning) {
+	const isMember = !message.author;
 	valid = false;
 
 	const embedMessage = {
 		"author":  { "name": "Warning" },
 		"fields":  [
 			[`Do not ${warning.name}!`, stripIndents`
-				The server ${message.guild.name} does not want you to ${warning.name} there.
+				The server ${isMember ? "" : message.guild.name} does not want you to ${warning.name} there.
 				If this was a mistake, you may edit your message without the ${warning.code}.
-			`],
-			["Original message:", message]
+			`]
 		],
 		"footer":  "Action made by AutoMod"
 	};
 
-	if (message.content) {
+	if (!isMember) {
+		message.delete();
+		embedMessage.fields.push(["Original message:", message]);
+
 		embedMessage.message           = message;
 		embedMessage.author.picture    = message.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 });
-	} else embedMessage.author.picture = message.user.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 });
 
-	message.author.send(message.client.embed(embedMessage));
+		return message.author.send(message.client.embed(embedMessage));
+	}
+
+	embedMessage.author.picture = message.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 });
+	message.send(message.client.embed(embedMessage));
 }
 
 // Get rid of '=== "true"'
