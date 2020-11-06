@@ -163,7 +163,6 @@ client.on("message", async message => {
 	reactions(message);
 	guildEvents(message);
 
-	// Increase read/ran values
 	totals.inc("messages");
 });
 
