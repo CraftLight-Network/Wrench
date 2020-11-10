@@ -61,14 +61,14 @@ module.exports = class AsciiCommand extends Command {
 			if (args === "cancel") return message.reply("Cancelled command.");
 
 			// Create and upload figlet to hastebin
-			hastebin.createPaste(figlet.textSync(args, action.replace("_", " ")), {
+			const upload = await hastebin.createPaste(figlet.textSync(args, action.replace("_", " ")), {
 				"raw":          true,
 				"contentType": "text/plain",
 				"server":      "https://hastebin.com"
-			}).then(function(link) {
-				const embedMessage = this.client.embed({ "message": message, "title": "Figlet link:", "description": link });
-				return message.channel.send(embedMessage);
 			});
+
+			const embedMessage = this.client.embed({ "message": message, "title": "Figlet link:", "description": upload });
+			return message.channel.send(embedMessage);
 		}
 	}
 };
