@@ -24,8 +24,7 @@ module.exports = class EmbedCommand extends Command {
 			`,
 			"examples": [
 				`${config.prefix.commands}embed {"footer": "Hello"}`,
-				`
-\`\`\`json
+				`\`\`\`json
 {
 	"author": {
 		"name": "Encode42",
@@ -34,9 +33,7 @@ module.exports = class EmbedCommand extends Command {
 	"title": "Embed title",
 	"description": "Embed description"
 }
-\`\`\`
-				`, `
-\`\`\`json
+\`\`\``, `\`\`\`json
 {
 	"author": { "name": "Cool Guy" }
 	"fields": [
@@ -45,8 +42,7 @@ module.exports = class EmbedCommand extends Command {
 		["Field 3", "This is a field that isn't next to another"]
 	]
 }
-\`\`\`
-			`],
+\`\`\``],
 			"clientPermissions": ["SEND_MESSAGES", "EMBED_LINKS"],
 			"args": [
 				{
@@ -63,10 +59,12 @@ module.exports = class EmbedCommand extends Command {
 	}
 
 	run(message, { embedJSON }) {
-		try {JSON.parse(embedJSON.match(/{[^]+}/))}
-		catch (e) {return message.reply("That is not valid JSON!")}
-
-		const embedMessage = JSON.parse(embedJSON.match(/{[^]+}/));
+		let embedMessage;
+		try {
+			embedMessage = JSON.parse(embedJSON.match(/{[^]+}/));
+			if (!(embedMessage instanceof Object)) throw TypeError;
+		}
+		catch {return message.reply(`That's not valid JSON! Check the examples in \`${config.prefix.commands}help embed\`.`)}
 		embedMessage.message = message;
 
 		if (embedMessage.author) {

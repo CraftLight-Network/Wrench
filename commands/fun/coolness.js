@@ -45,15 +45,13 @@ module.exports = class CoolnessCommand extends Command {
 		const seed   = random.clone(seedrandom(person.split(" ")[0] + date.getMonth().toString() + date.getDate().toString()));
 		let coolness = seed.int(0, 100);
 
-		// Easter-egg
-		// Detect if a person was specified
+		// Easter-egg?
 		let int = person.split(" ");
 		if (int.length > 1) {
 			person = int[0];
 			int    = int[1];
 		}
 
-		// Egg payload
 		if (this.client.range(parseInt(int), 0, 100)) {
 			coolness = parseInt(int);
 			if (person === int[0]) person = message.author.username;

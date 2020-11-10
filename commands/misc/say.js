@@ -36,7 +36,7 @@ module.exports = class SayCommand extends Command {
 	}
 
 	run(message, { toSay }) {
-		if (toSay.length < 1) return;
+		if (toSay.length === 0) return;
 
 		if (message.guild) {message.delete()};
 		return message.say(toSay);

@@ -1,16 +1,10 @@
 // Define and require modules
 const botConfig     = require("../../config");
-const Config        = require("./config");
+// const Config        = require("./config");
 const _             = require("lodash");
 
 module.exports = async (message) => {
-	let guildConfig;
-	if (message.guild) {
-		const config = new Config("guild", message.guild.id);
-		guildConfig = await config.get();
-	}
-
-	if (botConfig.reactions.enabled && (!message.guild || guildConfig.misc.reactions === "true")) checkReactions();
+	if (botConfig.reactions.enabled) checkReactions();
 	function checkReactions() {
 		const reactions = _.cloneDeep(botConfig.reactions.types);
 		reactions.forEach(async e => {
@@ -30,11 +24,11 @@ module.exports = async (message) => {
 			e.emotes.forEach(async m   => await message.react(m));
 		});
 	}
-
-	async function checkMessages(message, regex, limit) {
-		const messages = await message.channel.messages.fetch({ "limit": limit });
-
-		messages.delete(message.id);
-		return messages.some(m => message.client.check(m.content, regex));
-	}
 };
+
+async function checkMessages(message, regex, limit) {
+	const messages = await message.channel.messages.fetch({ "limit": limit });
+
+	messages.delete(message.id);
+	return messages.some(m => message.client.check(m.content, regex));
+}

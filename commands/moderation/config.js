@@ -80,7 +80,7 @@ ${JSON.stringify(guildConfig, null, 2)}
 		}
 
 		// Sanitize property
-		property = property.replace(/[^\w\d.]/, "");
+		property = property.replace(/[^\w.]/, "");
 
 		// Make sure the property exists
 		if (!checkExists()) return message.reply("That config property does not exist.");

@@ -104,7 +104,7 @@ ${JSON.stringify(tagConfig, null, 2)}
 		if (property === "cancel") return message.reply("Cancelled command.");
 
 		// Sanitize property
-		property = property.replace(/[^\w\d.]/, "");
+		property = property.replace(/[^\w.]/, "");
 
 		// Add command
 		if (action === "add") {

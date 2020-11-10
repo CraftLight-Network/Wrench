@@ -24,7 +24,7 @@
 // Define and require modules
 const { CommandoClient }  = require("discord.js-commando");
 const { stripIndents }    = require("common-tags");
-const conf                = require("./config");
+const options             = require("./config");
 const readline            = require("readline");
 const moment              = require("moment");
 const path                = require("path");
@@ -61,9 +61,9 @@ createFolder("./data/private", "./data/private/enmap", "./data/private/logs");
 // Register + create command instance
 const Config = require("./data/js/config");
 const client = new CommandoClient({
-	"owner":                   conf.owners,
-	"invite":                  conf.support,
-	"commandPrefix":           conf.prefix.commands,
+	"owner":                   options.owners,
+	"invite":                  options.support,
+	"commandPrefix":           options.prefix.commands,
 	"commandEditableDuration": 1,
 	"partials":                ["MESSAGE", "CHANNEL", "REACTION", "USER", "GUILD_MEMBER"]
 });
@@ -83,10 +83,10 @@ client.registry
 // Create voice channel join/leave event
 client.on("voiceStateUpdate", (from, to) => {
 	if (from.channelID !== to.channelID) client.emit("voiceJoinLeave", from, to);
-});
+})
 
 // Create message edit event
-client.on("messageUpdate", async (oldMessage, newMessage) => {
+.on("messageUpdate", async (oldMessage, newMessage) => {
 	oldMessage = await client.getMessage(oldMessage);
 	newMessage = await client.getMessage(newMessage);
 
@@ -132,7 +132,7 @@ client.on("ready", () => {
 	log.info(`${totals.get("commands")} commands used | ${totals.get("messages")} messages read | ${totals.get("translations")} translations done`);
 
 	// Set the bots status
-	if (conf.status.enabled) {status(); setInterval(status, conf.status.timeout)};
+	if (options.status.enabled) {status(); setInterval(status, options.status.timeout)};
 
 	async function status() {
 		// Get the status
@@ -148,12 +148,12 @@ client.on("ready", () => {
 
 	// Get a random status
 	async function getStatus() {
-		const status = conf.status.types[Math.floor(Math.random() * conf.status.types.length)];
+		const status = options.status.types[Math.floor(Math.random() * options.status.types.length)];
 		return status.name = await client.placeholders(status.name);
 	}
-});
+})
 
-client.on("message", async message => {
+.on("message", async message => {
 	message = await client.getMessage(message);
 
 	// Ignore bots
@@ -164,10 +164,10 @@ client.on("message", async message => {
 	guildEvents(message);
 
 	totals.inc("messages");
-});
+})
 
 // Run automod and reactions on edited messages
-client.on("messageEdit", async (oldMessage, message) => {
+.on("messageEdit", async (oldMessage, message) => {
 	message = await client.getMessage(message);
 	if (message.author.bot) return;
 
@@ -186,7 +186,7 @@ async function guildEvents(message) {
 		if (guildConfig.automod.enabled === "true" && !client.checkRole(message, guildConfig.automod.modRoleIDs)) automod(message);
 
 		// Tag command
-		if (message.content.indexOf(conf.prefix.tags) === 0 && message.content.includes(" ")) {
+		if (message.content.indexOf(options.prefix.tags) === 0 && message.content.includes(" ")) {
 			const tagCommand = client.registry.commands.find(c => c.name === "tag");
 			tagCommand.run(message, { "action": message.content.slice(1) });
 		}

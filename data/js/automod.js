@@ -13,7 +13,7 @@ async function createBadLinks() {
 
 	// Sanitize and format
 	bad = await hosts.body
-		.replace(/#.*|([0-9]\.){3}[0-9]\s|https?:\/\//gmi, "")
+		.replace(/#.*|(\d\.){3}\d\s|https?:\/\//gim, "")
 		.trim()
 		.split("\n")
 		.slice(14)

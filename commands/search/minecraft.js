@@ -70,7 +70,7 @@ module.exports = class MinecraftCommand extends Command {
 			const playerRequest = await request(`https://api.mojang.com/users/profiles/minecraft/${player}`);
 			uuid = this.client.parseJSON(playerRequest.body).id;
 		} else {
-			uuid = player.toLowerCase().replace(/[^0-9a-z]/g, "");
+			uuid = player.toLowerCase().replace(/[^\da-z]/g, "");
 		}
 
 		// Get name of user

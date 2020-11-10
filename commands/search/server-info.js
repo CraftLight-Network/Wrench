@@ -38,19 +38,13 @@ module.exports = class ServerInfoCommand extends Command {
 	}
 
 	run(message, { action }) {
-		const guild = message.guild;
-		let defaultMessageNotifications, icon, splash;
-
-		const iconURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png?size=4096`;
-		const splashURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.splash}.png?size=4096`;
-
-		// Notifications
-		if (guild.defaultMessageNotifications === "MENTIONS") defaultMessageNotifications = "@mentions";
-		else                                                  defaultMessageNotifications = "All";
-
+		const guild = message.guild; let icon, splash;
+		const defaultMessageNotifications = guild.defaultMessageNotifications === "MENTIONS" ? "@mentions" : "All";
 		const embedMessage = { "message": message, "title": `${guild.name} Info:`, "fields": [] };
 
 		// Server icon & splash image
+		const iconURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png?size=4096`;
+		const splashURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.splash}.png?size=4096`;
 		if (guild.icon) {
 			icon = `[Click](${iconURL})`;
 			embedMessage.thumbnail = iconURL;

@@ -102,7 +102,7 @@ module.exports = class ConvertCommand extends Command {
 		conversions.some(e => {
 			if (!e.aliases.includes(from)) return false;
 
-			e.to.some(i => {
+			return e.to.some(i => {
 				if (!i.aliases.includes(to)) return false;
 				return message.channel.send(this.client.embed({
 					"message": message,

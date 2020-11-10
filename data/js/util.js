@@ -55,7 +55,7 @@ module.exports.run = (client) => {
 		// Add fields
 		if (options.fields) {
 			options.fields.forEach(e => {
-				if (!e[2]) e[2] = false;
+				e[2] = e[2] ? e[2] : false;
 				embed.addField(e[0], e[1], e[2]);
 			});
 		};
@@ -106,10 +106,8 @@ module.exports.run = (client) => {
 
 	// Permission check
 	client.checkRole = (message, roles) => {
-		let hasRole = false;
-		roles.some(r => {if (message.member.roles.cache.has(r)) return hasRole = true;});
-		if (!hasRole && message.author.id !== message.guild.owner.id && !config.owners.includes(message.author.id)) return false;
-		return true;
+		const hasRole = roles.some(r => {return !!message.member.roles.cache.has(r)});
+		return !!(hasRole || message.author.id === message.guild.owner.id || config.owners.includes(message.author.id));
 	};
 
 	client.placeholders = (message, custom) => {
@@ -159,7 +157,7 @@ module.exports.run = (client) => {
 					e.title       ? e.title                       : "",
 					e.author      ? e.author.name                 : "",
 					e.description ? truncate(
-						e.description.replace(/[\r\n]+|  +/gm, ""),
+						e.description.replace(/[\n\r]+|  +/gm, ""),
 						75
 					) : "",
 					e.image       ? truncate(e.image.url, 40)     : "",
@@ -189,19 +187,14 @@ module.exports.run = (client) => {
 
 		function mentions() {
 			const match = message.match(/<@!\d+>/g);
-			if (match) match.forEach(e => message = message.replace(e, client.users.cache.get(e.replace(/[^\d]/g, "")).username));
+			if (match) match.forEach(e => message = message.replace(e, client.users.cache.get(e.replace(/\D/g, "")).username));
 			return message;
 		}
 	};
 
 	// Check if a string includes content from an array
 	client.check = (string, compare) => {
-		let found = false;
-		if (Array.isArray(compare)) {
-			compare.some(c => string.match(new RegExp(c, "gi")));
-		} else if (string.match(compare)) found = true;
-
-		return found;
+		return Array.isArray(compare) ? compare.some(c => {return string.match(new RegExp(c, "gi"))}) : string.match(compare);
 	};
 
 	client.parseJSON = json => {
@@ -213,8 +206,7 @@ module.exports.run = (client) => {
 
 	// Get message from partials
 	client.getMessage = async message => {
-		if (message.partial) return await message.fetch();
-		else return message;
+		return message.partial ? (await message.fetch()) : message;
 	};
 
 	// Misc.
@@ -230,19 +222,16 @@ module.exports.run = (client) => {
 		return false;
 	};
 
-	function truncate(input, length) {return input.length > length ? input.slice(0, length - 1).trim() + "..." : input}
 	client.truncate = truncate;
 
 	client.toArray = (string, char) => {
 		if (string === undefined)  return [];
-		if (Array.isArray(string)) return string;
-		else return string.split(char);
+		return Array.isArray(string) ? string : string.split(char);
 	};
 
 	client.toString = (array, char) => {
 		if (array === undefined)   return "";
-		if (!Array.isArray(array)) return array;
-		else return array.join(char);
+		return !Array.isArray(array) ? array : array.join(char);
 	};
 
 	client.sleep = ms => {
@@ -255,3 +244,5 @@ module.exports.run = (client) => {
 	client.range = (x, min, max) => {return (x - min) * (x - max) <= 0};
 	client.difference = (x, y) => {return Math.abs(x - y) / ((x + y) / 2)};
 };
+
+function truncate(input, length) {return input.length > length ? input.slice(0, length - 1).trim() + "..." : input}
