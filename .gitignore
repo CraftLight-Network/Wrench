@@ -4,11 +4,11 @@
 
 # OS files
 .DS_Store
-Thumbs.db
-desktop.ini
 /.vscode
+desktop.ini
+Thumbs.db
 
 # Private files
-auth.json
 /data/private
+auth.json
 packagehash.txt

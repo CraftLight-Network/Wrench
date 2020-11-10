@@ -95,7 +95,7 @@ module.exports.run = (client) => {
 
 			// Set result to input
 			await result.find(i => result = i.content);
-			if (options.cancel) if (result === "cancel") break;
+			if (options.cancel && result === "cancel") break;
 
 			// Validate input
 			if (!options.validate) break;

@@ -117,7 +117,7 @@ ${JSON.stringify(guildConfig, null, 2)}
 
 		// Function to check if a config value is an array
 		function isArray() {
-			if (path.query(guildConfig, `$.${property}`)[0] instanceof Array) return true;
+			if (Array.isArray(path.query(guildConfig, `$.${property}`)[0])) return true;
 			return false;
 		}
 	}

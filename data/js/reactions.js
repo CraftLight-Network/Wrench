@@ -17,7 +17,7 @@ module.exports = async (message) => {
 			if (!message.content.match(e.regex)) return;
 
 			// Checks
-			if (e.checkPrevious) if (await checkMessages(message, e.regex, e.checkPrevious)) return;
+			if (e.checkPrevious && await checkMessages(message, e.regex, e.checkPrevious)) return;
 
 			// Payloads
 			e.messages.forEach(async m => await message.channel.send(m));
