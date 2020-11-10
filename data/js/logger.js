@@ -109,7 +109,7 @@ module.exports.logger = function logger(client, totals) {
 				member.roles.add(e);
 			});
 		}
-	});
+	})
 
 	// Leave
 	.on("guildMemberRemove", async member => {
@@ -120,7 +120,7 @@ module.exports.logger = function logger(client, totals) {
 			"channel": guildConfig.leave.message.channelID,
 			"message": guildConfig.leave.message.message
 		}, member);
-	});
+	})
 
 	/* ### Log events ### */
 	// Member join
