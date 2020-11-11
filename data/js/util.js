@@ -193,8 +193,9 @@ module.exports.run = (client) => {
 	};
 
 	// Check if a string includes content from an array
-	client.check = (string, compare) => {
-		return Array.isArray(compare) ? compare.some(c => {return string.match(new RegExp(c, "gi"))}) : string.match(compare);
+	client.check = (string, compare, performance) => {
+		if (performance) return string.some(s => {return compare.includes(s)});
+		return Array.isArray(compare) ? compare.some(c => {return new RegExp(c, "i").test(string)}) : compare.test(string);
 	};
 
 	client.parseJSON = json => {
