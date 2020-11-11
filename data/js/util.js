@@ -206,7 +206,7 @@ module.exports.run = (client) => {
 
 	// Get message from partials
 	client.getMessage = async message => {
-		return message.partial ? (await message.fetch()) : message;
+		return message.partial ? await message.fetch() : message;
 	};
 
 	// Misc.

@@ -91,9 +91,7 @@ client.on("voiceStateUpdate", (from, to) => {
 	newMessage = await client.getMessage(newMessage);
 
 	// Make sure the edit is really an edit
-	if (oldMessage.content       === newMessage.content ||
-		oldMessage.pinned        !== newMessage.pinned  ||
-		oldMessage.embeds.length !== newMessage.embeds.length) return;
+	if (oldMessage.content === newMessage.content) return;
 	client.emit("messageEdit", oldMessage, newMessage);
 });
 
@@ -154,10 +152,8 @@ client.on("ready", () => {
 })
 
 .on("message", async message => {
-	message = await client.getMessage(message);
-
-	// Ignore bots
 	if (message.author.bot) return;
+	message = await client.getMessage(message);
 
 	// Run events
 	reactions(message);
@@ -168,7 +164,6 @@ client.on("ready", () => {
 
 // Run automod and reactions on edited messages
 .on("messageEdit", async (oldMessage, message) => {
-	message = await client.getMessage(message);
 	if (message.author.bot) return;
 
 	// Run events
@@ -183,7 +178,7 @@ async function guildEvents(message) {
 		const guildConfig = await config.get();
 
 		// Run automod and reactions
-		if (guildConfig.automod.enabled === "true" && !client.checkRole(message, guildConfig.automod.modRoleIDs)) automod(message);
+		if (guildConfig.automod.enabled && !client.checkRole(message, guildConfig.automod.adminID)) automod(message);
 
 		// Tag command
 		if (message.content.indexOf(options.prefix.tags) === 0 && message.content.includes(" ")) {

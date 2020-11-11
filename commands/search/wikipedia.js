@@ -46,7 +46,7 @@ module.exports = class WikipediaCommand extends Command {
 
 			// Detect whether or not there are multiple results
 			const summary = await result.summary();
-			if (summary.match(/may refer to:/)) {
+			if (summary.includes("may refer to:")) {
 				embedMessage.description = stripIndents`
 					**Multiple results found:**
 					${this.client.truncate((await result.links()).join(", "), 250)}

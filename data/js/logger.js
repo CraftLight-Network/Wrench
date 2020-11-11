@@ -97,14 +97,14 @@ module.exports.logger = function logger(client, totals) {
 		const guildConfig = await getConfig(member.guild.id);
 
 		// Message
-		if (guildConfig.join.message.enabled === "true") sendMessage({
+		if (guildConfig.join.message.enabled) sendMessage({
 			"placeholders": true,
 			"channel": guildConfig.join.message.channelID,
 			"message": guildConfig.join.message.message
 		}, member);
 
 		// Role
-		if (guildConfig.join.role.enabled === "true") {
+		if (guildConfig.join.role.enabled) {
 			guildConfig.join.role.roleIDs.forEach(e => {
 				member.roles.add(e);
 			});
@@ -115,7 +115,7 @@ module.exports.logger = function logger(client, totals) {
 	.on("guildMemberRemove", async member => {
 		const guildConfig = await getConfig(member.guild.id);
 
-		if (guildConfig.leave.message.enabled === "true") sendMessage({
+		if (!guildConfig.leave.message.enabled) sendMessage({
 			"placeholders": true,
 			"channel": guildConfig.leave.message.channelID,
 			"message": guildConfig.leave.message.message
