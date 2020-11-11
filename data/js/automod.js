@@ -109,7 +109,7 @@ function reply(message, warning) {
 				If this was a mistake, you may edit your message without the ${warning.code}.
 			`]
 		],
-		"footer":  "Action made by AutoMod"
+		"footer":  "AutoMod v1.0 (11.11.2020)"
 	};
 
 	if (!isMember) {
@@ -125,6 +125,3 @@ function reply(message, warning) {
 	embedMessage.author.picture = message.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 });
 	message.send(message.client.embed(embedMessage));
 }
-
-/*
-// Define and require modules
