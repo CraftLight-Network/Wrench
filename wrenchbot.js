@@ -24,7 +24,7 @@
 // Define and require modules
 const { CommandoClient }  = require("discord.js-commando");
 const { stripIndents }    = require("common-tags");
-const conf                = require("./config");
+const options             = require("./config");
 const readline            = require("readline");
 const moment              = require("moment");
 const path                = require("path");
@@ -56,14 +56,14 @@ function createFolder(...dirs) {
 		if (!fs.existsSync(dir)) fs.mkdirSync(dir);
 	});
 }
-createFolder("./data/private", "./data/private/enmap", "./data/private/logs");
+createFolder("./data/private", "./data/private/database", "./data/private/logs");
 
 // Register + create command instance
 const Config = require("./data/js/config");
 const client = new CommandoClient({
-	"owner":                   conf.owners,
-	"invite":                  conf.support,
-	"commandPrefix":           conf.prefix.commands,
+	"owner":                   options.owners,
+	"invite":                  options.support,
+	"commandPrefix":           options.prefix.commands,
 	"commandEditableDuration": 1,
 	"partials":                ["MESSAGE", "CHANNEL", "REACTION", "USER", "GUILD_MEMBER"]
 });
@@ -83,26 +83,26 @@ client.registry
 // Create voice channel join/leave event
 client.on("voiceStateUpdate", (from, to) => {
 	if (from.channelID !== to.channelID) client.emit("voiceJoinLeave", from, to);
-});
+})
 
 // Create message edit event
-client.on("messageUpdate", async (oldMessage, newMessage) => {
+.on("messageUpdate", async (oldMessage, newMessage) => {
 	oldMessage = await client.getMessage(oldMessage);
 	newMessage = await client.getMessage(newMessage);
 
 	// Make sure the edit is really an edit
-	if (oldMessage.content       === newMessage.content ||
-		oldMessage.pinned        !== newMessage.pinned  ||
-		oldMessage.embeds.length !== newMessage.embeds.length) return;
+	if (oldMessage.content === newMessage.content) return;
 	client.emit("messageEdit", oldMessage, newMessage);
 });
 
-// Get Enmap
-const totals = require("./data/js/enmap").totals;
+// Get database
+const totals = require("./data/js/config").totals;
 
 // Logger
 const { log, logger } = require("./data/js/logger");
-logger(client, totals);
+logger(client/* , totals */);
+
+if (fs.existsSync("./data/private/enmap")) require("./data/js/config").migrateFromEnmap(log);
 
 // Get utilities
 listen(["./data/js/util.js"]);
@@ -124,15 +124,15 @@ function listen(files) {
 const automod   = require("./data/js/automod");
 const reactions = require("./data/js/reactions");
 
-client.on("ready", () => {
+client.on("ready", async () => {
 	log.ok("------------------------------------------");
 	log.ok(` WrenchBot START ON: ${moment().format("MM/DD/YY hh:mm:ss A")}`);
 	log.ok("------------------------------------------");
-	log.info(`Name: ${client.user.tag} | ID: ${client.user.id} | ${client.guilds.cache.size} servers`);
-	log.info(`${totals.get("commands")} commands used | ${totals.get("messages")} messages read | ${totals.get("translations")} translations done`);
+	log.info(`Name: ${client.user.tag} | ID: ${client.user.id}`);
+	log.info(`${await totals.get("commands")} commands used | ${await totals.get("messages")} messages read | ${client.guilds.cache.size} servers`);
 
 	// Set the bots status
-	if (conf.status.enabled) {status(); setInterval(status, conf.status.timeout)};
+	if (options.status.enabled) {status(); setInterval(status, options.status.timeout)};
 
 	async function status() {
 		// Get the status
@@ -148,60 +148,42 @@ client.on("ready", () => {
 
 	// Get a random status
 	async function getStatus() {
-		const status = conf.status.types[Math.floor(Math.random() * conf.status.types.length)];
-		return status.name = await client.placeholders(status.name);
+		const status = options.status.types[Math.floor(Math.random() * options.status.types.length)];
+		status.name = await client.placeholders(status.name);
+		return status;
 	}
-});
+})
 
-client.on("message", async message => {
-	message = await client.getMessage(message);
-
-	// Ignore bots
+.on("message", async message => {
 	if (message.author.bot) return;
+	message = await client.getMessage(message);
 
 	// Run events
 	reactions(message);
 	guildEvents(message);
 
-	totals.inc("messages");
-});
+	// totals.inc("messages");
+})
 
 // Run automod and reactions on edited messages
-client.on("messageEdit", async (oldMessage, message) => {
-	message = await client.getMessage(message);
+.on("messageEdit", async (oldMessage, message) => {
 	if (message.author.bot) return;
 
 	// Run events
 	reactions(message);
 	guildEvents(message);
-});
-
-// Guild-only events
-async function guildEvents(message) {
-	if (message.guild) {
-		const config = new Config("guild", message.guild.id);
-		const guildConfig = await config.get();
-
-		// Run automod and reactions
-		if (guildConfig.automod.enabled === "true" && !client.checkRole(message, guildConfig.automod.modRoleIDs)) automod(message);
-
-		// Tag command
-		if (message.content.indexOf(conf.prefix.tags) === 0 && message.content.includes(" ")) {
-			const tagCommand = client.registry.commands.find(c => c.name === "tag");
-			tagCommand.run(message, { "action": message.content.slice(1) });
-		}
-	}
-}
+})
 
 // Voice chat text channel role
-client.on("voiceJoinLeave", async (from, to) => {
-	const config = new Config("guild", to.guild.id);
+.on("voiceJoinLeave", async (from, to) => {
+	const config = new Config("guild", to.guild);
 	const guildConfig = await config.get();
+	if (guildConfig === "breaking") return;
 
-	if (!guildConfig.misc.vcText.enabled) return;
+	if (!guildConfig.misc.voicechat.enabled) return;
 
 	// Get each channel/role ID
-	guildConfig.misc.vcText.IDs.forEach(e => {
+	guildConfig.misc.voicechat.ID.forEach(e => {
 		const ids = e.split(",");
 
 		// Add/remove role
@@ -209,6 +191,24 @@ client.on("voiceJoinLeave", async (from, to) => {
 		else if (to.member.roles.cache.has(ids[1])) to.member.roles.remove(ids[1]);
 	});
 });
+
+// Guild-only events
+async function guildEvents(message) {
+	if (message.guild) {
+		const config = new Config("guild", message.guild);
+		const guildConfig = await config.get();
+		if (guildConfig === "breaking") return;
+
+		// Run automod and reactions
+		if (guildConfig.automod.enabled && !client.checkRole(message, guildConfig.automod.adminID)) automod(message);
+
+		// Tag command
+		if (message.content.indexOf(options.prefix.tags) === 0 && message.content.includes(" ")) {
+			const tagCommand = client.registry.commands.find(c => c.name === "tag");
+			tagCommand.run(message, { "action": message.content.slice(1) });
+		}
+	}
+}
 
 // Finally, log it in
 client.login(require("./auth").token);

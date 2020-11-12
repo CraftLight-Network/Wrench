@@ -1,40 +1,30 @@
 // Define and require modules
-const botConfig     = require("../../config");
-const Config        = require("./config");
-const _             = require("lodash");
+const botConfig = require("../../config");
 
 module.exports = async (message) => {
-	let guildConfig;
-	if (message.guild) {
-		const config = new Config("guild", message.guild.id);
-		guildConfig = await config.get();
-	}
+	if (botConfig.reactions.enabled) {
+		botConfig.reactions.types.forEach(async e => {
+			const flags = e.flags ? e.flags : "i";
+			const regex = e.fullWord ? new RegExp(`\\b${e.regex.replace(/\|/g, "\\b|\\b")}`, flags) : new RegExp(e.regex, flags);
 
-	if (botConfig.reactions.enabled && (!message.guild || guildConfig.misc.reactions === "true")) checkReactions();
-	function checkReactions() {
-		const reactions = _.cloneDeep(botConfig.reactions.types);
-		reactions.forEach(async e => {
-			if (e.flags === undefined) e.flags = "i";
-			if (e.fullWord) e.regex = new RegExp(`\\b${e.regex.replace(/\|/g, "\\b|\\b")}`, e.flags);
-			else e.regex = new RegExp(e.regex, e.flags);
+			if (!regex.test(message.content)) return;
 
-			e.messages = message.client.toArray(e.messages, "|");
-			e.emotes   = message.client.toArray(e.emotes,   "|");
-			if (!message.content.match(e.regex)) return;
+			const messages = message.client.toArray(e.messages, "|");
+			const emotes   = message.client.toArray(e.emotes,   "|");
 
 			// Checks
-			if (e.checkPrevious) if (await checkMessages(message, e.regex, e.checkPrevious)) return;
+			if (e.checkPrevious && await checkMessages(message, regex, e.checkPrevious)) return;
 
 			// Payloads
-			e.messages.forEach(async m => await message.channel.send(m));
-			e.emotes.forEach(async m   => await message.react(m));
+			messages.forEach(async m => message.channel.send(m));
+			emotes.forEach(async m   => message.react(m));
 		});
 	}
-
-	async function checkMessages(message, regex, limit) {
-		const messages = await message.channel.messages.fetch({ "limit": limit });
-
-		messages.delete(message.id);
-		return messages.some(m => message.client.check(m.content, regex));
-	}
 };
+
+async function checkMessages(message, regex, limit) {
+	const messages = await message.channel.messages.fetch({ "limit": limit });
+	messages.delete(message.id);
+
+	return messages.some(m => {return message.client.check(m.content, regex)});
+}

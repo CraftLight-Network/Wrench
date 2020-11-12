@@ -2,7 +2,7 @@
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
 const Config           = require("../../data/js/config");
-const config           = require("../../config");
+const options          = require("../../config");
 
 module.exports = class PurgeCommand extends Command {
 	constructor(client) {
@@ -12,7 +12,7 @@ module.exports = class PurgeCommand extends Command {
 			"group": "moderation",
 			"description": "Purge messages from chat or from a specific user.",
 			"details": stripIndents`
-				Run \`${config.prefix.commands}purge <amount> [user]\` to purge messages.
+				Run \`${options.prefix.commands}purge <amount> [user]\` to purge messages.
 				**Notes:**
 				<amount>: Required, how many messages to delete. Use "\`all\`" to remove all messages.
 				[user]: Optional, what user to delete messages for.
@@ -47,11 +47,13 @@ module.exports = class PurgeCommand extends Command {
 
 	async run(message, { amount, user }) {
 		if (!isNaN(parseInt(amount))) amount = parseInt(amount);
-		const config = new Config("guild", message.guild.id);
+		const config = new Config("guild", message.guild);
 		const guildConfig = await config.get();
+		if (guildConfig === "breaking")
+			return message.reply(`This server's config must be migrated, but some steps have breaking changes! Please run \`${options.prefix.commands}migrate\`.`);
 
 		// Permission check
-		if (!this.client.checkRole(message, guildConfig.automod.modRoleIDs)) return message.reply("You do not have permission to use this command.");
+		if (!this.client.checkRole(message, guildConfig.automod.adminID)) return message.reply("You do not have permission to use this command.");
 
 		// Purge entire channel
 		if (amount === "all") {

@@ -1,0 +1,89 @@
+{
+	"automod": {
+		"enabled": "boolean",
+		"adminID": "guildRoleID",
+		"modules": {
+			"spam": {
+				"enabled":     "boolean",
+				"threshold":   "int",
+				"adminBypass": "boolean"
+			},
+			"invites": {
+				"enabled":     "boolean",
+				"adminBypass": "boolean"
+			},
+			"badLinks": {
+				"enabled":     "boolean",
+				"level":       "min|med|max",
+				"adminBypass": "boolean"
+			},
+			"caps": {
+				"enabled":     "boolean",
+				"threshold":   "percent",
+				"adminBypass": "boolean"
+			},
+			"blacklisted": {
+				"enabled":     "boolean",
+				"words":       "string",
+				"adminBypass": "boolean"
+			}
+		}
+	},
+	"join": {
+		"message": {
+			"enabled":   "boolean",
+			"channelID": "guildChannelID",
+			"message":   "string"
+		},
+		"role": {
+			"enabled": "boolean",
+			"roleID":  "guildRoleID"
+		}
+	},
+	"leave": {
+		"message": {
+			"enabled":   "boolean",
+			"channelID": "guildChannelID",
+			"message":   "string"
+		}
+	},
+	"log": {
+		"enabled":   "boolean",
+		"channelID": "guildChannelID",
+		"modules": {
+			"moderation": "boolean",
+			"server":     "boolean",
+			"member":     "boolean",
+			"message":    "boolean",
+			"channel":    "boolean",
+			"emoji":      "boolean"
+		}
+	},
+	"misc": {
+		"bot": {
+			"enabled":   "boolean",
+			"channelID": "guildChannelID"
+		},
+		"voicechat": {
+			"enabled": "boolean",
+			"ID":      "guildChannelID,guildRoleID"
+		},
+		"advert": {
+			"enabled":   "boolean",
+			"channelID": "guildChannelID"
+		},
+		"spam": {
+			"enabled":   "boolean",
+			"channelID": "guildChannelID"
+		},
+		"nsfw": {
+			"enabled":   "boolean",
+			"channelID": "guildChannelID"
+		},
+		"counting": {
+			"enabled":   "boolean",
+			"channelID": "guildChannelID"
+		}
+	},
+	"version": "static"
+}

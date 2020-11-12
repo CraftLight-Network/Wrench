@@ -3,8 +3,7 @@ const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
 const TokenBucket      = require("limiter").TokenBucket;
 const translator       = require("baidu-translate-api");
-const totals           = require("../../data/js/enmap").totals;
-const config           = require("../../config");
+const options          = require("../../config");
 
 // Ratelimits
 const monthBucket = new TokenBucket("10000000", "month", null);
@@ -27,7 +26,7 @@ module.exports = class TranslateCommand extends Command {
 			"group":       "misc",
 			"description": "Translate a message from one language to another.",
 			"details": stripIndents`
-				Run \`${config.prefix.commands}translate <from> <to> <message>\` to translate a message.
+				Run \`${options.prefix.commands}translate <from> <to> <message>\` to translate a message.
 				**Notes:**
 				<from>: Required, the source language.
 				<to>: Required, the destination language.
@@ -69,7 +68,6 @@ module.exports = class TranslateCommand extends Command {
 
 		// Translate the message
 		translator(translation, { "from": from, "to": to }).then(translated => {
-			totals.inc("translations");
 			return message.channel.send(this.client.embed({
 				"author": {
 					"name":    `${message.author.username} (${translated.from}-${translated.to})`,

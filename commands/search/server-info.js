@@ -1,7 +1,7 @@
 // Define and require modules
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const config           = require("../../config");
+const options          = require("../../config");
 const moment           = require("moment");
 
 const actions = ["standard", "advanced", "all"];
@@ -14,7 +14,7 @@ module.exports = class ServerInfoCommand extends Command {
 			"group":       "search",
 			"description": "View information about the server you are in.",
 			"details": stripIndents`
-				Run \`${config.prefix.commands}server-info [level]\` to view server info.
+				Run \`${options.prefix.commands}server-info [level]\` to view server info.
 				**Notes:**
 				[action]: Optional, what level to grab server info at.
 
@@ -38,19 +38,13 @@ module.exports = class ServerInfoCommand extends Command {
 	}
 
 	run(message, { action }) {
-		const guild = message.guild;
-		let defaultMessageNotifications, icon, splash;
-
-		const iconURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png?size=4096`;
-		const splashURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.splash}.png?size=4096`;
-
-		// Notifications
-		if (guild.defaultMessageNotifications === "MENTIONS") defaultMessageNotifications = "@mentions";
-		else                                                  defaultMessageNotifications = "All";
-
+		const guild = message.guild; let icon, splash;
+		const defaultMessageNotifications = guild.defaultMessageNotifications === "MENTIONS" ? "@mentions" : "All";
 		const embedMessage = { "message": message, "title": `${guild.name} Info:`, "fields": [] };
 
 		// Server icon & splash image
+		const iconURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.icon}.png?size=4096`;
+		const splashURL = `https://cdn.discordapp.com/icons/${guild.id}/${guild.splash}.png?size=4096`;
 		if (guild.icon) {
 			icon = `[Click](${iconURL})`;
 			embedMessage.thumbnail = iconURL;

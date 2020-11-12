@@ -2,7 +2,7 @@
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
 const request          = require("async-request");
-const config           = require("../../config");
+const options          = require("../../config");
 const random           = require("random");
 
 const actions   = ["skin", "info"];
@@ -17,7 +17,7 @@ module.exports = class MinecraftCommand extends Command {
 			"group":       "search",
 			"description": "Get information on a Minecraft player.",
 			"details": stripIndents`
-				Run \`${config.prefix.commands}minecraft <action> (player) (args)\` to use commands.
+				Run \`${options.prefix.commands}minecraft <action> (player) (args)\` to use commands.
 				**Notes:**
 				<action>: Required, what to do.
 				(player): Required depending on action, in-game name or UUID of the player.
@@ -70,7 +70,7 @@ module.exports = class MinecraftCommand extends Command {
 			const playerRequest = await request(`https://api.mojang.com/users/profiles/minecraft/${player}`);
 			uuid = this.client.parseJSON(playerRequest.body).id;
 		} else {
-			uuid = player.toLowerCase().replace(/[^0-9a-z]/g, "");
+			uuid = player.toLowerCase().replace(/[^\da-z]/g, "");
 		}
 
 		// Get name of user

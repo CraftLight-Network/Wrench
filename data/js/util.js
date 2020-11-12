@@ -1,10 +1,9 @@
 // Define and require modules
 const { stripIndents } = require("common-tags");
+const totals           = require("../../data/js/config").totals;
 const Embed            = require("discord.js").MessageEmbed;
-const totals           = require("../../data/js/enmap").totals;
-const config           = require("../../config");
-const path             = require("jsonpath");
-const fs               = require("fs");
+const options          = require("../../config");
+const _                = require("lodash");
 
 module.exports.run = (client) => {
 	/**
@@ -42,11 +41,9 @@ module.exports.run = (client) => {
 		if (options.attachments) embed.attachFiles(options.attachments);
 
 		// Add author
-		if (options.author) {
-			embed.setAuthor(options.author.name, options.author.picture);
-		}
+		if (options.author) embed.setAuthor(options.author.name, options.author.picture);
 
-		// Add title, url, thumbnail, and description
+		// Add content, title, url, thumbnail, and description
 		if (options.title)                embed.setTitle(options.title);
 		if (options.title && options.url) embed.setURL(options.url);
 		if (options.thumbnail)            embed.setThumbnail(options.thumbnail);
@@ -55,7 +52,7 @@ module.exports.run = (client) => {
 		// Add fields
 		if (options.fields) {
 			options.fields.forEach(e => {
-				if (!e[2]) e[2] = false;
+				e[2] = e[2] ? e[2] : false;
 				embed.addField(e[0], e[1], e[2]);
 			});
 		};
@@ -95,7 +92,7 @@ module.exports.run = (client) => {
 
 			// Set result to input
 			await result.find(i => result = i.content);
-			if (options.cancel) if (result === "cancel") break;
+			if (options.cancel && result === "cancel") break;
 
 			// Validate input
 			if (!options.validate) break;
@@ -106,22 +103,19 @@ module.exports.run = (client) => {
 
 	// Permission check
 	client.checkRole = (message, roles) => {
-		let hasRole = false;
-		roles.some(r => {if (message.member.roles.cache.has(r)) return hasRole = true;});
-		if (!hasRole && message.author.id !== message.guild.owner.id && !config.owners.includes(message.author.id)) return false;
-		return true;
+		const hasRole = roles ? roles.some(r => {return !!message.member.roles.cache.has(r)}) : false;
+		return !!(hasRole || message.author.id === message.guild.owner.id || options.owners.includes(message.author.id));
 	};
 
-	client.placeholders = (message, custom) => {
+	client.placeholders = async (message, custom) => {
 		// Pre-set placeholders
 		const placeholders = {
-			"%prefix%":             config.prefix.commands,
-			"%prefix_tags%":        config.prefix.tags,
+			"%prefix%":             options.prefix.commands,
+			"%prefix_tags%":        options.prefix.tags,
 			"%total_servers%":      client.guilds.cache.size,
-			"%total_commands%":     totals.get("commands"),
-			"%total_messages%":     totals.get("messages"),
-			"%total_translations%": totals.get("translations"),
-			"%total_automod%":      totals.get("automod")
+			"%total_commands%":     await totals.get("commands"),
+			"%total_messages%":     await totals.get("messages"),
+			"%total_automod%":      await totals.get("automod")
 		};
 
 		// Custom placeholders
@@ -159,7 +153,7 @@ module.exports.run = (client) => {
 					e.title       ? e.title                       : "",
 					e.author      ? e.author.name                 : "",
 					e.description ? truncate(
-						e.description.replace(/[\r\n]+|  +/gm, ""),
+						e.description.replace(/[\n\r]+|  +/gm, ""),
 						75
 					) : "",
 					e.image       ? truncate(e.image.url, 40)     : "",
@@ -176,36 +170,32 @@ module.exports.run = (client) => {
 		return message.content += embeds;
 	};
 
-	// Create multiple directories if non-existent
-	client.createFolder = (...dirs) => {
-		dirs.forEach(dir => {
-			if (!fs.existsSync(dir)) fs.mkdirSync(dir);
-		});
-	};
-
 	// Replace mentions with users
 	client.translate = (message, mode) => {
 		if (mode === "mentions") return mentions();
 
 		function mentions() {
 			const match = message.match(/<@!\d+>/g);
-			if (match) match.forEach(e => message = message.replace(e, client.users.cache.get(e.replace(/[^\d]/g, "")).username));
+			if (match) match.forEach(e => message = message.replace(e, client.users.cache.get(e.replace(/\D/g, "")).username));
 			return message;
 		}
 	};
 
 	// Check if a string includes content from an array
-	client.check = (string, compare) => {
-		let found = false;
-		if (Array.isArray(compare)) {
-			compare.some(c => string.match(new RegExp(c, "gi")));
-		} else if (string.match(compare)) found = true;
-
-		return found;
+	client.check = (string, compare, performance) => {
+		if (performance) return string.some(s => {return compare.includes(s)});
+		return Array.isArray(compare) ? compare.some(c => {return new RegExp(c, "i").test(string)}) : compare.test(string);
 	};
 
 	client.parseJSON = json => {
-		let output = {};
+		let output  = {};
+		try {output = JSON.parse(json)} catch {}
+
+		return output;
+	};
+
+	client.stringJSON = json => {
+		let output  = json;
 		try {output = JSON.parse(json)} catch {}
 
 		return output;
@@ -213,36 +203,32 @@ module.exports.run = (client) => {
 
 	// Get message from partials
 	client.getMessage = async message => {
-		if (message.partial) return await message.fetch();
-		else return message;
+		return message.partial ? await message.fetch() : message;
 	};
 
 	// Misc.
 	client.isCommand = (message, command) => {
-		if (message.content.charAt(0) === config.prefix.commands) message.content = message.content.slice(1, message.content.length);
+		if (message.content.charAt(0) === options.prefix.commands) message.content = message.content.slice(1, message.content.length);
 		if (message.content === command) return true;
 	};
 
-	client.removeCommand = (message, command) => message.replace(`${config.prefix.commands}${command.name} `, "");
+	client.removeCommand = (message, command) => message.replace(`${options.prefix.commands}${command.name} `, "");
 
-	client.checkPropertyExists = (config, property) => {
-		if (path.query(config, `$.${property}`)[0] !== undefined) return true;
-		return false;
+	client.checkExists = (config, property) => {
+		const element = _.get(config, property);
+		return !(element === undefined || (typeof element === "object" && !Array.isArray(element)));
 	};
 
-	function truncate(input, length) {return input.length > length ? input.slice(0, length - 1).trim() + "..." : input}
 	client.truncate = truncate;
 
 	client.toArray = (string, char) => {
 		if (string === undefined)  return [];
-		if (Array.isArray(string)) return string;
-		else return string.split(char);
+		return Array.isArray(string) ? string : string.split(char);
 	};
 
 	client.toString = (array, char) => {
 		if (array === undefined)   return "";
-		if (!Array.isArray(array)) return array;
-		else return array.join(char);
+		return !Array.isArray(array) ? array : array.join(char);
 	};
 
 	client.sleep = ms => {
@@ -255,3 +241,5 @@ module.exports.run = (client) => {
 	client.range = (x, min, max) => {return (x - min) * (x - max) <= 0};
 	client.difference = (x, y) => {return Math.abs(x - y) / ((x + y) / 2)};
 };
+
+function truncate(input, length) {return input.length > length ? input.slice(0, length - 1).trim() + "..." : input}

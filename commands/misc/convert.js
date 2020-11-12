@@ -1,7 +1,7 @@
 // Define and require modules
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const config           = require("../../config");
+const options          = require("../../config");
 
 const u = {
 	"fahrenheit": ["f", "fahrenheit", "fahrenhiet", "farenheight", "farenhieght"],
@@ -66,7 +66,7 @@ module.exports = class ConvertCommand extends Command {
 			"group":       "misc",
 			"description": "Convert one unit to another.",
 			"details": stripIndents`
-				Run \`${config.prefix.commands}unit <from> <to> <unit>\` to convert units.
+				Run \`${options.prefix.commands}unit <from> <to> <unit>\` to convert units.
 				**Notes:**
 				<from>: Required, what to convert the unit from.
 				<to>: Required, what to convert the unit to.
@@ -102,7 +102,7 @@ module.exports = class ConvertCommand extends Command {
 		conversions.some(e => {
 			if (!e.aliases.includes(from)) return false;
 
-			e.to.some(i => {
+			return e.to.some(i => {
 				if (!i.aliases.includes(to)) return false;
 				return message.channel.send(this.client.embed({
 					"message": message,

@@ -13,7 +13,7 @@ async function createBadLinks() {
 
 	// Sanitize and format
 	bad = await hosts.body
-		.replace(/#.*|([0-9]\.){3}[0-9]\s|https?:\/\//gmi, "")
+		.replace(/#.*|(\d\.){3}\d\s|https?:\/\//gim, "")
 		.trim()
 		.split("\n")
 		.slice(14)
@@ -45,11 +45,41 @@ let valid = true;
 module.exports = async (message) => {
 	if (!message.guild) return;
 
-	const config = new Config("guild", message.guild.id);
+	const config = new Config("guild", message.guild);
 	const guildConfig = await config.get();
+	if (guildConfig === "breaking") return;
+
+	// SPAM SPAM SPAM
+	if (valid && guildConfig.automod.modules.spam.enabled) await spam();
+	async function spam() {
+		antiSpam.message(message);
+
+		// Check for unique words
+		const c = message.content.split(" ").filter(Boolean);
+		if (c.length / parseInt(guildConfig.automod.modules.spam.threshold, 10) < [...new Set(c)].length) return;
+
+		reply(message, { "name": "spam", "code": "spam" });
+	};
+
+	// Invite detection
+	if (valid && guildConfig.automod.modules.invites.enabled) await invites();
+	async function invites() {
+		if (!/discord(app)?.(com\/invite|gg)/.test(message.content)) return;
+		reply(message, { "name": "send invite links", "code": "invite" });
+	}
+
+	// CAPS threshold
+	if (valid && guildConfig.automod.modules.caps.enabled) await caps();
+	async function caps() {
+		const upperCase = message.content.match(/[\p{Lu}]/gu);
+		if (parseInt(guildConfig.automod.modules.caps.threshold.replace(/\D/, ""), 10) >
+		Math.floor(((upperCase ? upperCase.length : 0) / message.content.replace(/\s/g, "").length) * 100)) return;
+
+		reply(message, { "name": "send all caps", "code": "caps" });
+	}
 
 	// Blacklisted words
-	if (b(guildConfig.automod.modules.blacklisted.enabled)) await blacklisted();
+	if (guildConfig.automod.modules.blacklisted.enabled) await blacklisted();
 	async function blacklisted() {
 		if (!message.client.check(message.content,
 			new RegExp(message.client.toString(guildConfig.automod.modules.blacklisted.words, "|", "i")))) return;
@@ -57,43 +87,13 @@ module.exports = async (message) => {
 		reply(message, { "name": "send blacklisted words", "code": "blacklisted words" });
 	}
 
-	// Invite detection
-	if (valid && guildConfig.automod.modules.invites.enabled) await invites();
-	async function invites() {
-		if (!message.content.match(/discord(app)?.(com\/invite|gg)/)) return;
-
-		reply(message, { "name": "send invite links", "code": "invite" });
-	}
-
-	// SPAM SPAM SPAM
-	if (valid && b(guildConfig.automod.modules.spam.enabled)) await spam();
-	async function spam() {
-		antiSpam.message(message);
-
-		// Check for unique words
-		const c = message.content.split(" ").map(s => s.trim().replace(/[ ]/g, ""));
-		if (c.length / parseInt(guildConfig.automod.modules.spam.threshold, 10) < [...new Set(c)].length) return;
-
-		reply(message, { "name": "spam", "code": "spam" });
-	};
-
 	// Bad links
-	if (valid && b(guildConfig.automod.modules.badLinks)) await badLinks();
+	if (valid && guildConfig.automod.modules.badLinks) await badLinks();
 	async function badLinks() {
-		if (!message.content.split(" ").some(c => bad.includes(c))) return;
+		if (!message.client.check(message.content.split(" "), bad, true)) return;
 
 		// Delete and warn
 		reply(message, { "name": "send bad links", "code": "link" });
-	}
-
-	// CAPS threshold
-	if (valid && b(guildConfig.automod.modules.caps.enabled)) await caps();
-	async function caps() {
-		const upperCase = message.content.match(/[\p{Lu}]/gu);
-		if (parseInt(guildConfig.automod.modules.caps.threshold.replace(/[^0-9]/, ""), 10) >
-		Math.floor(((upperCase ? upperCase.length : 0) / message.content.replace(/\s/g, "").length) * 100)) return;
-
-		reply(message, { "name": "send all caps", "code": "caps" });
 	}
 };
 
@@ -110,7 +110,7 @@ function reply(message, warning) {
 				If this was a mistake, you may edit your message without the ${warning.code}.
 			`]
 		],
-		"footer":  "Action made by AutoMod"
+		"footer":  "AutoMod v1.0 (11.11.2020)"
 	};
 
 	if (!isMember) {
@@ -126,6 +126,3 @@ function reply(message, warning) {
 	embedMessage.author.picture = message.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 });
 	message.send(message.client.embed(embedMessage));
 }
-
-// Get rid of '=== "true"'
-function b(string) {return string === "true"}

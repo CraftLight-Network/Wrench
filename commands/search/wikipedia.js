@@ -2,7 +2,7 @@
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
 const wikipedia        = require("wikijs").default;
-const config           = require("../../config");
+const options          = require("../../config");
 
 module.exports = class WikipediaCommand extends Command {
 	constructor(client) {
@@ -12,7 +12,7 @@ module.exports = class WikipediaCommand extends Command {
 			"group":       "search",
 			"description": "Search Wikipedia.",
 			"details": stripIndents`
-				Run \`${config.prefix.commands}wikipedia <search>\` to search Wikipedia.
+				Run \`${options.prefix.commands}wikipedia <search>\` to search Wikipedia.
 				**Notes:**
 				<search>: Required, what will be searched.
 				Arguments must be links, slugs, or titles. 
@@ -46,7 +46,7 @@ module.exports = class WikipediaCommand extends Command {
 
 			// Detect whether or not there are multiple results
 			const summary = await result.summary();
-			if (summary.match(/may refer to:/)) {
+			if (summary.includes("may refer to:")) {
 				embedMessage.description = stripIndents`
 					**Multiple results found:**
 					${this.client.truncate((await result.links()).join(", "), 250)}

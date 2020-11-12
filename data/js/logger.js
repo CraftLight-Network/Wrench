@@ -70,66 +70,69 @@ const log = new winston.createLogger({
 winston.addColors(levels.colors);
 
 module.exports.log = log;
-module.exports.logger = function logger(client, totals) {
+module.exports.logger = function logger(client/* , totals */) {
 	/* ### Bot events ### */
 	// Unhandled rejections
 	process.on("unhandledRejection", (reason) => {console.trace(reason)});
 	process.on("unhandledError",     (reason) => {console.trace(reason)});
 
 	// Connection events
-	client.on("reconnecting", () => log.info("Reconnecting to Discord..."));
-	client.on("resume",       () => log.ok("Reconnected to Discord."));
+	client.on("reconnecting", () => log.info("Reconnecting to Discord..."))
+	      .on("resume",       () => log.ok("Reconnected to Discord."))
 
 	// Guild events
-	client.on("guildCreate", guild => {
-		getConfig(guild.id).ensure();
+	.on("guildCreate", guild => {
+		getConfig(guild);
 		log.info(`Added to ${guild.name} (ID: ${guild.id})`);
-	});
+	})
 
-	client.on("guildDelete", guild => {
+	.on("guildDelete", guild => {
 		getConfig(guild.id).reset();
 		log.info(`Removed from ${guild.name} (ID: ${guild.id})`);
-	});
+	})
 
 	/* ### Guild events ### */
 	// Join
-	client.on("guildMemberAdd", async member => {
-		const guildConfig = await getConfig(member.guild.id);
+	.on("guildMemberAdd", async member => {
+		const guildConfig = await getConfig(member.guild);
+		if (guildConfig === "breaking") return;
 
 		// Message
-		if (guildConfig.join.message.enabled === "true") sendMessage({
+		if (guildConfig.join.message.enabled) sendMessage({
 			"placeholders": true,
 			"channel": guildConfig.join.message.channelID,
 			"message": guildConfig.join.message.message
 		}, member);
 
 		// Role
-		if (guildConfig.join.role.enabled === "true") {
-			guildConfig.join.role.roleIDs.forEach(e => {
+		if (guildConfig.join.role.enabled) {
+			guildConfig.join.role.roleID.forEach(e => {
 				member.roles.add(e);
 			});
 		}
-	});
+	})
 
 	// Leave
-	client.on("guildMemberRemove", async member => {
-		const guildConfig = await getConfig(member.guild.id);
+	.on("guildMemberRemove", async member => {
+		const guildConfig = await getConfig(member.guild);
+		if (guildConfig === "breaking") return;
 
-		if (guildConfig.leave.message.enabled === "true") sendMessage({
+		if (!guildConfig.leave.message.enabled) sendMessage({
 			"placeholders": true,
 			"channel": guildConfig.leave.message.channelID,
 			"message": guildConfig.leave.message.message
 		}, member);
-	});
+	})
 
 	/* ### Log events ### */
 	// Member join
-	client.on("guildMemberAdd", async member => {
-		const guildConfig = await getConfig(member.guild.id);
-		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.member === "false") return;
+	.on("guildMemberAdd", async member => {
+		const guildConfig = await getConfig(member.guild);
+		if (guildConfig === "breaking") return;
 
+		if (!guildConfig.log.enabled || !guildConfig.log.modules.member) return;
 		sendMessage({
-			"channel": guildConfig.channels.log.channelID,
+			"channel": guildConfig.log.channelID,
 			"message": client.embed({
 				"title": `Member joined (${member.user.username})`,
 				"description": stripIndents`
@@ -145,13 +148,14 @@ module.exports.logger = function logger(client, totals) {
 				"timestamp": true
 			})
 		});
-	});
+	})
 
 	// Member leave
-	client.on("guildMemberRemove", async member => {
-		const guildConfig = await getConfig(member.guild.id);
-		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.member === "false") return;
+	.on("guildMemberRemove", async member => {
+		const guildConfig = await getConfig(member.guild);
+		if (guildConfig === "breaking") return;
 
+		if (!guildConfig.log.enabled || !guildConfig.log.modules.member) return;
 		const roles = member.roles.cache.map(r => r.name === "@everyone" ? "" : r.name)
 			.filter(Boolean);
 
@@ -173,17 +177,19 @@ module.exports.logger = function logger(client, totals) {
 		if (roles.length > 0) embedMessage.fields.push(["Roles", `\`${roles.join("`, `")}\``]);
 
 		sendMessage({
-			"channel": guildConfig.channels.log.channelID,
+			"channel": guildConfig.log.channelID,
 			"message": client.embed(embedMessage)
 		});
-	});
+	})
 
 	// Message deletion
-	client.on("messageDelete", async message => {
+	.on("messageDelete", async message => {
 		if (!message.guild || !message.content) return;
 
-		const guildConfig = await getConfig(message.guild.id);
-		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.message === "false") return;
+		const guildConfig = await getConfig(message.guild);
+		if (guildConfig === "breaking") return;
+
+		if (!guildConfig.log.enabled || !guildConfig.log.modules.message) return;
 
 		// Grab the message if the bot can
 		try {message = await client.getMessage(message)}
@@ -198,10 +204,9 @@ module.exports.logger = function logger(client, totals) {
 		logs = logs.entries.first();
 
 		// Return results from audit log
-		let description;
-		if (message.author.id !== logs.executor.id &&
-			message.author.id === logs.target.id   &&
-			logs.createdAt > new Date().getTime() - 20000) description = stripIndents`
+		const description = message.author.id !== logs.executor.id &&
+			message.author.id === logs.target.id &&
+			logs.createdAt > new Date().getTime() - 20000 ? stripIndents`
 			By: <@${logs.executor.id}>
 			Tag: ${logs.executor.tag}
 			ID: ${logs.executor.id}
@@ -211,8 +216,7 @@ module.exports.logger = function logger(client, totals) {
 			ID: ${message.author.id}
 			
 			Channel: <#${message.channel.id}>
-		`;
-		else description = stripIndents`
+		` : stripIndents`
 			User: <@${message.author.id}>
 			Tag: ${message.author.tag}
 			ID: ${message.author.id}
@@ -222,7 +226,7 @@ module.exports.logger = function logger(client, totals) {
 
 		// Send the log
 		sendMessage({
-			"channel": guildConfig.channels.log.channelID,
+			"channel": guildConfig.log.channelID,
 			"message": client.embed({
 				"title":       `Message deleted (${message.author.username})`,
 				"description": description,
@@ -234,21 +238,23 @@ module.exports.logger = function logger(client, totals) {
 				"timestamp": true
 			})
 		});
-	});
+	})
 
 	// Message edits
-	client.on("messageEdit", async (oldMessage, newMessage) => {
+	.on("messageEdit", async (oldMessage, newMessage) => {
 		if (!newMessage.guild || newMessage.author.bot) return;
 
-		const guildConfig = await getConfig(newMessage.guild.id);
-		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.message === "false") return;
+		const guildConfig = await getConfig(newMessage.guild);
+		if (guildConfig === "breaking") return;
+
+		if (!guildConfig.log.enabled || !guildConfig.log.modules.message) return;
 
 		// Construct the message link
 		const messageLink = `https://discord.com/channels/${oldMessage.guild.id}/${oldMessage.channel.id}/${oldMessage.id}`;
 
 		// Send the log
 		sendMessage({
-			"channel": guildConfig.channels.log.channelID,
+			"channel": guildConfig.log.channelID,
 			"message": client.embed({
 				"title":       `Message edited (${newMessage.author.username})`,
 				"description": stripIndents`
@@ -267,25 +273,18 @@ module.exports.logger = function logger(client, totals) {
 				"timestamp": true
 			})
 		});
-	});
+	})
 
 	// Commands ran
-	client.on("commandRun", async (command, promise, message) => {
+	.on("commandRun", async (command, promise, message) => {
 		log.command(`${(message.guild  ? "" : "(DM) ") + message.author.tag} | ${client.truncate(message.content, 442)}`);
 
 		const complete = await promise;
 		if (complete)
 			log.complete(`${(message.guild ? "" : "(DM) ") + message.author.tag} | ${client.truncate(message.content, 442)} -> ${client.embedToString(await promise)}`);
 
-		totals.inc("commands");
+		// totals.inc("commands");
 	});
-
-	// Format durations to times
-	function getDuration(then) {
-		const time      = moment.duration((new Date()).getTime() - then);
-		const formatted = time.format("y [years], M [months], d [days], h [hours], m [minutes], s [seconds].");
-		return formatted.replace(/\D0 .*?[,.]/g, "").trim();
-	}
 
 	// Send messages to channels
 	function sendMessage(options, object) {
@@ -304,13 +303,18 @@ module.exports.logger = function logger(client, totals) {
 	}
 
 	function checkValidChannel(channel) {
-		if (client.channels.cache.get(channel) === undefined) return false;
-		else return true;
-	}
-
-	// Get the config
-	async function getConfig(guild) {
-		const config = new Config("guild", guild);
-		return await config.get();
+		return client.channels.cache.get(channel) !== undefined;
 	}
 };
+
+// Format durations to times
+function getDuration(then) {
+	const time      = moment.duration((new Date()).getTime() - then);
+	const formatted = time.format("y [years], M [months], d [days], h [hours], m [minutes], s [seconds].");
+	return formatted.replace(/\D0 .*?[,.]/g, "").trim();
+}
+
+async function getConfig(guild) {
+	const config = new Config("guild", guild);
+	return await config.get();
+}

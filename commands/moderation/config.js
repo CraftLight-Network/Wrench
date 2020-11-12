@@ -2,8 +2,8 @@
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
 const Config           = require("../../data/js/config");
-const config           = require("../../config");
-const path             = require("jsonpath");
+const options          = require("../../config");
+const _                = require("lodash");
 
 const actions = ["view", "set", "add", "remove", "reset"];
 
@@ -16,7 +16,7 @@ module.exports = class ConfigCommand extends Command {
 			"group": "moderation",
 			"description": "Edit the server configuration.",
 			"details": stripIndents`
-				Run \`${config.prefix.commands}config <action> (property) (value)\` to interact with the config.
+				Run \`${options.prefix.commands}config <action> (property) (value)\` to interact with the config.
 				**Notes:**
 				<action>: Required, what to do.
 				(name): Required depending on action, what property to take action on.
@@ -54,11 +54,13 @@ module.exports = class ConfigCommand extends Command {
 	}
 
 	async run(message, { action, property, value }) {
-		const config = new Config("guild", message.guild.id);
+		const config = new Config("guild", message.guild);
 		const guildConfig = await config.get();
+		if (guildConfig === "breaking")
+			return message.reply(`This server's config must be migrated, but some steps have breaking changes! Please run \`${options.prefix.commands}migrate\`.`);
 
 		// Permission check
-		if (!this.client.checkRole(message, guildConfig.automod.modRoleIDs)) return message.reply("You do not have permission to use this command.");
+		if (!this.client.checkRole(message, guildConfig.automod.adminID)) return message.reply("You do not have permission to use this command.");
 
 		// View command
 		if (action === "view") {
@@ -80,45 +82,37 @@ ${JSON.stringify(guildConfig, null, 2)}
 		}
 
 		// Sanitize property
-		property = property.replace(/[^\w\d.]/, "");
+		property = property.replace(/[^\w.]/, "");
 
 		// Make sure the property exists
-		if (!checkExists()) return message.reply("That config property does not exist.");
+		if (!this.client.checkExists(guildConfig, property)) return message.reply("That config property does not exist.");
 
 		// Set command
 		if (action === "set") {
-			if (property === "version") return message.reply("You cannot change `version`.");
-
-			config.set(property, value);
-			return message.reply(`Set ${property} to ${value}.`);
+			if (isArray()) return message.reply("That config property is an array. Use `add` instead.");
+			out(await config.set(property, value), "Set", "set", "to");
 		}
 
 		// Add command
 		if (action === "add") {
 			if (!isArray()) return message.reply("That config property is not an array. Use `set` instead.");
-
-			config.add(property, value);
-			return message.reply(`Added ${value} to ${property}.`);
+			out(await config.add(property, value), "Added", "add", "to");
 		}
 
 		// Remove command
 		if (action === "remove") {
 			if (!isArray()) return message.reply("That config property is not an array.");
-
-			config.remove(property, value);
-			return message.reply(`Removed ${value} from ${property}.`);
+			out(await config.remove(property, value), "Removed", "remove", "from");
 		}
 
-		// Function to check if a config value exists
-		function checkExists() {
-			if (path.query(guildConfig, `$.${property}`)[0] !== undefined) return true;
-			return false;
+		function out(success, did, action, where) {
+			if (success) return message.reply(`${did} \`${property}\` ${where} \`${value}\`.`);
+			return message.reply(`Unable to ${action} \`${property}\` ${where} \`${value}\`. The input type may be invalid!`);
 		}
 
 		// Function to check if a config value is an array
 		function isArray() {
-			if (path.query(guildConfig, `$.${property}`)[0] instanceof Array) return true;
-			return false;
+			return Array.isArray(_.get(guildConfig, property));
 		}
 	}
 };

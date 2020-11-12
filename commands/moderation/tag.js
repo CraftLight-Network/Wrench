@@ -2,7 +2,7 @@
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
 const Config           = require("../../data/js/config");
-const conf             = require("../../config");
+const options          = require("../../config");
 
 const actions = ["<tag name>", "view", "add", "remove", "reset"];
 
@@ -15,7 +15,7 @@ module.exports = class TagCommand extends Command {
 			"group": "moderation",
 			"description": "Create tags/shortcuts for longer or special messages.",
 			"details": stripIndents`
-				Run \`${conf.prefix.commands}tag <action> (property) (value)\` to interact with the tags.
+				Run \`${options.prefix.commands}tag <action> (property) (value)\` to interact with the tags.
 				**Notes:**
 				<action>: Required, what to do. (OR tag name)
 				(name): Required depending on action, what property to take action on.
@@ -53,10 +53,12 @@ module.exports = class TagCommand extends Command {
 	}
 
 	async run(message, { action, property, value }) {
-		const config = new Config("guild", message.guild.id);
+		const config = new Config("guild", message.guild);
 		const guildConfig = await config.get();
+		if (guildConfig === "breaking")
+			return message.reply(`This server's config must be migrated, but some steps have breaking changes! Please run \`${options.prefix.commands}migrate\`.`);
 
-		const configTags = new Config("tags", message.guild.id);
+		const configTags = new Config("tags", message.guild);
 		const tagConfig  = await configTags.get();
 
 		// Get all names of tags
@@ -65,7 +67,7 @@ module.exports = class TagCommand extends Command {
 
 		// Send tag if not command
 		if (!actions.includes(action)) {
-			if (message.content.charAt(0) !== conf.prefix.tags) if (names.includes(action)) return message.reply(`The tag \`${action}\` does not exist.`);
+			if (message.content.charAt(0) !== options.prefix.tags && names.includes(action)) return message.reply(`The tag \`${action}\` does not exist.`);
 
 			tagConfig.tags.forEach(tag => {
 				if (action !== tag.name) return;
@@ -91,7 +93,7 @@ ${JSON.stringify(tagConfig, null, 2)}
 		}
 
 		// Permission check
-		if (!this.client.checkRole(message, guildConfig.automod.modRoleIDs)) return message.reply("You do not have permission to use this command.");
+		if (!this.client.checkRole(message, guildConfig.automod.adminID)) return message.reply("You do not have permission to use this command.");
 
 		// Reset command
 		if (action === "reset") {
@@ -104,7 +106,7 @@ ${JSON.stringify(tagConfig, null, 2)}
 		if (property === "cancel") return message.reply("Cancelled command.");
 
 		// Sanitize property
-		property = property.replace(/[^\w\d.]/, "");
+		property = property.replace(/[^\w.]/, "");
 
 		// Add command
 		if (action === "add") {
