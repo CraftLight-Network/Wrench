@@ -15,7 +15,11 @@ const location = { "dataDir": "./data/private/database" };
 // Per-server settings
 const guildConfig = new Josh({
 	"name":            "guildConfig",
-	"serializer":      (a) => {return a instanceof Object ? a : stringJSON(a)},
+	"serializer":      (a) => {
+		return a instanceof Object ? a
+			: typeof stringJSON(a) === "number" ? accurateInt(a) ? stringJSON(a)
+			: a : stringJSON(a);
+	},
 	"provider":        SQLite,
 	"providerOptions": location
 });
@@ -275,6 +279,10 @@ function stringJSON(json) {
 
 	return output;
 };
+
+function accurateInt(number) {
+	return number < 9007199254740991 && number > -9007199254740991;
+}
 
 module.exports = Config;
 
