@@ -256,7 +256,7 @@ class Config {
 		});
 
 		if (valid.filter(Boolean).length === option.length) return { "valid": true };
-		return { "valid": false, "reason": `Input type was not a \`${reason.join("`, `")}\`. ${option.join().includes(",") ? `(\`${option}\`)` : ""}` };
+		return { "valid": false, "reason": `The input type was not a \`${reason.join("`, `")}\`. ${option.join().includes(",") ? `(Format: \`${option}\`)` : ""}` };
 	}
 }
 
