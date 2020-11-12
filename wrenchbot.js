@@ -149,7 +149,8 @@ client.on("ready", async () => {
 	// Get a random status
 	async function getStatus() {
 		const status = options.status.types[Math.floor(Math.random() * options.status.types.length)];
-		return status.name = await client.placeholders(status.name);
+		status.name = await client.placeholders(status.name);
+		return status;
 	}
 })
 
