@@ -28,7 +28,7 @@ module.exports = class AsciiCommand extends Command {
 					"prompt":   `What font would you like to use? (Run \`${options.prefix.commands}ascii fonts\` for list.)`,
 					"type":     "string",
 					"error":    `Please enter a valid font. (\`${options.prefix.commands}ascii fonts\`)`,
-					"oneOf":    fonts
+					"validate": (a) => {return fonts.includes(a)}
 				},
 				{
 					"key":      "args",
