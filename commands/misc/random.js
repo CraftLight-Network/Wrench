@@ -1,7 +1,7 @@
 // Define and require modules
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const config           = require("../../config");
+const options          = require("../../config");
 const random           = require("random");
 
 module.exports = class RandomCommand extends Command {
@@ -12,7 +12,7 @@ module.exports = class RandomCommand extends Command {
 			"group":       "misc",
 			"description": "Choose a random number.",
 			"details": stripIndents`
-				Run \`${config.prefix.commands}random <min> <max>\` to choose a random number.
+				Run \`${options.prefix.commands}random <min> <max>\` to choose a random number.
 				**Notes:**
 				<min>: Required, minimum number.
 				<max>: Required, maximum number.

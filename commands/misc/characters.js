@@ -1,7 +1,7 @@
 // Define and require modules
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const config           = require("../../config");
+const options          = require("../../config");
 
 module.exports = class CharactersCommand extends Command {
 	constructor(client) {
@@ -11,7 +11,7 @@ module.exports = class CharactersCommand extends Command {
 			"group":       "misc",
 			"description": "Count how many characters are in a message.",
 			"details": stripIndents`
-				Run \`${config.prefix.commands}characters <args>\` to count the characters in your message.
+				Run \`${options.prefix.commands}characters <args>\` to count the characters in your message.
 				**Notes:**
 				<args>: Required, what the bot will count.
 			`,

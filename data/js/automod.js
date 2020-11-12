@@ -45,8 +45,9 @@ let valid = true;
 module.exports = async (message) => {
 	if (!message.guild) return;
 
-	const config = new Config("guild", message.guild.id);
+	const config = new Config("guild", message.guild);
 	const guildConfig = await config.get();
+	if (guildConfig === "breaking") return;
 
 	// SPAM SPAM SPAM
 	if (valid && guildConfig.automod.modules.spam.enabled) await spam();

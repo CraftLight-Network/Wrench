@@ -1,0 +1,67 @@
+{
+	"run": [{
+		"info": {
+			"from":     1,
+			"to":       2,
+			"changelog": [
+				"* The contents of `channels` has been merged with `misc`.",
+				"* `log` is now a root element.",
+				"* All values have been parsed into their correct data type.",
+				"* Most ID values have been renamed from xIDs to xID.",
+				"+ Every value now has entry validation for security and ease.",
+				"+ `adminBypass` value to determine which AutoMod modules are bypassable with the admin roles.",
+				"+ `badLinks.level` value to control the bad links database used.",
+				"- `misc.reactions` removed for the upcoming per-guild reactions."
+			],
+			"breaking": true,
+			"reason":   "Migrating from config version 1 to version 2 requires all channel and role IDs to be reset. This is due to a very large security exploit present in the first version of the config. You will have to set all of these values again after migrating."
+		},
+		"steps": [
+			["join.message.enabled", "false"],
+			["join.message.channelID", "invalidate"],
+			["join.role.enabled", "false"],
+			["join.role.roleIDs", "invalidate"],
+			["leave.message.enabled", "false"],
+			["leave.message.channelID", "invalidate"],
+			["channels.advert.enabled", "false"],
+			["channels.advert.channelIDs", "invalidate"],
+			["channels.spam.enabled", "false"],
+			["channels.spam.channelIDs", "invalidate"],
+			["channels.bot.enabled", "false"],
+			["channels.bot.channelIDs", "invalidate"],
+			["channels.counting.enabled", "false"],
+			["channels.counting.channelIDs", "invalidate"],
+			["channels.log.enabled", "false"],
+			["channels.log.channelID", "invalidate"],
+			["channels.log.modules.moderation", "parse"],
+			["channels.log.modules.server", "parse"],
+			["channels.log.modules.member", "parse"],
+			["channels.log.modules.message", "parse"],
+			["channels.log.modules.channel", "parse"],
+			["channels.log.modules.emoji", "parse"],
+			["automod.enabled", "parse"],
+			["automod.modRoleIDs", "invalidate"],
+			["automod.modules.spam.enabled", "parse"],
+			["automod.modules.spam.threshold", "parse"],
+			["automod.modules.invites", "parse"],
+			["automod.modules.badLinks", "parse"],
+			["automod.modules.caps.enabled", "parse"],
+			["automod.modules.blacklisted.enabled", "parse"],
+			["misc.vcText.enabled", "false"],
+			["misc.vcText.IDs", "invalidate"]
+		],
+		"remove": [
+			"misc.reactions"
+		],
+		"move": [
+			["channels.advert", "misc.advert"],
+			["channels.spam", "misc.spam"],
+			["channels.bot", "misc.bot"],
+			["channels.counting", "misc.counting"],
+			["channels.log", "log"],
+			["automod.modules.invites", "automod.modules.invites.enabled"],
+			["automod.modules.badLinks", "automod.modules.badLinks.enabled"],
+			["misc.vcText", "misc.voicechat"]
+		]
+	}]
+}

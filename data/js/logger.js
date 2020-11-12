@@ -82,7 +82,7 @@ module.exports.logger = function logger(client, totals) {
 
 	// Guild events
 	.on("guildCreate", guild => {
-		getConfig(guild.id).ensure();
+		getConfig(guild);
 		log.info(`Added to ${guild.name} (ID: ${guild.id})`);
 	})
 
@@ -94,7 +94,8 @@ module.exports.logger = function logger(client, totals) {
 	/* ### Guild events ### */
 	// Join
 	.on("guildMemberAdd", async member => {
-		const guildConfig = await getConfig(member.guild.id);
+		const guildConfig = await getConfig(member.guild);
+		if (guildConfig === "breaking") return;
 
 		// Message
 		if (guildConfig.join.message.enabled) sendMessage({
@@ -105,7 +106,7 @@ module.exports.logger = function logger(client, totals) {
 
 		// Role
 		if (guildConfig.join.role.enabled) {
-			guildConfig.join.role.roleIDs.forEach(e => {
+			guildConfig.join.role.roleID.forEach(e => {
 				member.roles.add(e);
 			});
 		}
@@ -113,7 +114,8 @@ module.exports.logger = function logger(client, totals) {
 
 	// Leave
 	.on("guildMemberRemove", async member => {
-		const guildConfig = await getConfig(member.guild.id);
+		const guildConfig = await getConfig(member.guild);
+		if (guildConfig === "breaking") return;
 
 		if (!guildConfig.leave.message.enabled) sendMessage({
 			"placeholders": true,
@@ -125,11 +127,12 @@ module.exports.logger = function logger(client, totals) {
 	/* ### Log events ### */
 	// Member join
 	.on("guildMemberAdd", async member => {
-		const guildConfig = await getConfig(member.guild.id);
-		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.member === "false") return;
+		const guildConfig = await getConfig(member.guild);
+		if (guildConfig === "breaking") return;
 
+		if (!guildConfig.log.enabled || !guildConfig.log.modules.member) return;
 		sendMessage({
-			"channel": guildConfig.channels.log.channelID,
+			"channel": guildConfig.log.channelID,
 			"message": client.embed({
 				"title": `Member joined (${member.user.username})`,
 				"description": stripIndents`
@@ -149,9 +152,10 @@ module.exports.logger = function logger(client, totals) {
 
 	// Member leave
 	.on("guildMemberRemove", async member => {
-		const guildConfig = await getConfig(member.guild.id);
-		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.member === "false") return;
+		const guildConfig = await getConfig(member.guild);
+		if (guildConfig === "breaking") return;
 
+		if (!guildConfig.log.enabled || !guildConfig.log.modules.member) return;
 		const roles = member.roles.cache.map(r => r.name === "@everyone" ? "" : r.name)
 			.filter(Boolean);
 
@@ -173,7 +177,7 @@ module.exports.logger = function logger(client, totals) {
 		if (roles.length > 0) embedMessage.fields.push(["Roles", `\`${roles.join("`, `")}\``]);
 
 		sendMessage({
-			"channel": guildConfig.channels.log.channelID,
+			"channel": guildConfig.log.channelID,
 			"message": client.embed(embedMessage)
 		});
 	})
@@ -182,8 +186,10 @@ module.exports.logger = function logger(client, totals) {
 	.on("messageDelete", async message => {
 		if (!message.guild || !message.content) return;
 
-		const guildConfig = await getConfig(message.guild.id);
-		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.message === "false") return;
+		const guildConfig = await getConfig(message.guild);
+		if (guildConfig === "breaking") return;
+
+		if (!guildConfig.log.enabled || !guildConfig.log.modules.message) return;
 
 		// Grab the message if the bot can
 		try {message = await client.getMessage(message)}
@@ -220,7 +226,7 @@ module.exports.logger = function logger(client, totals) {
 
 		// Send the log
 		sendMessage({
-			"channel": guildConfig.channels.log.channelID,
+			"channel": guildConfig.log.channelID,
 			"message": client.embed({
 				"title":       `Message deleted (${message.author.username})`,
 				"description": description,
@@ -238,15 +244,17 @@ module.exports.logger = function logger(client, totals) {
 	.on("messageEdit", async (oldMessage, newMessage) => {
 		if (!newMessage.guild || newMessage.author.bot) return;
 
-		const guildConfig = await getConfig(newMessage.guild.id);
-		if (guildConfig.channels.log.enabled === "false" || guildConfig.channels.log.modules.message === "false") return;
+		const guildConfig = await getConfig(newMessage.guild);
+		if (guildConfig === "breaking") return;
+
+		if (!guildConfig.log.enabled || !guildConfig.log.modules.message) return;
 
 		// Construct the message link
 		const messageLink = `https://discord.com/channels/${oldMessage.guild.id}/${oldMessage.channel.id}/${oldMessage.id}`;
 
 		// Send the log
 		sendMessage({
-			"channel": guildConfig.channels.log.channelID,
+			"channel": guildConfig.log.channelID,
 			"message": client.embed({
 				"title":       `Message edited (${newMessage.author.username})`,
 				"description": stripIndents`
@@ -275,7 +283,7 @@ module.exports.logger = function logger(client, totals) {
 		if (complete)
 			log.complete(`${(message.guild ? "" : "(DM) ") + message.author.tag} | ${client.truncate(message.content, 442)} -> ${client.embedToString(await promise)}`);
 
-		totals.inc("commands");
+		// totals.inc("commands");
 	});
 
 	// Send messages to channels

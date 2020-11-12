@@ -1,7 +1,7 @@
 // Define and require modules
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const config           = require("../../config");
+const options          = require("../../config");
 const seedrandom       = require("seedrandom");
 const random           = require("random");
 
@@ -13,7 +13,7 @@ module.exports = class ShipCommand extends Command {
 			"group":       "fun",
 			"description": "Calculate the compatibility between two users.",
 			"details": stripIndents`
-				Run \`${config.prefix.commands}ship [person1] [person2]\` to calculate compatibility.
+				Run \`${options.prefix.commands}ship [person1] [person2]\` to calculate compatibility.
 				**Notes:**
 				[person1]: Required, first person to calculate.
 				[person2]: Required, second person to calculate.

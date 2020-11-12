@@ -1,9 +1,9 @@
 // Define and require modules
 const { stripIndents } = require("common-tags");
+const totals           = require("../../data/js/config").totals;
 const Embed            = require("discord.js").MessageEmbed;
-const totals           = require("../../data/js/enmap").totals;
-const config           = require("../../config");
-const path             = require("jsonpath");
+const options          = require("../../config");
+const _                = require("lodash");
 const fs               = require("fs");
 
 module.exports.run = (client) => {
@@ -42,11 +42,9 @@ module.exports.run = (client) => {
 		if (options.attachments) embed.attachFiles(options.attachments);
 
 		// Add author
-		if (options.author) {
-			embed.setAuthor(options.author.name, options.author.picture);
-		}
+		if (options.author) embed.setAuthor(options.author.name, options.author.picture);
 
-		// Add title, url, thumbnail, and description
+		// Add content, title, url, thumbnail, and description
 		if (options.title)                embed.setTitle(options.title);
 		if (options.title && options.url) embed.setURL(options.url);
 		if (options.thumbnail)            embed.setThumbnail(options.thumbnail);
@@ -106,20 +104,19 @@ module.exports.run = (client) => {
 
 	// Permission check
 	client.checkRole = (message, roles) => {
-		const hasRole = roles.some(r => {return !!message.member.roles.cache.has(r)});
-		return !!(hasRole || message.author.id === message.guild.owner.id || config.owners.includes(message.author.id));
+		const hasRole = roles ? roles.some(r => {return !!message.member.roles.cache.has(r)}) : false;
+		return !!(hasRole || message.author.id === message.guild.owner.id || options.owners.includes(message.author.id));
 	};
 
-	client.placeholders = (message, custom) => {
+	client.placeholders = async (message, custom) => {
 		// Pre-set placeholders
 		const placeholders = {
-			"%prefix%":             config.prefix.commands,
-			"%prefix_tags%":        config.prefix.tags,
+			"%prefix%":             options.prefix.commands,
+			"%prefix_tags%":        options.prefix.tags,
 			"%total_servers%":      client.guilds.cache.size,
-			"%total_commands%":     totals.get("commands"),
-			"%total_messages%":     totals.get("messages"),
-			"%total_translations%": totals.get("translations"),
-			"%total_automod%":      totals.get("automod")
+			"%total_commands%":     await totals.get("commands"),
+			"%total_messages%":     await totals.get("messages"),
+			"%total_automod%":      await totals.get("automod")
 		};
 
 		// Custom placeholders
@@ -199,7 +196,14 @@ module.exports.run = (client) => {
 	};
 
 	client.parseJSON = json => {
-		let output = {};
+		let output  = {};
+		try {output = JSON.parse(json)} catch {}
+
+		return output;
+	};
+
+	client.stringJSON = json => {
+		let output  = json;
 		try {output = JSON.parse(json)} catch {}
 
 		return output;
@@ -212,15 +216,15 @@ module.exports.run = (client) => {
 
 	// Misc.
 	client.isCommand = (message, command) => {
-		if (message.content.charAt(0) === config.prefix.commands) message.content = message.content.slice(1, message.content.length);
+		if (message.content.charAt(0) === options.prefix.commands) message.content = message.content.slice(1, message.content.length);
 		if (message.content === command) return true;
 	};
 
-	client.removeCommand = (message, command) => message.replace(`${config.prefix.commands}${command.name} `, "");
+	client.removeCommand = (message, command) => message.replace(`${options.prefix.commands}${command.name} `, "");
 
-	client.checkPropertyExists = (config, property) => {
-		if (path.query(config, `$.${property}`)[0] !== undefined) return true;
-		return false;
+	client.checkExists = (config, property) => {
+		const element = _.get(config, property);
+		return !(element === undefined || (typeof element === "object" && !Array.isArray(element)));
 	};
 
 	client.truncate = truncate;

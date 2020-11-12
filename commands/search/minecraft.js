@@ -2,7 +2,7 @@
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
 const request          = require("async-request");
-const config           = require("../../config");
+const options          = require("../../config");
 const random           = require("random");
 
 const actions   = ["skin", "info"];
@@ -17,7 +17,7 @@ module.exports = class MinecraftCommand extends Command {
 			"group":       "search",
 			"description": "Get information on a Minecraft player.",
 			"details": stripIndents`
-				Run \`${config.prefix.commands}minecraft <action> (player) (args)\` to use commands.
+				Run \`${options.prefix.commands}minecraft <action> (player) (args)\` to use commands.
 				**Notes:**
 				<action>: Required, what to do.
 				(player): Required depending on action, in-game name or UUID of the player.

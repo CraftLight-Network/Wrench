@@ -1,7 +1,7 @@
 // Define and require modules
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const config           = require("../../config");
+const options          = require("../../config");
 const moment           = require("moment");
 
 const actions = ["standard", "advanced", "all"];
@@ -14,7 +14,7 @@ module.exports = class ServerInfoCommand extends Command {
 			"group":       "search",
 			"description": "View information about the server you are in.",
 			"details": stripIndents`
-				Run \`${config.prefix.commands}server-info [level]\` to view server info.
+				Run \`${options.prefix.commands}server-info [level]\` to view server info.
 				**Notes:**
 				[action]: Optional, what level to grab server info at.
 

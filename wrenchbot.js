@@ -56,7 +56,7 @@ function createFolder(...dirs) {
 		if (!fs.existsSync(dir)) fs.mkdirSync(dir);
 	});
 }
-createFolder("./data/private", "./data/private/enmap", "./data/private/logs");
+createFolder("./data/private", "./data/private/database", "./data/private/logs");
 
 // Register + create command instance
 const Config = require("./data/js/config");
@@ -80,6 +80,8 @@ client.registry
 	.registerCommandsIn(path.join(__dirname, "commands"))
 	.registerDefaultCommands({ "unknownCommand": false });
 
+if (fs.existsSync("./data/private/enmap")) require("./data/js/config").migrateFromEnmap();
+
 // Create voice channel join/leave event
 client.on("voiceStateUpdate", (from, to) => {
 	if (from.channelID !== to.channelID) client.emit("voiceJoinLeave", from, to);
@@ -96,7 +98,7 @@ client.on("voiceStateUpdate", (from, to) => {
 });
 
 // Get Enmap
-const totals = require("./data/js/enmap").totals;
+const totals = require("./data/js/config").totals;
 
 // Logger
 const { log, logger } = require("./data/js/logger");
@@ -122,12 +124,12 @@ function listen(files) {
 const automod   = require("./data/js/automod");
 const reactions = require("./data/js/reactions");
 
-client.on("ready", () => {
+client.on("ready", async () => {
 	log.ok("------------------------------------------");
 	log.ok(` WrenchBot START ON: ${moment().format("MM/DD/YY hh:mm:ss A")}`);
 	log.ok("------------------------------------------");
 	log.info(`Name: ${client.user.tag} | ID: ${client.user.id} | ${client.guilds.cache.size} servers`);
-	log.info(`${totals.get("commands")} commands used | ${totals.get("messages")} messages read | ${totals.get("translations")} translations done`);
+	log.info(`${await totals.get("commands")} commands used | ${await totals.get("messages")} messages read | ${await totals.get("translations")} translations done`);
 
 	// Set the bots status
 	if (options.status.enabled) {status(); setInterval(status, options.status.timeout)};
@@ -159,7 +161,7 @@ client.on("ready", () => {
 	reactions(message);
 	guildEvents(message);
 
-	totals.inc("messages");
+	// totals.inc("messages");
 })
 
 // Run automod and reactions on edited messages
@@ -169,13 +171,32 @@ client.on("ready", () => {
 	// Run events
 	reactions(message);
 	guildEvents(message);
+})
+
+// Voice chat text channel role
+.on("voiceJoinLeave", async (from, to) => {
+	const config = new Config("guild", to.guild);
+	const guildConfig = await config.get();
+	if (guildConfig === "breaking") return;
+
+	if (!guildConfig.misc.voicechat.enabled) return;
+
+	// Get each channel/role ID
+	guildConfig.misc.voicechat.ID.forEach(e => {
+		const ids = e.split(",");
+
+		// Add/remove role
+		if (to.channelID === ids[0]) to.member.roles.add(ids[1]);
+		else if (to.member.roles.cache.has(ids[1])) to.member.roles.remove(ids[1]);
+	});
 });
 
 // Guild-only events
 async function guildEvents(message) {
 	if (message.guild) {
-		const config = new Config("guild", message.guild.id);
+		const config = new Config("guild", message.guild);
 		const guildConfig = await config.get();
+		if (guildConfig === "breaking") return;
 
 		// Run automod and reactions
 		if (guildConfig.automod.enabled && !client.checkRole(message, guildConfig.automod.adminID)) automod(message);
@@ -187,23 +208,6 @@ async function guildEvents(message) {
 		}
 	}
 }
-
-// Voice chat text channel role
-client.on("voiceJoinLeave", async (from, to) => {
-	const config = new Config("guild", to.guild.id);
-	const guildConfig = await config.get();
-
-	if (!guildConfig.misc.vcText.enabled) return;
-
-	// Get each channel/role ID
-	guildConfig.misc.vcText.IDs.forEach(e => {
-		const ids = e.split(",");
-
-		// Add/remove role
-		if (to.channelID === ids[0]) to.member.roles.add(ids[1]);
-		else if (to.member.roles.cache.has(ids[1])) to.member.roles.remove(ids[1]);
-	});
-});
 
 // Finally, log it in
 client.login(require("./auth").token);

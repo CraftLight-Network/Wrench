@@ -2,7 +2,7 @@
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
 const wikipedia        = require("wikijs").default;
-const config           = require("../../config");
+const options          = require("../../config");
 
 module.exports = class WikipediaCommand extends Command {
 	constructor(client) {
@@ -12,7 +12,7 @@ module.exports = class WikipediaCommand extends Command {
 			"group":       "search",
 			"description": "Search Wikipedia.",
 			"details": stripIndents`
-				Run \`${config.prefix.commands}wikipedia <search>\` to search Wikipedia.
+				Run \`${options.prefix.commands}wikipedia <search>\` to search Wikipedia.
 				**Notes:**
 				<search>: Required, what will be searched.
 				Arguments must be links, slugs, or titles. 

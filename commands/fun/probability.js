@@ -1,7 +1,7 @@
 // Define and require modules
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const config           = require("../../config");
+const options          = require("../../config");
 const seedrandom       = require("seedrandom");
 const random           = require("random");
 
@@ -13,7 +13,7 @@ module.exports = class ProbabilityCommand extends Command {
 			"group":       "fun",
 			"description": "Calculate the probability between two topics.",
 			"details": stripIndents`
-				Run \`${config.prefix.commands}probability <topic1> <topic2>\` to calculate compatibility.
+				Run \`${options.prefix.commands}probability <topic1> <topic2>\` to calculate compatibility.
 				**Notes:**
 				<topic1>: Required, first topic to calculate.
 				<topic2>: Required, second topic to calculate.

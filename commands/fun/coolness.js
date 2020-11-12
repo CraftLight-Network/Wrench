@@ -1,7 +1,7 @@
 // Define and require modules
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const config           = require("../../config");
+const options          = require("../../config");
 const seedrandom       = require("seedrandom");
 const random           = require("random");
 
@@ -13,7 +13,7 @@ module.exports = class CoolnessCommand extends Command {
 			"group":       "fun",
 			"description": "Calculate the coolness of a user.",
 			"details": stripIndents`
-				Run \`${config.prefix.commands}coolness [person]\` to calculate a user's coolness.
+				Run \`${options.prefix.commands}coolness [person]\` to calculate a user's coolness.
 				**Notes:**
 				[person]: Optional, who's coolness will be calculated.
 				Arguments must be under 150 characters.

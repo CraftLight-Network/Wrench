@@ -1,7 +1,7 @@
 // Define and require modules
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const config           = require("../../config");
+const options          = require("../../config");
 
 const values = ["author", "author.name", "author.picture", "title", "url", "thumbnail", "description", "footer", "color", "fields", "image"];
 
@@ -13,7 +13,7 @@ module.exports = class EmbedCommand extends Command {
 			"group":       "misc",
 			"description": "Create an embedded message.",
 			"details": stripIndents`
-				Run \`${config.prefix.commands}embed <JSON>\` to make an embed
+				Run \`${options.prefix.commands}embed <JSON>\` to make an embed
 				**Notes:**
 				<JSON>: Required, the contents of the embed.
 				How to format JSON: JSON always starts and ends with \`{\`/\`}\`
@@ -23,7 +23,7 @@ module.exports = class EmbedCommand extends Command {
 				JSON elements: \`${values.join("`, `")}\`
 			`,
 			"examples": [
-				`${config.prefix.commands}embed {"footer": "Hello"}`,
+				`${options.prefix.commands}embed {"footer": "Hello"}`,
 				`\`\`\`json
 {
 	"author": {
@@ -64,7 +64,7 @@ module.exports = class EmbedCommand extends Command {
 			embedMessage = JSON.parse(embedJSON.match(/{[^]+}/));
 			if (!(embedMessage instanceof Object)) throw TypeError;
 		}
-		catch {return message.reply(`That's not valid JSON! Check the examples in \`${config.prefix.commands}help embed\`.`)}
+		catch {return message.reply(`That's not valid JSON! Check the examples in \`${options.prefix.commands}help embed\`.`)}
 		embedMessage.message = message;
 
 		if (embedMessage.author) {
