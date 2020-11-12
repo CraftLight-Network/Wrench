@@ -40,7 +40,6 @@ module.exports = class MigrateCommand extends Command {
 
 		// Send the server's old config in case of any lost data
 		const oldConfig = this.client.embed({
-			"message":     message,
 			"title":       `${message.guild.name}'s old config:`,
 			"description": `
 \`\`\`json
@@ -55,7 +54,6 @@ ${JSON.stringify(await config.getRaw(), null, 2)}
 
 		// Send the latest migration's changelog
 		const changelog = {
-			"message":     message,
 			"title":       `guildConfig v${configDetails.version.current}'s migration details:`,
 			"fields": [
 				["Changelog", configDetails.info.changelog.join("\n")]
