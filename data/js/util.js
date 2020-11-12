@@ -4,7 +4,6 @@ const totals           = require("../../data/js/config").totals;
 const Embed            = require("discord.js").MessageEmbed;
 const options          = require("../../config");
 const _                = require("lodash");
-const fs               = require("fs");
 
 module.exports.run = (client) => {
 	/**
@@ -169,13 +168,6 @@ module.exports.run = (client) => {
 		}
 
 		return message.content += embeds;
-	};
-
-	// Create multiple directories if non-existent
-	client.createFolder = (...dirs) => {
-		dirs.forEach(dir => {
-			if (!fs.existsSync(dir)) fs.mkdirSync(dir);
-		});
 	};
 
 	// Replace mentions with users

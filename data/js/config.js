@@ -233,11 +233,10 @@ class Config {
 					case "static":  return false;
 
 					// Percentages
-					case "percent": {
-						const parsed = parseInt(o.replace("%", ""));
+					case "percent":
+						const parsed = parseInt(o.replace("%", ""), 10);
 						if (o.indexOf("%") > 0 || parsed > 100 || parsed < 0) return false;
 						return true;
-					}
 
 					// Role ID in server
 					case "guildRoleID": return !!(this.rawGuild.roles.cache.get(input[i]));
