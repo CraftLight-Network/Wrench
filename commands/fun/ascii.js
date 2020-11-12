@@ -5,7 +5,7 @@ const options          = require("../../config");
 const figlet           = require("figlet");
 const fs               = require("fs");
 
-const fonts = ["fonts"].concat(figlet.fontsSync().map(i => i.replace(" ", "_").toLowerCase()));
+const fonts = ["fonts"].concat(figlet.fontsSync().map(i => i.replace(" ", "_")));
 
 module.exports = class AsciiCommand extends Command {
 	constructor(client) {
