@@ -77,6 +77,16 @@ ${JSON.stringify(guildConfig, null, 2)}
 
 		// Reset command
 		if (action === "reset") {
+			const oldConfig = this.client.embed({
+				"title":       `${message.guild.name}'s old config:`,
+				"description": `
+\`\`\`json
+${JSON.stringify(await config.getRaw(), null, 2)}
+\`\`\`
+				`
+			});
+			message.reply("Resetting the config. Here's your old config so you can copy over any lost data: ", { "embed": oldConfig });
+
 			config.reset();
 			return message.reply("Successfully reset the config.");
 		}
