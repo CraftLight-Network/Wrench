@@ -90,23 +90,23 @@ ${JSON.stringify(guildConfig, null, 2)}
 		// Set command
 		if (action === "set") {
 			if (isArray()) return message.reply("That config property is an array. Use `add` instead.");
-			out(await config.set(property, value), "Set", "to");
+			out(await config.set(property, value), "Set", "set", "to");
 		}
 
 		// Add command
 		if (action === "add") {
 			if (!isArray()) return message.reply("That config property is not an array. Use `set` instead.");
-			out(await config.add(property, value), "Added", "to");
+			out(await config.add(property, value), "Added", "add", "to");
 		}
 
 		// Remove command
 		if (action === "remove") {
 			if (!isArray()) return message.reply("That config property is not an array.");
-			out(await config.remove(property, value), "Removed", "from");
+			out(await config.remove(property, value), "Removed", "remove", "from");
 		}
 
-		function out(success, action, where) {
-			if (success) return message.reply(`${action} ${property} ${where} ${value}.`);
+		function out(success, did, action, where) {
+			if (success) return message.reply(`${did} ${property} ${where} ${value}.`);
 			return message.reply(`Unable to \`${action}\` ${property} ${where} ${value}. The value may be invalid!`);
 		}
 
