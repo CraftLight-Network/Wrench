@@ -214,6 +214,13 @@ module.exports.run = (client) => {
 
 	client.removeCommand = (message, command) => message.replace(`${options.prefix.commands}${command.name} `, "");
 
+	client.generateID = (length) => {
+		if (!length) length = 8;
+		return new Array(length).join().replace(/(.|$)/g, function() {
+			return (Math.trunc(Math.random() * 36)).toString(36)[Math.random() < 0.5 ? "toString" : "toUpperCase"]();
+		});
+	};
+
 	client.checkExists = (config, property) => {
 		const element = _.get(config, property);
 		return !(element === undefined || (typeof element === "object" && !Array.isArray(element)));
