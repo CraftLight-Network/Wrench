@@ -1,13 +1,13 @@
 // Define and require modules
-const merge            = require("merge-json");
-const sort             = require("sort-json");
-const path             = require("jsonpath");
-const _                = require("lodash");
-const fs               = require("fs");
+const merge = require("merge-json");
+const sort  = require("sort-json");
+const path  = require("jsonpath");
+const _     = require("lodash");
+const fs    = require("fs");
 
 // Define and require modules
-const SQLite   = require("@josh-providers/sqlite");
-const Josh     = require("josh");
+const SQLite = require("@josh-providers/sqlite");
+const Josh   = require("josh");
 
 // Location where the database is saved
 const location = { "dataDir": "./data/private/database" };
