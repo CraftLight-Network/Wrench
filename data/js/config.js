@@ -293,6 +293,9 @@ module.exports.migrateFromEnmap = async (log) => {
 	await tagConfig.import(await oldTagConfig.export());
 	await totals.import(await oldTotals.export());
 
+	// Remove unused values
+	totals.delete("translations");
+
 	// Close and rename
 	await oldGuildConfig.close(); await oldReactionConfig.close();
 	await oldTagConfig.close();   await oldTotals.close();
