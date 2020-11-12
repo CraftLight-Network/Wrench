@@ -106,8 +106,8 @@ ${JSON.stringify(guildConfig, null, 2)}
 		}
 
 		function out(success, did, action, where) {
-			if (success) return message.reply(`${did} ${property} ${where} ${value}.`);
-			return message.reply(`Unable to \`${action}\` ${property} ${where} ${value}. The value may be invalid!`);
+			if (success) return message.reply(`${did} \`${property}\` ${where} \`${value}\`.`);
+			return message.reply(`Unable to ${action} \`${property}\` ${where} \`${value}\`. The value may be invalid!`);
 		}
 
 		// Function to check if a config value is an array
