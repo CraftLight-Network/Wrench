@@ -39,7 +39,6 @@ module.exports = class MigrateCommand extends Command {
 			return message.reply("This server's config is already up-to-date!");
 
 		// Send the server's old config in case of any lost data
-		message.reply("Migration starting! Here's your old config so you can copy over any lost data:");
 		const oldConfig = this.client.embed({
 			"message":     message,
 			"title":       `${message.guild.name}'s old config:`,
@@ -49,11 +48,10 @@ ${JSON.stringify(await config.getRaw(), null, 2)}
 \`\`\`
 			`
 		});
-		message.channel.send(oldConfig);
+		message.reply("Migration starting! Here's your old config so you can copy over any lost data:", { "embed": oldConfig });
 
 		// Migrate the config
 		await config.check(true);
-		message.reply(`Migration complete! You are now running guildConfig v${configDetails.version.current} (From v${configDetails.version.local})`);
 
 		// Send the latest migration's changelog
 		const changelog = {
@@ -64,6 +62,6 @@ ${JSON.stringify(await config.getRaw(), null, 2)}
 			]
 		};
 		if (configDetails.info.breaking) changelog.fields.push(["Breaking Reason", configDetails.info.reason]);
-		message.channel.send(this.client.embed(changelog));
+		message.reply(`Migration complete! You are now running guildConfig v${configDetails.version.current} (From v${configDetails.version.local})`, { "embed": this.client.embed(changelog) });
 	}
 };
