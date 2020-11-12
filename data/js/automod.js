@@ -43,7 +43,7 @@ antiSpam.on("spamThresholdWarn", (member) => reply(member, { "name": "spam", "co
 
 let valid = true;
 module.exports = async (message) => {
-	if (!message.guild) return;
+	if (!message.guild || message.system || !message.content) return;
 
 	const config = new Config("guild", message.guild);
 	const guildConfig = await config.get();
