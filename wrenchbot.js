@@ -80,8 +80,6 @@ client.registry
 	.registerCommandsIn(path.join(__dirname, "commands"))
 	.registerDefaultCommands({ "unknownCommand": false });
 
-if (fs.existsSync("./data/private/enmap")) require("./data/js/config").migrateFromEnmap();
-
 // Create voice channel join/leave event
 client.on("voiceStateUpdate", (from, to) => {
 	if (from.channelID !== to.channelID) client.emit("voiceJoinLeave", from, to);
@@ -97,12 +95,14 @@ client.on("voiceStateUpdate", (from, to) => {
 	client.emit("messageEdit", oldMessage, newMessage);
 });
 
-// Get Enmap
+// Get database
 const totals = require("./data/js/config").totals;
 
 // Logger
 const { log, logger } = require("./data/js/logger");
 logger(client, totals);
+
+if (fs.existsSync("./data/private/enmap")) require("./data/js/config").migrateFromEnmap(log);
 
 // Get utilities
 listen(["./data/js/util.js"]);
@@ -128,8 +128,8 @@ client.on("ready", async () => {
 	log.ok("------------------------------------------");
 	log.ok(` WrenchBot START ON: ${moment().format("MM/DD/YY hh:mm:ss A")}`);
 	log.ok("------------------------------------------");
-	log.info(`Name: ${client.user.tag} | ID: ${client.user.id} | ${client.guilds.cache.size} servers`);
-	log.info(`${await totals.get("commands")} commands used | ${await totals.get("messages")} messages read | ${await totals.get("translations")} translations done`);
+	log.info(`Name: ${client.user.tag} | ID: ${client.user.id}`);
+	log.info(`${await totals.get("commands")} commands used | ${await totals.get("messages")} messages read | ${client.guilds.cache.size} servers`);
 
 	// Set the bots status
 	if (options.status.enabled) {status(); setInterval(status, options.status.timeout)};

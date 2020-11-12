@@ -275,7 +275,9 @@ function stringJSON(json) {
 module.exports = Config;
 
 // Migrate Enmap -> JOSH
-module.exports.migrateFromEnmap = async () => {
+module.exports.migrateFromEnmap = async (log) => {
+	log.info("Old Enmap database found, migrating...");
+
 	const dataDir = "./data/private/enmap";
 	const Enmap   = require("enmap");
 
@@ -296,6 +298,8 @@ module.exports.migrateFromEnmap = async () => {
 	await oldTagConfig.close();   await oldTotals.close();
 
 	fs.renameSync("./data/private/enmap", "./data/private/enmap.bak");
+
+	log.ok("Migrated Enmap database to JOSH!");
 };
 
 // Export individual databases
