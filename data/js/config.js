@@ -16,9 +16,10 @@ const location = { "dataDir": "./data/private/database" };
 const guildConfig = new Josh({
 	"name":            "guildConfig",
 	"serializer":      (a) => {
+		const parsed = stringJSON(a);
 		return a instanceof Object ? a
-			: typeof stringJSON(a) === "number" ? accurateInt(a) ? stringJSON(a)
-			: a : stringJSON(a);
+			: typeof parsed === "number" ? accurateInt(a) ? parsed
+			: a : parsed;
 	},
 	"provider":        SQLite,
 	"providerOptions": location
