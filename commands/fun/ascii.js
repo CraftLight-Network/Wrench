@@ -2,8 +2,8 @@
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
 const options          = require("../../config");
-const hastebin         = require("hastebin");
 const figlet           = require("figlet");
+const fs               = require("fs");
 
 const fonts = ["fonts"].concat(figlet.fontsSync().map(i => i.replace(" ", "_").toLowerCase()));
 
@@ -53,22 +53,23 @@ module.exports = class AsciiCommand extends Command {
 	async run(message, { action, args }) {
 		// Return link to fonts if specified
 		if (action === "fonts") {
-			const embedMessage = this.client.embed({ "message": message, "title": "Available Fonts:", "description": "https://dl.encode42.dev/Etc/wrenchbot-fonts.txt" });
-			return message.channel.send(embedMessage);
-		} else {
-			// Take input if not specified
-			if (!args) args = await this.client.userInput(message, { "question": "What would you like to make ascii art of?" });
-			if (args === "cancel") return message.reply("Cancelled command.");
+			const embedMessage = this.client.embed({ "message": message, "title": "Available Fonts:", "description": "Open the file above to view the list of fonts." });
+			const file = `./data/private/tmp/ASCII-${message.author.tag}}.txt`;
+			fs.writeFileSync(file, fonts.join(",\n"));
 
-			// Create and upload figlet to hastebin
-			const upload = await hastebin.createPaste(figlet.textSync(args, action.replace("_", " ")), {
-				"raw":          true,
-				"contentType": "text/plain",
-				"server":      "https://hastebin.com"
-			});
-
-			const embedMessage = this.client.embed({ "message": message, "title": "Figlet link:", "description": upload });
-			return message.channel.send(embedMessage);
+			return message.channel.send({ "embed": embedMessage, "files": [file] });
 		}
+
+		// Take input if not specified
+		if (!args) args = await this.client.userInput(message, { "question": "What would you like to make ascii art of?" });
+		if (args === "cancel") return message.reply("Cancelled command.");
+
+		const embedMessage = this.client.embed({ "message": message, "title": "ASCII Figlet Output:", "description": "Open the file above to view the figlet output." });
+
+		const output = figlet.textSync(args, action.replace("_", " "));
+		const file   = `./data/private/tmp/ASCII-${message.author.tag}}.txt`;
+		fs.writeFileSync(file, output);
+
+		return message.channel.send({ "embed": embedMessage, "files": [file] });
 	}
 };
