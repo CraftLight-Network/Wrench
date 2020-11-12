@@ -99,7 +99,7 @@ ${JSON.stringify(guildConfig, null, 2)}
 		if (action === "add") {
 			if (!isArray()) return message.reply("That config property is not an array. Use `set` instead.");
 
-			const checked = await config.set(property, value);
+			const checked = await config.add(property, value);
 			out(checked.valid, { "action": "Added", "reason": checked.reason });
 		}
 
