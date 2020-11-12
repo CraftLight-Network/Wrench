@@ -103,7 +103,7 @@ module.exports.run = (client) => {
 
 	// Permission check
 	client.checkRole = (message, roles) => {
-		const hasRole = roles ? roles.some(r => {return !!message.member.roles.cache.has(r)}) : false;
+		const hasRole = roles && Array.isArray(roles) ? roles.some(r => {return !!message.member.roles.cache.has(r)}) : false;
 		return !!(hasRole || message.author.id === message.guild.owner.id || options.owners.includes(message.author.id));
 	};
 
