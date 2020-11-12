@@ -221,7 +221,7 @@ class Config {
 			valid.push(r.split("|").some(o => {
 				switch (o) {
 					// Strings
-					case "string":  return JSON.parse(input[i]) instanceof String;
+					case "string":  return stringJSON(input[i]) instanceof String;
 
 					// Booleans
 					case "boolean": return input[i] === "true" ? true : input[i] === "false";
