@@ -301,7 +301,7 @@ module.exports.migrateFromEnmap = async (log) => {
 
 	fs.renameSync("./data/private/enmap", "./data/private/enmap.bak");
 
-	log.ok("Migrated Enmap database to JOSH!");
+	log.ok("Migrated the Enmap database to JOSH!");
 };
 
 // Export individual databases
