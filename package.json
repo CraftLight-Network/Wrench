@@ -33,7 +33,6 @@
 		"discord-anti-spam": "^2.4.1",
 		"discord.js": "^12.4.1",
 		"discord.js-commando": "github:discordjs/Commando",
-		"enmap": "^5.8.0",
 		"figlet": "^1.5.0",
 		"franc": "^5.0.0",
 		"fs": "0.0.1-security",
