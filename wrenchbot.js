@@ -100,7 +100,7 @@ const totals = require("./data/js/config").totals;
 
 // Logger
 const { log, logger } = require("./data/js/logger");
-logger(client, totals);
+logger(client/* , totals */);
 
 if (fs.existsSync("./data/private/enmap")) require("./data/js/config").migrateFromEnmap(log);
 

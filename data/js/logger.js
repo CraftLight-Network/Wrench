@@ -70,7 +70,7 @@ const log = new winston.createLogger({
 winston.addColors(levels.colors);
 
 module.exports.log = log;
-module.exports.logger = function logger(client, totals) {
+module.exports.logger = function logger(client/* , totals */) {
 	/* ### Bot events ### */
 	// Unhandled rejections
 	process.on("unhandledRejection", (reason) => {console.trace(reason)});
