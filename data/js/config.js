@@ -172,32 +172,34 @@ class Config {
 
 	// Set config properties
 	async set(property, value) {
-		if (!this.checks(property, value)) return false;
-		await this.config.set(`${this.guild}.${property}`, value);
+		const checked = this.checks(property, value);
+		if (!checked.valid) return checked;
 
-		return true;
+		await this.config.set(`${this.guild}.${property}`, value);
+		return { "valid": true };
 	}
 
 	// Add to arrays
 	// CURRENTLY BROKEN! JOSH ISSUE?
 	async add(property, value) {
-		if (!this.checks(property, value)) return false;
+		const checked = this.checks(property, value);
+		if (!checked.valid) return false;
+
 		_.get(await this.config.get(`${this.guild}`), property) ? await this.config.push(`${this.guild}.${property}`, value)
 			: await this.config.set(`${this.guild}.${property}`, [value]);
-
-		return true;
+		return { "valid": true };
 	}
 
 	// Remove from arrays
 	async remove(property, value) {
 		await this.config.remove(`${this.guild}.${property}`, value);
-		return true;
+		return { "valid": true };
 	};
 
 	// Delete whole values
 	async delete(value) {
 		await this.config.delete(this.guild, value);
-		return true;
+		return { "valid": true };
 	}
 
 	// Reset the guild's config
@@ -211,6 +213,7 @@ class Config {
 		const option     = _.get(this.options, property).split(",");
 		const input      = value.split(",");
 		const valid      = [];
+		const reason     = [];
 
 		// Argument length
 		if (option.length !== input.length) return false;
@@ -219,9 +222,10 @@ class Config {
 		option.some((r, i) => {
 			// Each optional argument
 			valid.push(r.split("|").some(o => {
+				reason.push(o);
 				switch (o) {
 					// Strings
-					case "string":  return typeof stringJSON(input[i]) === "string";
+					case "string": return typeof stringJSON(input[i]) === "string";
 
 					// Booleans
 					case "boolean": return input[i] === "true" ? true : input[i] === "false";
@@ -250,8 +254,9 @@ class Config {
 			}));
 			return false;
 		});
-		if (valid.filter(Boolean).length === option.length) return true;
-		return false;
+
+		if (valid.filter(Boolean).length === option.length) return { "valid": true };
+		return { "valid": false, "reason": `Input type was not a \`${reason.join("`, `")}\`. ${option.join().includes(",") ? `(\`${option}\`)` : ""}` };
 	}
 }
 

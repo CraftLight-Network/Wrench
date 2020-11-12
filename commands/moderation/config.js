@@ -90,29 +90,33 @@ ${JSON.stringify(guildConfig, null, 2)}
 		// Set command
 		if (action === "set") {
 			if (isArray()) return message.reply("That config property is an array. Use `add` instead.");
-			out(await config.set(property, value), "Set", "set", "to");
+
+			const checked = await config.set(property, value);
+			out(checked.valid, { "action": "Set", "reason": checked.reason });
 		}
 
 		// Add command
 		if (action === "add") {
 			if (!isArray()) return message.reply("That config property is not an array. Use `set` instead.");
-			out(await config.add(property, value), "Added", "add", "to");
+
+			const checked = await config.set(property, value);
+			out(checked.valid, { "action": "Added", "reason": checked.reason });
 		}
 
 		// Remove command
 		if (action === "remove") {
 			if (!isArray()) return message.reply("That config property is not an array.");
-			out(await config.remove(property, value), "Removed", "remove", "from");
+
+			const checked = await config.set(property, value);
+			out(checked.valid, { "action": "Removed", "reason": checked.reason });
 		}
 
-		function out(success, did, action, where) {
-			if (success) return message.reply(`${did} \`${property}\` ${where} \`${value}\`.`);
-			return message.reply(`Unable to ${action} \`${property}\` ${where} \`${value}\`. The input type may be invalid!`);
+		function out(success, options) {
+			if (success) return message.reply(`${options.action} \`${property}\` → \`${value}\`.`);
+			return message.reply(`Unable to execute the change \`${property}\` → \`${value}\`! ${options.reason}`);
 		}
 
 		// Function to check if a config value is an array
-		function isArray() {
-			return Array.isArray(_.get(guildConfig, property));
-		}
+		function isArray() {return Array.isArray(_.get(guildConfig, property))}
 	}
 };
