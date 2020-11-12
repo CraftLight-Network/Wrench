@@ -1,6 +1,7 @@
 {
 	"owners": ["272466470510788608"],
 	"support": "https://encode42.dev/support",
+	"clearTemp": 60,
 	"prefix": {
 		"commands": "]",
 		"tags": ">"

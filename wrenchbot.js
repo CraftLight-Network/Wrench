@@ -58,6 +58,13 @@ function createFolder(...dirs) {
 }
 createFolder("./data/private", "./data/private/database", "./data/private/logs");
 
+// Create the temporary directory
+clearTemp();
+function clearTemp() {
+	fs.rmdirSync("./data/private/tmp", { "recursive": true });
+	fs.mkdirSync("./data/private/tmp");
+}
+
 // Register + create command instance
 const Config = require("./data/js/config");
 const client = new CommandoClient({
@@ -152,6 +159,9 @@ client.on("ready", async () => {
 		status.name = await client.placeholders(status.name);
 		return status;
 	}
+
+	// Clear the temporary directory
+	setInterval(clearTemp, options.clearTemp * 60 * 1000);
 })
 
 .on("message", async message => {
