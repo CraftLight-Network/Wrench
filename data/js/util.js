@@ -247,6 +247,8 @@ module.exports.run = (client) => {
 	// Math based methods
 	client.range = (x, min, max) => {return (x - min) * (x - max) <= 0};
 	client.difference = (x, y) => {return Math.abs(x - y) / ((x + y) / 2)};
+
+	client.log.verbose("Injection complete in util.js.");
 };
 
 function truncate(input, length) {return input.length > length ? input.slice(0, length - 1).trim() + "..." : input}
