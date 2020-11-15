@@ -1,14 +1,14 @@
 // Define and require modules
-const { stripIndents }    = require("common-tags");
-const Config              = require("./config");
-const winston             = require("winston");
+const { stripIndents } = require("common-tags");
+const Config           = require("./config");
+const winston          = require("winston");
 require("winston-daily-rotate-file");
 
 // Moment + sleep
 const moment = require("moment");
 require("moment-duration-format");
 
-// Make the Winston logger
+// Logger levels
 const levels = {
 	"levels": {
 		"ok":        0,
@@ -17,7 +17,8 @@ const levels = {
 		"complete":  3,
 		"translate": 4,
 		"warning":   5,
-		"error":     6
+		"error":     6,
+		"verbose":   7
 	},
 	"colors": {
 		"ok":        "green",
@@ -26,10 +27,12 @@ const levels = {
 		"complete":  "black cyanBG",
 		"translate": "cyan",
 		"warning":   "yellow",
-		"error":     "red"
+		"error":     "red",
+		"verbose":   "purple"
 	}
 };
 
+// Logger format
 const format = {
 	"base": winston.format.combine(
 		winston.format.timestamp({ "format": "M/D/YY h:mm:ss A" }),
@@ -48,6 +51,7 @@ const format = {
 	}
 };
 
+// Create the logger
 // eslint-disable-next-line new-cap
 const log = new winston.createLogger({
 	"level":       "error",
@@ -57,6 +61,7 @@ const log = new winston.createLogger({
 		new winston.transports.Console({ "format": format.console }),
 		new winston.transports.DailyRotateFile({
 			"format":        format.file,
+			"level":         "verbose",
 			"filename":      "data/private/logs/%DATE%.log",
 			"datePattern":   "M-D-YY",
 			"createSymlink": true,
@@ -71,7 +76,7 @@ winston.addColors(levels.colors);
 
 module.exports.log = log;
 module.exports.logger = function logger(client/* , totals */) {
-	/* ### Bot events ### */
+	// // Bot events
 	// Unhandled rejections
 	process.on("unhandledRejection", (reason) => {console.trace(reason)});
 	process.on("unhandledError",     (reason) => {console.trace(reason)});
@@ -91,7 +96,7 @@ module.exports.logger = function logger(client/* , totals */) {
 		log.info(`Removed from ${guild.name} (ID: ${guild.id})`);
 	})
 
-	/* ### Guild events ### */
+	// // Guild events
 	// Join
 	.on("guildMemberAdd", async member => {
 		const guildConfig = await getConfig(member.guild);
@@ -124,7 +129,7 @@ module.exports.logger = function logger(client/* , totals */) {
 		}, member);
 	})
 
-	/* ### Log events ### */
+	// // Log events
 	// Member join
 	.on("guildMemberAdd", async member => {
 		const guildConfig = await getConfig(member.guild);
