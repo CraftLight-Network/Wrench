@@ -1,5 +1,4 @@
 // Define and require modules
-const merge = require("merge-json");
 const sort  = require("sort-json");
 const path  = require("jsonpath");
 const _     = require("lodash");
@@ -154,7 +153,7 @@ class Config {
 
 		// Return config if non-breaking
 		const json = await this.config.get(this.guild);
-		return breaking ? "breaking" : await merge.merge(_.cloneDeep(this.file), json);
+		return breaking ? "breaking" : await _.merge(_.cloneDeep(this.file), json);
 	}
 
 	// Get the raw server config data
