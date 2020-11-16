@@ -1,5 +1,5 @@
 # v2.0 Note
-**WrenchBot is currently being re-written from the ground up. It's missing many commands, but has much more in the terms of backend and guild functionality. Follow the [project board](https://github.com/CraftLight-Network/WrenchBot/projects) for updates on completion.**
+**WrenchBot is currently being re-written from the ground up. It's missing many commands, but has much more in the terms of backend and guild functionality. Many things will change mid-development, so things may break. Follow the [project board](https://github.com/CraftLight-Network/WrenchBot/projects) for updates on completion.**
 
 # WrenchBot
 
