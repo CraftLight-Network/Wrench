@@ -29,13 +29,17 @@ const path               = require("path");
 const fs                 = require("fs");
 
 // Register + create command instance
-const Config = require("./data/js/config");
 const client = new CommandoClient({
-	"owner":                   options.owners,
-	"invite":                  options.support,
-	"commandPrefix":           options.prefix.commands,
-	"commandEditableDuration": 1,
-	"partials":                ["MESSAGE", "CHANNEL", "REACTION", "USER", "GUILD_MEMBER"]
+	"owner":                     options.owners,
+	"invite":                    options.support,
+	"commandPrefix":             options.prefix.commands,
+	"commandEditableDuration":   1,
+	"partials":                  ["MESSAGE", "CHANNEL", "REACTION", "USER", "GUILD_MEMBER"],
+	"disableMentions":           "everyone",
+	"messageCacheMaxSize":       100,
+	"messageEditHistoryMaxSize": 2,
+	"messageCacheLifetime":      21600,
+	"messageSweepInterval":      10800
 });
 client.registry
 	.registerDefaultTypes()
