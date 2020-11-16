@@ -1,3 +1,6 @@
+# v2.0 Note
+**WrenchBot is currently being re-written from the ground up. It's missing many commands, but has much more in the terms of backend and guild functionality. Follow the [project board](https://github.com/CraftLight-Network/WrenchBot/projects) for updates on completion.**
+
 # WrenchBot
 
 <img src="https://repository-images.githubusercontent.com/160117136/8186cd80-63b0-11e9-88f6-fa3933300bc1" width="200">
