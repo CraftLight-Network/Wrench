@@ -21,12 +21,12 @@
 */
 
 // Define and require modules
-const { CommandoClient }  = require("discord.js-commando");
-const totals           = require("./data/js/config").totals;
-const options          = require("./config");
-const moment           = require("moment");
-const path             = require("path");
-const fs               = require("fs");
+const { CommandoClient } = require("discord.js-commando");
+const totals             = require("./data/js/config").totals;
+const options            = require("./config");
+const moment             = require("moment");
+const path               = require("path");
+const fs                 = require("fs");
 
 // Register + create command instance
 const Config = require("./data/js/config");
