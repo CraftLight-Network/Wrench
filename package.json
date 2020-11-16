@@ -24,10 +24,12 @@
 		"@josh-providers/sqlite": "^1.0.16",
 		"async-request": "^1.2.0",
 		"baidu-translate-api": "^0.4.3",
+		"bufferutil": "^4.0.2",
 		"common-tags": "^1.8.0",
 		"discord-anti-spam": "^2.4.1",
 		"discord.js": "github:discordjs/discord.js",
 		"discord.js-commando": "github:discordjs/Commando",
+		"erlpack": "github:discord/erlpack",
 		"figlet": "^1.5.0",
 		"fs": "0.0.1-security",
 		"josh": "^0.2.0",
@@ -43,9 +45,11 @@
 		"sort-json": "^2.0.0",
 		"string-similarity": "^4.0.3",
 		"tictactoe-complex-ai": "^1.0.1",
+		"utf-8-validate": "^5.0.3",
 		"wikijs": "^6.0.1",
 		"winston": "^3.3.3",
-		"winston-daily-rotate-file": "^3.10.0"
+		"winston-daily-rotate-file": "^3.10.0",
+		"zlib-sync": "^0.1.7"
 	},
 	"devDependencies": {
 		"eslint-config-standard": "^16.0.1",
