@@ -1,5 +1,4 @@
-/*
-              _______
+/*            _______
              ╱       ╲
             ╱   ╱────┘
            ╱   ╱
@@ -15,7 +14,7 @@
      ╱   ╱ ╱            WrenchBot
     ╱   ╱ ╱   Utility bot with fun additions
    ╱   ╱ ╱
-  ╱   ╱ ╱              Version 2.X
+  ╱   ╱ ╱            Version 2.X-indev
  ╱   ╱ ╱           https://encode42.dev
 ╱  O  ╱
 \____╱
