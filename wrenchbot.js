@@ -36,10 +36,10 @@ const client = new CommandoClient({
 	"commandEditableDuration":   1,
 	"partials":                  ["MESSAGE", "CHANNEL", "REACTION", "USER", "GUILD_MEMBER"],
 	"disableMentions":           "everyone",
-	"messageCacheMaxSize":       100,
+	"messageCacheMaxSize":       50000,
 	"messageEditHistoryMaxSize": 2,
-	"messageCacheLifetime":      21600,
-	"messageSweepInterval":      10800
+	"messageCacheLifetime":      604800,
+	"messageSweepInterval":      86400
 });
 client.registry
 	.registerDefaultTypes()
