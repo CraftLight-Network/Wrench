@@ -33,7 +33,7 @@ function runSetInterval(run, interval) {run(); setInterval(run, interval)}
 runSetInterval(() => {
 	fs.rmdirSync("./data/private/tmp", { "recursive": true });
 	fs.mkdirSync("./data/private/tmp");
-}, options.clearTemp * 60 * 1000);
+}, options.performance.cache.clearTemp * 60 * 1000);
 
 // Migrate from Enmap (if exists)
 if (fs.existsSync("./data/private/enmap")) require("./data/js/config").migrateFromEnmap(log);

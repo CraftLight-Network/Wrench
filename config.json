@@ -1,7 +1,6 @@
 {
 	"owners": ["272466470510788608"],
 	"support": "https://encode42.dev/support",
-	"clearTemp": 60,
 	"prefix": {
 		"commands": "]",
 		"tags": ">"
@@ -45,28 +44,38 @@
 	},
 	"status": {
 		"enabled": true,
-		"timeout": 30000,
+		"method": "repeat",
+		"timeout": 30,
 		"types": [
 			{
-				"type": "WATCHING",
+				"activity": "WATCHING",
 				"name": "you."
 			},
 			{
-				"type": "WATCHING",
+				"activity": "WATCHING",
 				"name": "%total_servers% servers."
 			},
 			{
-				"type": "PLAYING",
+				"activity": "PLAYING",
 				"name": "a game."
 			},
 			{
-				"type": "LISTENING",
+				"activity": "LISTENING",
 				"name": "%prefix%help"
 			},
 			{
-				"type": "LISTENING",
+				"activity": "LISTENING",
 				"name": "everyone."
 			}
 		]
+	},
+	"performance": {
+		"cache": {
+			"clearTemp": 60,
+			"message": {
+				"maxSize": 50000,
+				"lifetime": 604800
+			}
+		}
 	}
 }

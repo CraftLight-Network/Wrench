@@ -36,10 +36,10 @@ const client = new CommandoClient({
 	"commandEditableDuration":   1,
 	"partials":                  ["MESSAGE", "CHANNEL", "REACTION", "USER", "GUILD_MEMBER"],
 	"disableMentions":           "everyone",
-	"messageCacheMaxSize":       50000,
-	"messageEditHistoryMaxSize": 2,
-	"messageCacheLifetime":      604800,
-	"messageSweepInterval":      86400
+	"messageCacheMaxSize":       options.performance.cache.message.maxSize,
+	"messageCacheLifetime":      options.performance.cache.message.lifetime,
+	"messageSweepInterval":      86400,
+	"messageEditHistoryMaxSize": 2
 });
 client.registry
 	.registerDefaultTypes()
@@ -86,7 +86,7 @@ client.on("ready", async () => {
 	log.info(`${await totals.get("commands")} commands used | ${await totals.get("messages")} messages read | ${client.guilds.cache.size} servers`);
 
 	// Set the bots status
-	if (options.status.enabled) {status(); setInterval(status, options.status.timeout)};
+	if (options.status.enabled) {status(); setInterval(status, options.status.timeout * 1000)};
 
 	async function status() {
 		let status = await getStatus();
@@ -96,7 +96,7 @@ client.on("ready", async () => {
 			while (status.name === client.user.presence.activities[0].name) status = await getStatus();
 
 		// Set the status
-		client.user.setActivity(status.name, { "type": status.type, "url": status.url });
+		client.user.setActivity(status.name, { "type": status.activity, "url": status.url });
 	}
 
 	// Get a random status
