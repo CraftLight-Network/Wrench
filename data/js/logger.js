@@ -272,7 +272,7 @@ module.exports.logger = function logger(client/* , totals */) {
 				`,
 				"thumbnail":   newMessage.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 }),
 				"fields": [
-					["Old Message", client.truncate(oldMessage.content, 1024)]
+					["Old Message", client.truncate(oldMessage.content, 1000)]
 				],
 				"color": "#fcc419",
 				"timestamp": true
