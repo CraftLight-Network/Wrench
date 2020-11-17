@@ -14,7 +14,7 @@
 - Automated moderation system with bad link detection.
 - Tons of utility and fun commands to make everything easier.
 - Extremely customizable per-guild and per-instance.
-- Very optimized using <1% CPU and <60MB RAM.
+- Very optimized using <10% CPU and <60MB RAM.
 - A ton more! Read the more in-depth features section.
 </td>
 <td>
