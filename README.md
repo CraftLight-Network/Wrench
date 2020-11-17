@@ -28,7 +28,7 @@
 </tr>
 </table>
 
-⚠️ **WORK IN PROGRESS**
+⚠️ **WORK IN PROGRESS**  
 WrenchBot is currently being re-written from the ground up. It's missing many commands and features. But, it currently has much more in terms of backend and guild functionality. Many things will change mid-development, as such things may break. Follow the [v2 project board](https://github.com/CraftLight-Network/WrenchBot/projects/3) for updates on completion.
 
 ⌨️ **For developers:**  
