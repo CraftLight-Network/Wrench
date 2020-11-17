@@ -14,7 +14,7 @@
 - Automated moderation system with bad link detection.
 - Tons of utility and fun commands to make everything easier.
 - Extremely customizable per-guild and per-instance.
-- Very optimized using <1% CPU and <60mb RAM.
+- Very optimized using <1% CPU and <60MB RAM.
 - A ton more! Read the more in-depth features section.
 </td>
 <td>
@@ -28,7 +28,10 @@
 </tr>
 </table>
 
-**For developers:**  
+⚠️ **WORK IN PROGRESS**
+WrenchBot is currently being re-written from the ground up. It's missing many commands and features. But, it currently has much more in terms of backend and guild functionality. Many things will change mid-development, as such things may break. Follow the [v2 project board](https://github.com/CraftLight-Network/WrenchBot/projects/3) for updates on completion.
+
+⌨️ **For developers:**  
 Many of the modules made for specifically this bot work in other scenarios!  
 This bot was made with modularity in mind, meaning many elements work elsewhere.
 - TinyConfig
@@ -52,26 +55,29 @@ This bot was made with modularity in mind, meaning many elements work elsewhere.
 4. Rename `auth-example.json` to `auth.json` and place your bot token in the "`token`" element.
 5. Start the bot! Run `node .` in the bots root directory.
 
+## 🔨 All Features
+**CURRENTLY W.I.P.**
+
 ## 💾 Config values
 ### Hosting
 `owners`: Array of Discord user ids. These users can execute any command anywhere. [Discord user ID]  
 `support`: The link sent when an error occurs in a command. [Invite URL]  
 `prefix.commands`: The prefix the bot uses for commands. [Character]  
-`prefix.tags`: The prefix used in the tag shortcut. [Character]  
+`prefix.tags`: The prefix used in the tag shortcut. [Character]
 
 `status.enabled`: Whether or not the bot changes its status. [true | false]  
 `status.timeout`: How long the bot waits before changing its status. [Seconds, >15]  
 `status.method`: The way statuses are cycled through. [order | random | repeat]   
 `status.types` → `type`: The "activity" of the bot. [LISTENING | PLAYING | STREAMING | WATCHING]  
 `status.types` → `name`: The text displayed next to the type. [String]  
-`status.types` → `url`: The URL to display by the status. [URL]  
+`status.types` → `url`: The URL to display by the status. [URL]
 
 `performance.cache.clearTemp`: Time between cache directory clears. [Seconds]  
 `performance.cache.message.maxSize`: The maximum amount of messages stored in memory. [Number]  
 `performance.cache.message.lifetime`: How long messages will be stored before becoming clearable. [Number]
 
 ### Discord:
-**CURRENTLY W.I.P.**
+**ALSO CURRENTLY W.I.P.**
 
 ## ❔ FAQ
 **ALSO CURRENTLY W.I.P.**
