@@ -56,9 +56,9 @@ const defaultReactions        = require("../json/defaultReactions");
 const defaultTags             = require("../json/defaultTags");
 
 class Config {
-	constructor(config, guild, customConfig, customFile, customOptions, customMigrations) {
-		this.rawGuild = guild;
-		this.guild    = guild.id;
+	constructor(config, id, customConfig, customFile, customOptions, customMigrations) {
+		this.rawGuild = id.id || undefined;
+		this.id       = id.id ? id.id : id;
 
 		switch (config) {
 			case "custom":
@@ -87,20 +87,18 @@ class Config {
 		}
 	}
 
-	// Make sure the guild exists in the config
-	async ensure() {await this.config.ensure(this.guild, { "version": this.file.version })}
+	// Make sure the ID exists in the config
+	async ensure() {await this.config.ensure(this.id, { "version": this.file.version })}
 
 	// Check if a server config needs any migrations
 	async check(command) {
-		const config = await this.config.get(this.guild);
-
-		// Check if the local config is up-to-date
+		const config = await this.config.get(this.id);
 		if (config.version === this.file.version) return config;
 
 		// Migrate to each config version
 		return await new Promise(resolve => {
 			this.migrations.run.forEach(async m => {
-				if ((await this.config.get(this.guild)).version === m.info.from) {
+				if ((await this.config.get(this.id)).version === m.info.from) {
 					// Check if the migration has breaking changes
 					if (m.info.breaking && !command) {
 						resolve(false);
@@ -109,8 +107,8 @@ class Config {
 
 					// Migrate the config
 					const migrated = await this.migrate(m);
-					await this.config.delete(this.guild);
-					await this.config.set(this.guild, migrated);
+					await this.config.delete(this.id);
+					await this.config.set(this.id, migrated);
 					resolve(config);
 				}
 			});
@@ -119,7 +117,7 @@ class Config {
 
 	// Migrate a config file
 	async migrate(migration) {
-		const workingJSON = _.cloneDeep(await this.config.get(this.guild));
+		const workingJSON = _.cloneDeep(await this.config.get(this.id));
 
 		// General steps (parsing, invalidation, etc.)
 		migration.steps.forEach(s => {
@@ -146,7 +144,7 @@ class Config {
 		return sort(removeNull(workingJSON), { "depth": 1 });
 	}
 
-	// Get the config in JSON
+	// Get the merged config
 	async get() {
 		await this.ensure();
 		const config = await this.check();
@@ -155,64 +153,65 @@ class Config {
 		return !config ? false : _.merge(_.cloneDeep(this.file), config);
 	}
 
-	// Get the raw server config data
+	// Get the raw, unformatted config
 	async getRaw() {
 		await this.ensure();
-		return this.config.get(this.guild);
+		return this.config.get(this.id);
 	}
 
-	// Get the local and current config versions
+	// Get details about the local/current config
 	async getDetails() {
 		await this.ensure();
 		return {
 			"version": {
-				"local":   (await this.config.get(this.guild)).version,
+				"local":   (await this.config.get(this.id)).version,
 				"current": this.file.version
 			},
 			"info": this.migrations.run[0].info
 		};
 	}
 
-	// Set config properties
+	// Set exact config properties
 	async set(property, value) {
 		const checked = this.checks(property, value);
 		if (!checked.valid) return checked;
 
-		await this.config.set(`${this.guild}.${property}`, value);
+		await this.config.set(`${this.id}.${property}`, value);
 		return { "valid": true };
 	}
 
-	// Add to arrays
+	// Add/remove from arrays
 	// CURRENTLY BROKEN! JOSH ISSUE?
 	async add(property, value) {
 		const checked = this.checks(property, value);
 		if (!checked.valid) return false;
 
-		_.get(await this.config.get(`${this.guild}`), property) ? await this.config.push(`${this.guild}.${property}`, value)
-			: await this.config.set(`${this.guild}.${property}`, [value]);
+		_.get(await this.config.get(`${this.id}`), property) ? await this.config.push(`${this.id}.${property}`, value)
+			: await this.config.set(`${this.id}.${property}`, [value]);
 		return { "valid": true };
 	}
 
-	// Remove from arrays
 	async remove(property, value) {
-		await this.config.remove(`${this.guild}.${property}`, value);
+		await this.config.remove(`${this.id}.${property}`, value);
 		return { "valid": true };
 	};
 
-	// Delete whole values
+	// Delete entire values from the config
 	async delete(value) {
-		await this.config.delete(this.guild, value);
+		await this.config.delete(this.id, value);
 		return { "valid": true };
 	}
 
-	// Reset the guild's config
+	// Completely clear and reset the config
 	async reset() {
-		await this.config.delete(this.guild);
+		await this.config.delete(this.id);
 		this.ensure();
 	}
 
-	// Make sure the input value is valid
+	// Make sure the input type is valid
 	checks(property, value) {
+		if (!this.options) return { "valid": true };
+
 		const option     = _.get(this.options, property).split(",");
 		const input      = value.split(",");
 		const valid      = [];
@@ -245,10 +244,10 @@ class Config {
 						if (o.indexOf("%") > 0 || parsed > 100 || parsed < 0) return false;
 						return true;
 
-					// Role ID in server
+					// Role ID in Discord server
 					case "guildRoleID": return !!(this.rawGuild.roles.cache.get(input[i]));
 
-					// Guild ID in server
+					// Channel ID in Discord server
 					case "guildChannelID": return !!(this.rawGuild.channels.cache.get(input[i]));
 
 					// Specific value
