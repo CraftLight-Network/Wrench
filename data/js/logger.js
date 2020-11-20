@@ -1,6 +1,6 @@
 // Define and require modules
 const { stripIndents } = require("common-tags");
-const Config           = require("./config");
+const TinyConfig       = require("./config");
 const winston          = require("winston");
 require("winston-daily-rotate-file");
 
@@ -320,6 +320,6 @@ function getDuration(then) {
 }
 
 async function getConfig(guild) {
-	const config = new Config("guild", guild);
+	const config = new TinyConfig("guild", guild);
 	return await config.get();
 }

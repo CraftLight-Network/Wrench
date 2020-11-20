@@ -1,7 +1,7 @@
 // Define and require modules
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const Config           = require("../../data/js/config");
+const TinyConfig       = require("../../data/js/config");
 const options          = require("../../config");
 const _                = require("lodash");
 
@@ -54,7 +54,7 @@ module.exports = class ConfigCommand extends Command {
 	}
 
 	async run(message, { action, property, value }) {
-		const config = new Config("guild", message.guild);
+		const config = new TinyConfig("guild", message.guild);
 		const guildConfig = await config.get();
 		if (!guildConfig)
 			return message.reply(`This server's config must be migrated, but some steps have breaking changes! Please run \`${options.prefix.commands}migrate\`.`);

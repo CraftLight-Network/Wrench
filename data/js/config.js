@@ -55,7 +55,7 @@ const defaultConfigOptions    = require("../json/defaultConfig.options");
 const defaultReactions        = require("../json/defaultReactions");
 const defaultTags             = require("../json/defaultTags");
 
-class Config {
+class TinyConfig {
 	constructor(config, id, customConfig, customFile, customOptions, customMigrations) {
 		this.rawGuild = id.id || undefined;
 		this.id       = id.id ? id.id : id;
@@ -278,11 +278,9 @@ function stringJSON(json) {
 	return output;
 };
 
-function accurateInt(number) {
-	return number < 9007199254740991 && number > -9007199254740991;
-}
+function accurateInt(number) {return number < 9007199254740991 && number > -9007199254740991}
 
-module.exports = Config;
+module.exports = TinyConfig;
 
 // Migrate Enmap -> JOSH
 module.exports.migrateFromEnmap = async (log) => {

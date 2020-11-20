@@ -3,7 +3,7 @@ const { stripIndents } = require("common-tags");
 const AntiSpam         = require("discord-anti-spam");
 const request          = require("async-request");
 const log              = require("./logger").log;
-const Config           = require("./config");
+const TinyConfig       = require("./config");
 
 // Download and format bad links
 let bad = []; createBadLinks();
@@ -45,7 +45,7 @@ let valid = true;
 module.exports = async (message) => {
 	if (!message.guild || message.system || !message.content) return;
 
-	const config = new Config("guild", message.guild);
+	const config = new TinyConfig("guild", message.guild);
 	const guildConfig = await config.get();
 	if (!guildConfig) return;
 
@@ -93,7 +93,7 @@ module.exports = async (message) => {
 		if (!message.client.check(message.content.split(" "), bad, true)) return;
 
 		// Delete and warn
-		reply(message, { "name": "send bad links", "code": "link" });
+		reply(message, { "name": "send bad links", "code": "bad link" });
 	}
 };
 

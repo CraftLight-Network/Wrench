@@ -1,7 +1,7 @@
 // Define and require modules
 const { Command }      = require("discord.js-commando");
 const { stripIndents } = require("common-tags");
-const Config           = require("../../data/js/config");
+const TinyConfig       = require("../../data/js/config");
 const options          = require("../../config");
 
 module.exports = class MigrateCommand extends Command {
@@ -31,7 +31,7 @@ module.exports = class MigrateCommand extends Command {
 		// Permission check
 		if (!this.client.checkRole(message)) return message.reply("You do not have permission to use this command.");
 
-		const config = new Config("guild", message.guild);
+		const config = new TinyConfig("guild", message.guild);
 
 		// Make sure the config is not already up-to-date
 		const configDetails = await config.getDetails();

@@ -1,8 +1,8 @@
 // Define and require modules
-const options   = require("../../config");
-const reactions = require("./reactions");
-const automod   = require("./automod");
-const Config    = require("./config");
+const options    = require("../../config");
+const reactions  = require("./reactions");
+const automod    = require("./automod");
+const TinyConfig = require("./config");
 
 module.exports.run = (client) => {
 	// Create voice channel join/leave event
@@ -42,7 +42,7 @@ module.exports.run = (client) => {
 
 	// Voice chat text channel role
 	.on("voiceJoinLeave", async (from, to) => {
-		const config = new Config("guild", to.guild);
+		const config = new TinyConfig("guild", to.guild);
 		const guildConfig = await config.get();
 		if (!guildConfig) return;
 
@@ -61,7 +61,7 @@ module.exports.run = (client) => {
 	// Guild-only events
 	async function guildEvents(message) {
 		if (message.guild) {
-			const config = new Config("guild", message.guild);
+			const config = new TinyConfig("guild", message.guild);
 			const guildConfig = await config.get();
 			if (!guildConfig) return;
 
