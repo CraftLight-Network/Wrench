@@ -49,7 +49,7 @@ module.exports = class PurgeCommand extends Command {
 		if (!isNaN(parseInt(amount))) amount = parseInt(amount);
 		const config = new Config("guild", message.guild);
 		const guildConfig = await config.get();
-		if (guildConfig === "breaking")
+		if (!guildConfig)
 			return message.reply(`This server's config must be migrated, but some steps have breaking changes! Please run \`${options.prefix.commands}migrate\`.`);
 
 		// Permission check

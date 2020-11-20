@@ -22,11 +22,13 @@
 
 // Define and require modules
 const { CommandoClient } = require("discord.js-commando");
-const totals             = require("./data/js/config").totals;
 const options            = require("./config");
 const moment             = require("moment");
 const path               = require("path");
 const fs                 = require("fs");
+
+// Run the backend utilities
+require("./data/js/backend");
 
 // Register + create command instance
 const client = new CommandoClient({
@@ -54,8 +56,7 @@ client.registry
 	.registerCommandsIn(path.join(__dirname, "commands"))
 	.registerDefaultCommands({ "unknownCommand": false });
 
-// Run the startup functions
-require("./data/js/backend");
+// Create the extended events
 require("./data/js/events").run(client);
 
 // Logger
@@ -78,10 +79,11 @@ function listen(files) {
 	});
 }
 
+const totals = require("./data/js/config").totals;
 client.on("ready", async () => {
-	log.ok("------------------------------------------");
-	log.ok(` WrenchBot START ON: ${moment().format("MM/DD/YY hh:mm:ss A")}`);
-	log.ok("------------------------------------------");
+	log.ok("-----------------------------------------");
+	log.ok(` WrenchBot started! ${moment().format("MM/DD/YY hh:mm:ss A")}`);
+	log.ok("-----------------------------------------");
 	log.info(`Name: ${client.user.tag} | ID: ${client.user.id}`);
 	log.info(`${await totals.get("commands")} commands used | ${await totals.get("messages")} messages read | ${client.guilds.cache.size} servers`);
 

@@ -47,7 +47,7 @@ module.exports = async (message) => {
 
 	const config = new Config("guild", message.guild);
 	const guildConfig = await config.get();
-	if (guildConfig === "breaking") return;
+	if (!guildConfig) return;
 
 	// SPAM SPAM SPAM
 	if (valid && guildConfig.automod.modules.spam.enabled) await spam();
@@ -117,8 +117,8 @@ function reply(message, warning) {
 		message.delete();
 		embedMessage.fields.push(["Original message:", message]);
 
-		embedMessage.message           = message;
-		embedMessage.author.picture    = message.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 });
+		embedMessage.message         = message;
+		embedMessage.author.picture  = message.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 });
 
 		return message.author.send(message.client.embed(embedMessage));
 	}

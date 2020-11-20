@@ -100,7 +100,7 @@ module.exports.logger = function logger(client/* , totals */) {
 	// Join
 	.on("guildMemberAdd", async member => {
 		const guildConfig = await getConfig(member.guild);
-		if (guildConfig === "breaking") return;
+		if (!guildConfig) return;
 
 		// Message
 		if (guildConfig.join.message.enabled) sendMessage({
@@ -120,7 +120,7 @@ module.exports.logger = function logger(client/* , totals */) {
 	// Leave
 	.on("guildMemberRemove", async member => {
 		const guildConfig = await getConfig(member.guild);
-		if (guildConfig === "breaking") return;
+		if (!guildConfig) return;
 
 		if (!guildConfig.leave.message.enabled) sendMessage({
 			"placeholders": true,
@@ -133,7 +133,7 @@ module.exports.logger = function logger(client/* , totals */) {
 	// Member join
 	.on("guildMemberAdd", async member => {
 		const guildConfig = await getConfig(member.guild);
-		if (guildConfig === "breaking") return;
+		if (!guildConfig) return;
 
 		if (!guildConfig.log.enabled || !guildConfig.log.modules.member) return;
 		sendMessage({
@@ -158,7 +158,7 @@ module.exports.logger = function logger(client/* , totals */) {
 	// Member leave
 	.on("guildMemberRemove", async member => {
 		const guildConfig = await getConfig(member.guild);
-		if (guildConfig === "breaking") return;
+		if (!guildConfig) return;
 
 		if (!guildConfig.log.enabled || !guildConfig.log.modules.member) return;
 		const roles = member.roles.cache.map(r => r.name === "@everyone" ? "" : r.name)
@@ -192,7 +192,7 @@ module.exports.logger = function logger(client/* , totals */) {
 		if (!message.guild || !message.content) return;
 
 		const guildConfig = await getConfig(message.guild);
-		if (guildConfig === "breaking") return;
+		if (!guildConfig) return;
 
 		if (!guildConfig.log.enabled || !guildConfig.log.modules.message) return;
 
@@ -250,7 +250,7 @@ module.exports.logger = function logger(client/* , totals */) {
 		if (!newMessage.guild || newMessage.author.bot) return;
 
 		const guildConfig = await getConfig(newMessage.guild);
-		if (guildConfig === "breaking") return;
+		if (!guildConfig) return;
 
 		if (!guildConfig.log.enabled || !guildConfig.log.modules.message) return;
 
@@ -270,7 +270,7 @@ module.exports.logger = function logger(client/* , totals */) {
 					Channel: <#${newMessage.channel.id}>
 					Message: [Link](${messageLink})
 				`,
-				"thumbnail":   newMessage.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 }),
+				"thumbnail": newMessage.author.displayAvatarURL({ "format": "png", "dynamic": true, "size": 512 }),
 				"fields": [
 					["Old Message", client.truncate(oldMessage.content, 1000)]
 				],

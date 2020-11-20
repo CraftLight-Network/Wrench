@@ -36,4 +36,4 @@ runSetInterval(() => {
 }, options.performance.cache.clearTemp * 60 * 1000);
 
 // Migrate from Enmap (if exists)
-if (fs.existsSync("./data/private/enmap")) require("./data/js/config").migrateFromEnmap(log);
+if (fs.existsSync("./data/private/enmap")) require("../js/config").migrateFromEnmap(/* log */);

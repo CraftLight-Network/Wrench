@@ -56,7 +56,7 @@ module.exports = class ConfigCommand extends Command {
 	async run(message, { action, property, value }) {
 		const config = new Config("guild", message.guild);
 		const guildConfig = await config.get();
-		if (guildConfig === "breaking")
+		if (!guildConfig)
 			return message.reply(`This server's config must be migrated, but some steps have breaking changes! Please run \`${options.prefix.commands}migrate\`.`);
 
 		// Permission check

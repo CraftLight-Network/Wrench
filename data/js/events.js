@@ -44,7 +44,7 @@ module.exports.run = (client) => {
 	.on("voiceJoinLeave", async (from, to) => {
 		const config = new Config("guild", to.guild);
 		const guildConfig = await config.get();
-		if (guildConfig === "breaking") return;
+		if (!guildConfig) return;
 
 		if (!guildConfig.misc.voicechat.enabled) return;
 
@@ -63,7 +63,7 @@ module.exports.run = (client) => {
 		if (message.guild) {
 			const config = new Config("guild", message.guild);
 			const guildConfig = await config.get();
-			if (guildConfig === "breaking") return;
+			if (!guildConfig) return;
 
 			// Run automod and reactions
 			if (guildConfig.automod.enabled && !client.checkRole(message, guildConfig.automod.adminID)) automod(message);

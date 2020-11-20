@@ -92,17 +92,18 @@ class Config {
 
 	// Check if a server config needs any migrations
 	async check(command) {
-		// Check if the local config is up-to-date
 		const config = await this.config.get(this.guild);
-		if (config.version === this.file.version) return false;
 
-		// Check if the migration has breaking changes
-		let breaking = false;
-		breaking = await new Promise(resolve => {
+		// Check if the local config is up-to-date
+		if (config.version === this.file.version) return config;
+
+		// Migrate to each config version
+		return await new Promise(resolve => {
 			this.migrations.run.forEach(async m => {
 				if ((await this.config.get(this.guild)).version === m.info.from) {
+					// Check if the migration has breaking changes
 					if (m.info.breaking && !command) {
-						resolve(true);
+						resolve(false);
 						return;
 					}
 
@@ -110,11 +111,10 @@ class Config {
 					const migrated = await this.migrate(m);
 					await this.config.delete(this.guild);
 					await this.config.set(this.guild, migrated);
-					resolve(false);
+					resolve(config);
 				}
 			});
 		});
-		return breaking;
 	}
 
 	// Migrate a config file
@@ -149,11 +149,10 @@ class Config {
 	// Get the config in JSON
 	async get() {
 		await this.ensure();
-		const breaking = await this.check();
+		const config = await this.check();
 
 		// Return config if non-breaking
-		const json = await this.config.get(this.guild);
-		return breaking ? "breaking" : await _.merge(_.cloneDeep(this.file), json);
+		return !config ? false : _.merge(_.cloneDeep(this.file), config);
 	}
 
 	// Get the raw server config data
@@ -288,7 +287,7 @@ module.exports = Config;
 
 // Migrate Enmap -> JOSH
 module.exports.migrateFromEnmap = async (log) => {
-	log.info("Old Enmap database found, migrating...");
+	// log.info("Old Enmap database found, migrating...");
 
 	const dataDir = "./data/private/enmap";
 	const Enmap   = require("enmap");
@@ -314,7 +313,7 @@ module.exports.migrateFromEnmap = async (log) => {
 
 	fs.renameSync("./data/private/enmap", "./data/private/enmap.bak");
 
-	log.ok("Migrated the Enmap database to JOSH!");
+	// log.ok("Migrated the Enmap database to JOSH!");
 };
 
 // Export individual databases
