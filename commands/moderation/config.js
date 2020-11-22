@@ -54,7 +54,7 @@ module.exports = class ConfigCommand extends Command {
 	}
 
 	async run(message, { action, property, value }) {
-		const config = new TinyConfig("guild", message.guild);
+		const config = new TinyConfig("guild", message.guild, message);
 		const guildConfig = await config.get();
 		if (!guildConfig)
 			return message.reply(`This server's config must be migrated, but some steps have breaking changes! Please run \`${options.prefix.commands}migrate\`.`);

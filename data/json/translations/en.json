@@ -1,0 +1,56 @@
+{
+	"misc": {
+		"authNotFound": {
+			"line1": "The file \"auth.json\" does not exist! This is required in order to login to your bot.",
+			"line2": "Please refer to README.md for steps on how to get your token."
+		}
+	},
+	"automod": {
+		"spam": {
+			"name": "spam",
+			"code": "spam",
+			"message": {
+				"kicked": "**%1** has been kicked for spamming.",
+				"banned": "**%1** has been banned for spamming."
+			}
+		},
+		"invites": {
+			"name": "send server invite links",
+			"code": "server invite"
+		},
+		"caps": {
+			"name": "use an excessive amount of capitals",
+			"code": "excessive capitals"
+		},
+		"blacklisted": {
+			"name": "send words that are on the blacklist",
+			"code": "blacklisted word"
+		},
+		"badLinks": {
+			"name":  "send links that are considered malicious",
+			"code":  "bad link",
+			"ready": "The BadLinks array is ready!"
+		},
+		"title": "Warning",
+		"message": {
+			"line1":    "The server %1 does not want you to %2 there.",
+			"line2":    "If this was a mistake, you may edit your message without the %1.",
+			"original": "Original message:"
+		}
+	},
+	"config": {
+		"migrate":        "Successfully migrated the Enmap database to JOSH!",
+		"string":         "string",
+		"boolean":        "boolean",
+		"int":            "integer",
+		"static":         "changeable value",
+		"percent":        "percent",
+		"guildRoleID":    "guild role ID",
+		"guildChannelID": "guild channel ID",
+		"message": {
+			"main":   "The input type was not a %1",
+			"format": "Format:"
+		}
+	},
+	"completion": "100%"
+}

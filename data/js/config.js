@@ -50,27 +50,32 @@ totals.ensure("automod",  0);
 
 // Defaults + migrations + options
 const defaultConfig           = require("../json/defaultConfig");
-const defaultConfigMigrations = require("../json/defaultConfig.migrations");
-const defaultConfigOptions    = require("../json/defaultConfig.options");
+const defaultConfigMigrate    = require("../json/defaultConfig.migrate");
+const defaultConfigValidate   = require("../json/defaultConfig.validate");
 const defaultReactions        = require("../json/defaultReactions");
 const defaultTags             = require("../json/defaultTags");
 
 class TinyConfig {
-	constructor(config, id, customConfig, customFile, customOptions, customMigrations) {
+	constructor(config, id, message, options) {
+		this.message = message || {};
+		this.channel = this.message.channel;
+		options = (this.message.id ? options : this.message) || {};
+
 		this.rawGuild = id.id || undefined;
+		this.client   = this.rawGuild ? this.rawGuild.client : undefined;
 		this.id       = id.id ? id.id : id;
 
 		switch (config) {
 			case "custom":
-				this.migrations = customMigrations;
-				this.options    = customOptions;
-				this.config     = customConfig;
-				this.file       = customFile;
+				this.migrations = options.migrate;
+				this.validate   = options.validate;
+				this.config     = options.config;
+				this.file       = options.file;
 				break;
 
 			case "guild":
-				this.migrations = defaultConfigMigrations;
-				this.options    = defaultConfigOptions;
+				this.migrations = defaultConfigMigrate;
+				this.validate   = defaultConfigValidate;
 				this.config     = guildConfig;
 				this.file       = defaultConfig;
 				break;
@@ -184,7 +189,7 @@ class TinyConfig {
 	// CURRENTLY BROKEN! JOSH ISSUE?
 	async add(property, value) {
 		const checked = this.checks(property, value);
-		if (!checked.valid) return false;
+		if (!checked.valid) return checked;
 
 		_.get(await this.config.get(`${this.id}`), property) ? await this.config.push(`${this.id}.${property}`, value)
 			: await this.config.set(`${this.id}.${property}`, [value]);
@@ -210,49 +215,38 @@ class TinyConfig {
 
 	// Make sure the input type is valid
 	checks(property, value) {
-		if (!this.options) return { "valid": true };
+		if (!this.validate) return { "valid": true };
 
-		const option     = _.get(this.options, property).split(",");
-		const input      = value.split(",");
-		const valid      = [];
-		const reason     = [];
-
-		// Argument length
-		if (option.length !== input.length) return false;
+		const option = _.get(this.validate, property).split(",");
+		const input  = value.split(",");
+		const valid  = [];
+		const reason = [];
 
 		// Each required argument
 		option.some((r, i) => {
 			// Each optional argument
-			valid.push(r.split("|").some(o => {
+			valid.push(r.split("|").some(async o => {
 				reason.push(o);
-				switch (o) {
-					// Strings
-					case "string": return typeof stringJSON(input[i]) === "string";
+				try {
+					switch (o) {
+						case "string":           return typeof stringJSON(input[i]) === "string";          // Strings
+						case "boolean":          return input[i] === "true" ? true : input[i] === "false"; // Booleans
+						case "int":              return Number.isInteger(JSON.parse(input[i]));            // Integers
+						case "guildChannelID":   return !!(this.rawGuild.channels.cache.get(input[i]));    // Discord | Channel ID in server
+						case "guildEmojiID":     return !!(this.rawGuild.emojis.cache.get(input[i]));      // Discord | Emoji ID in server
+						case "guildRoleID":      return !!(this.rawGuild.roles.cache.get(input[i]));       // Discord | Role ID in server
+						case "channelMessageID": return !!(await this.channel.messages.fetch(input[i]));   // Discord | Message ID in channel
+						case "static":           return false;                                             // Static
 
-					// Booleans
-					case "boolean": return input[i] === "true" ? true : input[i] === "false";
+						// Percentages
+						case "percent":
+							const parsed = parseInt(o.replace("%", ""), 10);
+							if (o.indexOf("%") > 0 || parsed > 100 || parsed < 0) return false;
+							return true;
 
-					// Integers
-					case "int":     return Number.isInteger(JSON.parse(input[i]));
-
-					// Static
-					case "static":  return false;
-
-					// Percentages
-					case "percent":
-						const parsed = parseInt(o.replace("%", ""), 10);
-						if (o.indexOf("%") > 0 || parsed > 100 || parsed < 0) return false;
-						return true;
-
-					// Role ID in Discord server
-					case "guildRoleID": return !!(this.rawGuild.roles.cache.get(input[i]));
-
-					// Channel ID in Discord server
-					case "guildChannelID": return !!(this.rawGuild.channels.cache.get(input[i]));
-
-					// Specific value
-					default: return input[i] === o;
-				}
+						default: return input[i] === o; // Default, specific values
+					}
+				} catch {return false}
 			}));
 			return false;
 		});

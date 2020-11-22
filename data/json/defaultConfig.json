@@ -60,6 +60,7 @@
 		}
 	},
 	"misc": {
+		"language": "en",
 		"bot": {
 			"enabled":   false,
 			"channelID": []
@@ -67,6 +68,10 @@
 		"voicechat": {
 			"enabled": false,
 			"ID":      []
+		},
+		"reactionRoles": {
+			"enabled": false,
+			"ID": []
 		},
 		"advert": {
 			"enabled":   false,
