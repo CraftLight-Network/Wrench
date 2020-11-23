@@ -10,7 +10,7 @@
 		"enabled": true,
 		"types": [
 			{
-				"regex": "hello|hi|hey|hiya|heyo|howdy|sup|yo|hola|hallo|bonjour|salut|ciao|konnichiwa",
+				"regex": "hello|hi|hiya|heyo|howdy|sup|hola|hallo|bonjour|salut|ciao|konnichiwa",
 				"emotes": ["👋", "🇭", "🇮"],
 				"fullWord": true,
 				"checkPrevious": 5

@@ -1,4 +1,5 @@
 // Define and require modules
+const { forEach, some } = require("p-iteration");
 const sort  = require("sort-json");
 const path  = require("jsonpath");
 const _     = require("lodash");
@@ -59,11 +60,11 @@ class TinyConfig {
 	constructor(config, id, message, options) {
 		this.message = message || {};
 		this.channel = this.message.channel;
-		options = (this.message.id ? options : this.message) || {};
+		options      = (this.message.id ? options : this.message) || {};
 
-		this.rawGuild = id.id || undefined;
-		this.client   = this.rawGuild ? this.rawGuild.client : undefined;
-		this.id       = id.id ? id.id : id;
+		this.guild  = id.id ? id : undefined;
+		this.client = this.rawGuild ? this.rawGuild.client : undefined;
+		this.id     = id.id ? id.id : id;
 
 		switch (config) {
 			case "custom":
@@ -178,7 +179,7 @@ class TinyConfig {
 
 	// Set exact config properties
 	async set(property, value) {
-		const checked = this.checks(property, value);
+		const checked = await this.checks(property, value);
 		if (!checked.valid) return checked;
 
 		await this.config.set(`${this.id}.${property}`, value);
@@ -188,7 +189,7 @@ class TinyConfig {
 	// Add/remove from arrays
 	// CURRENTLY BROKEN! JOSH ISSUE?
 	async add(property, value) {
-		const checked = this.checks(property, value);
+		const checked = await this.checks(property, value);
 		if (!checked.valid) return checked;
 
 		_.get(await this.config.get(`${this.id}`), property) ? await this.config.push(`${this.id}.${property}`, value)
@@ -214,7 +215,7 @@ class TinyConfig {
 	}
 
 	// Make sure the input type is valid
-	checks(property, value) {
+	async checks(property, value) {
 		if (!this.validate) return { "valid": true };
 
 		const option = _.get(this.validate, property).split(",");
@@ -222,33 +223,39 @@ class TinyConfig {
 		const valid  = [];
 		const reason = [];
 
+		if (option.length !== input.length) return { "valid": false, "reason": `The input type was not a \`${reason.join("`, `")}\`. ${option.join().includes(",") ? `(Format: \`${option}\`)` : ""}` };
+
 		// Each required argument
-		option.some((r, i) => {
+		await forEach(option, async (r, i) => {
 			// Each optional argument
-			valid.push(r.split("|").some(async o => {
+			valid.push(await some(r.split("|"), async o => {
 				reason.push(o);
-				try {
-					switch (o) {
-						case "string":           return typeof stringJSON(input[i]) === "string";          // Strings
-						case "boolean":          return input[i] === "true" ? true : input[i] === "false"; // Booleans
-						case "int":              return Number.isInteger(JSON.parse(input[i]));            // Integers
-						case "guildChannelID":   return !!(this.rawGuild.channels.cache.get(input[i]));    // Discord | Channel ID in server
-						case "guildEmojiID":     return !!(this.rawGuild.emojis.cache.get(input[i]));      // Discord | Emoji ID in server
-						case "guildRoleID":      return !!(this.rawGuild.roles.cache.get(input[i]));       // Discord | Role ID in server
-						case "channelMessageID": return !!(await this.channel.messages.fetch(input[i]));   // Discord | Message ID in channel
-						case "static":           return false;                                             // Static
+				switch (o) {
+					case "string":           return typeof stringJSON(input[i]) === "string";          // Strings
 
-						// Percentages
-						case "percent":
-							const parsed = parseInt(o.replace("%", ""), 10);
-							if (o.indexOf("%") > 0 || parsed > 100 || parsed < 0) return false;
-							return true;
+					case "boolean":          return input[i] === "true" ? true : input[i] === "false"; // Booleans
 
-						default: return input[i] === o; // Default, specific values
-					}
-				} catch {return false}
+					case "int":              return Number.isInteger(JSON.parse(input[i]));            // Integers
+
+					case "percent":                                                                    // Percentages
+						const parsed = parseInt(o.replace("%", ""), 10);
+						if (o.indexOf("%") > 0 || parsed > 100 || parsed < 0) return false;
+						return true;
+
+					case "guildChannelID":   return !!(this.guild.channels.cache.get(input[i]));       // Discord | Channel ID in server
+
+					case "guildEmojiID":                                                               // Discord | Emoji ID in server
+						return !!(/[\uD800-\uDBFF][\uDC00-\uDFFF]/.test(input[i]) ||
+						this.guild.emojis.cache.get(input[i]));
+					case "guildRoleID":      return !!(this.guild.roles.cache.get(input[i]));          // Discord | Role ID in server
+
+					case "channelMessageID": return !!(await this.channel.messages.fetch(input[i]));   // Discord | Message ID in channel
+
+					case "static":           return false;                                             // Static
+
+					default: return input[i] === o; // Default, specific values
+				}
 			}));
-			return false;
 		});
 
 		if (valid.filter(Boolean).length === option.length) return { "valid": true };

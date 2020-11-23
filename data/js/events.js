@@ -20,6 +20,14 @@ module.exports.run = (client) => {
 		client.emit("messageEdit", oldMessage, newMessage);
 	})
 
+	// Emit reaction change event on add/remove
+	.on("messageReactionAdd", (reaction, user) => {
+		client.emit("messageReactionChange", reaction, user, "add");
+	})
+	.on("messageReactionRemove", (reaction, user) => {
+		client.emit("messageReactionChange", reaction, user, "remove");
+	})
+
 	.on("message", async message => {
 		if (message.author.bot) return;
 		message = await client.getMessage(message);
@@ -55,6 +63,27 @@ module.exports.run = (client) => {
 			// Add/remove role
 			if (to.channelID === ids[0]) to.member.roles.add(ids[1]);
 			else if (to.member.roles.cache.has(ids[1])) to.member.roles.remove(ids[1]);
+		});
+	})
+
+	.on("messageReactionChange", async (reaction, user, action) => {
+		if (!reaction.message.guild || user.bot) return;
+
+		const member = await reaction.message.guild.members.cache.get(user.id);
+		const config = new TinyConfig("guild", reaction.message.guild);
+		const guildConfig = await config.get();
+
+		if (!guildConfig.misc.reactionRoles.enabled) return;
+		guildConfig.misc.reactionRoles.ID.some(e => {
+			const ids = e.split(",");
+
+			if (reaction.message.id !== ids[0] ||
+			   (reaction.emoji.id   !== ids[1] &&
+				reaction.emoji.name !== ids[1])) return false;
+
+			if (action === "add") member.roles.add(ids[2]);
+			else member.roles.remove(ids[2]);
+			return true;
 		});
 	});
 

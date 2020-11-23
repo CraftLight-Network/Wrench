@@ -31,6 +31,7 @@
 		"lodash": "^4.17.20",
 		"moment": "^2.29.1",
 		"moment-duration-format": "^2.3.2",
+		"p-iteration": "^1.1.8",
 		"random": "^2.2.0",
 		"request": "^2.88.2",
 		"sort-json": "^2.0.0",
