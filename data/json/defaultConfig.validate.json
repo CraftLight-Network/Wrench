@@ -71,7 +71,7 @@
 		},
 		"reactionRoles": {
 			"enabled": "boolean",
-			"ID": "channelMessageID,guildEmojiID,guildRoleID"
+			"ID":      "channelMessageID,guildEmojiID,guildRoleID"
 		},
 		"advert": {
 			"enabled":   "boolean",
