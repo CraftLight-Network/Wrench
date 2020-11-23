@@ -120,7 +120,7 @@ module.exports.run = (client) => {
 
 		// Custom placeholders
 		if (custom !== undefined) {
-			Object.entries(custom).forEach(e => placeholders[e[0]] = e[1]);
+			custom.forEach(e => placeholders[e[0]] = e[1]);
 		}
 
 		// Replace placeholders

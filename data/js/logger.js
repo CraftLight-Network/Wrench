@@ -122,7 +122,7 @@ module.exports.logger = function logger(client/* , totals */) {
 		const guildConfig = await getConfig(member.guild);
 		if (!guildConfig) return;
 
-		if (!guildConfig.leave.message.enabled) sendMessage({
+		if (guildConfig.leave.message.enabled) sendMessage({
 			"placeholders": true,
 			"channel": guildConfig.leave.message.channelID,
 			"message": guildConfig.leave.message.message
@@ -292,7 +292,8 @@ module.exports.logger = function logger(client/* , totals */) {
 	});
 
 	// Send messages to channels
-	function sendMessage(options, object) {
+	async function sendMessage(options, object) {
+		// Make sure the channel is still valid
 		if (!checkValidChannel(options.channel)) return;
 
 		let placeholders = [];
@@ -301,8 +302,9 @@ module.exports.logger = function logger(client/* , totals */) {
 		if (!options.placeholders) options.commonPlaceholders = false;
 		if (options.commonPlaceholders === undefined) options.commonPlaceholders = true;
 
+		// Replace placeholders
 		if (options.commonPlaceholders) placeholders = client.commonPlaceholders(object, "member");
-		if (options.placeholders) options.message = client.placeholders(options.message, placeholders);
+		if (options.placeholders) options.message = await client.placeholders(options.message, placeholders);
 
 		client.channels.cache.get(options.channel).send(options.message);
 	}
