@@ -61,7 +61,6 @@ require("./data/js/events").run(client);
 
 // Logger
 const { log, logger } = require("./data/js/logger");
-logger(client/* , totals */);
 client.log = log;
 
 // Listen and update to backend client files
@@ -86,6 +85,9 @@ client.on("ready", async () => {
 	log.ok("-----------------------------------------");
 	log.info(`Name: ${client.user.tag} | ID: ${client.user.id}`);
 	log.info(`${await totals.get("commands")} commands used | ${await totals.get("messages")} messages read | ${client.guilds.cache.size} servers`);
+
+	// Start the logger
+	logger(client/* , totals */);
 
 	// Set the bots status
 	if (options.status.enabled) {status(); setInterval(status, options.status.timeout * 1000)};
