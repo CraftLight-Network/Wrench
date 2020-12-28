@@ -1,5 +1,5 @@
 # NOTE: This bot is currently under heavy development!
-## Expect missing or broken features, many breaking internal changes, and lots of issues! I'm writing this from the ground-up with large goals in modularity and performance, it may take a while to finish!
+## Expect missing or broken features, many breaking internal changes, and lots of issues! I'm writing this from the ground-up with large goals in modularity and performance, it may take a while to finish! Check the [project board](https://github.com/CraftLight-Network/WrenchBot/projects/3) for planned and in-progress changes!
 
 <img src="https://repository-images.githubusercontent.com/160117136/7032cb00-284a-11eb-9b50-bd521c314044" width="200px" align="right">
 <div align="center">
