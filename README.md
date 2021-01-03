@@ -1,5 +1,6 @@
 # NOTE: This bot is currently under heavy development!
-## Expect missing or broken features, many breaking internal changes, and lots of issues! I'm writing this from the ground-up with large goals in modularity and performance, it may take a while to finish! Check the [project board](https://github.com/CraftLight-Network/WrenchBot/projects/3) for planned and in-progress changes!
+### Expect missing or broken features, many breaking internal changes, and lots of issues! I'm writing this from the ground-up with large goals in modularity and performance, it may take a while to finish! Check the [project board](https://github.com/CraftLight-Network/WrenchBot/projects/3) for planned and in-progress changes.
+**I do not believe this is ready for a production environment yet. There are too many incomplete or broken features. If you're interested in the completion of this project, join the Discord server for updates!**
 
 <img src="https://repository-images.githubusercontent.com/160117136/7032cb00-284a-11eb-9b50-bd521c314044" width="200px" align="right">
 <div align="center">
