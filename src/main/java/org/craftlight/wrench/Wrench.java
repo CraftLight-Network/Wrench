@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import javax.security.auth.login.LoginException;
 
 public class Wrench {
-	private static Logger logger = LoggerFactory.getLogger("BotLogger");
+	private static final Logger logger = LoggerFactory.getLogger("BotLogger");
 	private static Config config;
 	private static JDA jda;
 
