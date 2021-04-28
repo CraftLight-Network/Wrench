@@ -1,0 +1,39 @@
+plugins {
+    id "application"
+    id "com.github.johnrengelman.shadow" version "5.2.0"
+}
+
+mainClassName = "org.craftlight.wrench.Wrench"
+description "Discord bot built with performance and modularity in mind."
+version "3.0"
+
+task launch(type: JavaExec) {
+    dependsOn "shadowJar"
+    main = "-jar"
+    args shadowJar.archiveFile.get()
+}
+
+compileJava.options.encoding = "UTF-8"
+sourceCompatibility = 11
+targetCompatibility = 11
+
+repositories {
+    mavenCentral()
+    maven {
+        url "https://m2.dv8tion.net/releases"
+        name "m2-dv8tion"
+    }
+    maven {
+        url "https://jitpack.io"
+        name "jitpack"
+    }
+}
+
+dependencies {
+    implementation "ch.qos.logback:logback-classic:1.2.3"
+    implementation "me.carleslc.Simple-YAML:Simple-Yaml:1.7.2"
+    implementation "com.github.Kaktushose:jda-commands:dev-SNAPSHOT"
+    implementation ("net.dv8tion:JDA:4.2.1_262") {
+        exclude module: "opus-java"
+    }
+}

@@ -1,0 +1,60 @@
+bot:
+  # Name of the bot
+  name: "Wrench"
+
+  prefix:
+    # Allow mention as prefix
+    mention: false
+
+    # Prefix for commands
+    commands: "]"
+
+    # Prefix for tags
+    tags: ">"
+
+info:
+  # Support invite link
+  support: "https://encode42.dev/support"
+
+  # List of owners (User ID)
+  owners:
+  - "272466470510788608"
+
+  # Bot credits
+  credits:
+  - "Encode42"
+  - "CraftLight Network"
+
+  # Activities to cycle through
+  status:
+    enabled: true
+
+    # Method to cycle by (random | order)
+    method: "random"
+
+    # Interval to run a new cycle (minutes)
+    interval: 1
+
+    # status: Bot status type (online | idle | do_not_disturb | invisible)
+    # activity: Bot activity type (playing | watching | listening | streaming)
+    # content: org.craftlight.wrench.Main contents of the activity
+    cycle:
+    - status: "online"
+      activity: "watching"
+      content: "you. 🙂"
+
+    - status: "online"
+      activity: "watching"
+      content: "%total_servers% servers."
+
+    - status: "online"
+      activity: "playing"
+      content: "a game."
+
+    - status: "online"
+      activity: "listening"
+      content: "%command_prefix%help"
+
+    - status: "online"
+      activity: "listening"
+      content: "everyone. 🙂"
