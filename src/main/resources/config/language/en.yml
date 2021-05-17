@@ -1,0 +1,7 @@
+logger:
+  bot:
+    starting: "Starting {}..."
+    started: "{} has started!"
+  config:
+    reloading: "Reloading {}..."
+    reloaded: "Reloaded!"

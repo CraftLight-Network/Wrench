@@ -3,7 +3,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "5.2.0"
 }
 
-mainClassName = "org.craftlight.wrench.Wrench"
+mainClassName = "org.craftlight.wrench.Main"
 description = "Discord bot built with performance and modularity in mind."
 version = "3.0"
 

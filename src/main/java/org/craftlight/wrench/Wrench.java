@@ -12,53 +12,51 @@ import org.slf4j.LoggerFactory;
 import javax.security.auth.login.LoginException;
 
 public class Wrench {
-	private static final Logger logger = LoggerFactory.getLogger("BotLogger");
-	private static Config config;
-	private static JDA jda;
+	private final Logger logger = LoggerFactory.getLogger(Wrench.class);
+	public final Config config;
+	public final Language language;
+	private final JDA jda;
+	private final JDACommands jdaCommands;
+	private static Wrench instance;
 
-	public static Logger getLogger() {
-		return logger;
+	public static Wrench getInstance() {
+		return instance;
 	}
 
-	public static Config getConfig() {
-		return config;
-	}
+	public Wrench() throws LoginException {
+		instance = this;
 
-	public static JDA getJDA() {
-		return jda;
-	}
-
-	public static void main(String[] arguments) {
 		// Create the config files
-		logger.debug("Creating config files...");
-		config = new Config("config/config.yml", "config.yml");
+		config = new Config("config/config.yml");
+		language = new Language("config/language/en.yml");
 		Config token = new Config("config/token.yml", "token.yml");
 
 		// Start the JDA instance
-		logger.info("Starting " + config.getString("bot.name") + "!");
-		try {
-			jda = JDABuilder.createLight(token.getString("token")).build();
-		} catch (LoginException e) {
-			logger.error("Error while starting!", e);
-			System.exit(1);
-		}
+		logger.info(language.BOT_STARTING);
+		jda = JDABuilder.createLight(token.getString("token")).build();
 
 		// Register commands
-		JDACommands commands = new JDACommandsBuilder(jda)
-				.setCommandPackage("org.craftlight.wrench.commands")
-				.setDefaultSettings(
-					new CommandSettings(
-						config.getString("bot.prefix.commands"),
-						true,
-						true,
-						config.getBoolean("bot.prefix.mention")
-					)
+		jdaCommands = new JDACommandsBuilder(jda)
+			.setCommandPackage("org.craftlight.wrench.commands")
+			.setDefaultSettings(
+				new CommandSettings(
+					config.getString("bot.prefix.commands"),
+					true,
+					true,
+					config.getBoolean("bot.prefix.mention")
 				)
-				.build();
+			)
+			.build();
+
+		logger.info(language.BOT_STARTED);
 	}
 
-	public static void reload() {
-		logger.info("Reloading config file...");
+	public void reload() {
+		logger.info(language.CONFIG_RELOADING);
+
 		config.load();
+		language.load();
+
+		logger.info(language.CONFIG_RELOADED);
 	}
 }

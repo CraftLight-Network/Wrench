@@ -9,7 +9,7 @@ import org.craftlight.wrench.Wrench;
 public class ReloadCommand {
     @Command("reload")
     public void reloadCommand(CommandEvent event) {
-        Wrench.reload();
+        Wrench.getInstance().reload();
         event.reply("Reloaded!");
     }
 }
