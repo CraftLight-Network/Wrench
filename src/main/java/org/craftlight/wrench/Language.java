@@ -5,7 +5,8 @@ import org.craftlight.wrench.util.Config;
 import java.util.Map;
 
 public class Language extends Config {
-    private final Map<String, String> globalPlaceholders;
+    private final Map<String, String> placeholders;
+    private final String prefix = "%";
 
     /**
      * Language configuration file manager
@@ -17,9 +18,9 @@ public class Language extends Config {
         Config wrenchConfig = Wrench.getInstance().config;
 
         // TODO: generate this dynamically
-        globalPlaceholders = Map.of(
-            "%bot.name", wrenchConfig.getString("bot.name"),
-            "%bot.version", "1.0"
+        placeholders = Map.of(
+            "bot.name", wrenchConfig.getString("bot.name"),
+            "bot.version", "1.0"
         );
     }
 
@@ -40,15 +41,15 @@ public class Language extends Config {
     public String read(String path, String ...args) {
         String value = this.has(path) ? this.getString(path) : path;
 
-        if (path.contains("%")) {
+        if (value.contains(prefix)) {
             // Replace global placeholders
-            for (Map.Entry<String, String> entry : globalPlaceholders.entrySet()) {
-                value = value.replace(entry.getKey(), entry.getValue());
+            for (Map.Entry<String, String> entry : placeholders.entrySet()) {
+                value = value.replace(prefix + entry.getKey(), entry.getValue());
             }
 
             // Iterate placeholders
             for (int i = 0; i < args.length; i++) {
-                value = value.replace("%" + (i + 1), args[i]);
+                value = value.replace(prefix + (i + 1), args[i]);
             }
         }
 
