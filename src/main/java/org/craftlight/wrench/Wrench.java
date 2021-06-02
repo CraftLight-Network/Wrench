@@ -14,7 +14,7 @@ import javax.security.auth.login.LoginException;
 public class Wrench {
 	private final Logger logger = LoggerFactory.getLogger(Wrench.class);
 	public final Config config;
-	public final Language language;
+	public final Language lang;
 	private final JDA jda;
 	private final JDACommands jdaCommands;
 	private static Wrench instance;
@@ -28,11 +28,11 @@ public class Wrench {
 
 		// Create the config files
 		config = new Config("config/config.yml");
-		language = new Language("config/language/en.yml");
+		lang = new Language("config/language/en.yml");
 		Config token = new Config("config/token.yml", "token.yml");
 
 		// Start the JDA instance
-		logger.info(language.BOT_STARTING);
+		logger.info(lang.read("logger.bot.starting"));
 		jda = JDABuilder.createLight(token.getString("token")).build();
 
 		// Register commands
@@ -48,15 +48,15 @@ public class Wrench {
 			)
 			.build();
 
-		logger.info(language.BOT_STARTED);
+		logger.info(lang.read("logger.bot.started"));
 	}
 
 	public void reload() {
-		logger.info(language.CONFIG_RELOADING);
+		logger.info(lang.read("logger.config.reloading"));
 
 		config.load();
-		language.load();
+		lang.load();
 
-		logger.info(language.CONFIG_RELOADED);
+		logger.info(lang.read("logger.config.reloaded"));
 	}
 }

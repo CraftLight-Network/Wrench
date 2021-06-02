@@ -12,6 +12,9 @@ bot:
     # Prefix for tags
     tags: ">"
 
+    # Language file used
+    language: "en"
+
 info:
   # Support invite link
   support: "https://encode42.dev/support"

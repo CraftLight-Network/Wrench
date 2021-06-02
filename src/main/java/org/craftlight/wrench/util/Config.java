@@ -132,6 +132,15 @@ public class Config {
 	}
 
 	/**
+	 * Check if the config has a path
+	 * @param path Path to check existence of
+	 * @return Whether or not the path exists
+	 */
+	public boolean has(String path) {
+		return config.contains(path);
+	}
+
+	/**
 	 * Get an object from a path
 	 * @param path Path to get value of
 	 * @return Returned object

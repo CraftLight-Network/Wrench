@@ -2,14 +2,10 @@ package org.craftlight.wrench;
 
 import org.craftlight.wrench.util.Config;
 
-public class Language {
-    public String BOT_STARTING;
-    public String BOT_STARTED;
-    public String CONFIG_RELOADING;
-    public String CONFIG_RELOADED;
+import java.util.Map;
 
-    public final Config language;
-    private final Config config;
+public class Language extends Config {
+    private final Map<String, String> globalPlaceholders;
 
     /**
      * Language configuration file manager
@@ -17,29 +13,35 @@ public class Language {
      * @param resourceName Name or path to copy from
      */
     public Language(String fileName, String resourceName) {
-        language = new Config(fileName, resourceName);
-        config = Wrench.getInstance().config;
+        super(fileName, resourceName);
+        Config wrenchConfig = Wrench.getInstance().config;
 
-        load();
+        // TODO: generate this dynamically
+        globalPlaceholders = Map.of(
+            "%bot.name", wrenchConfig.getString("bot.name"),
+            "%bot.version", "1.0"
+        );
     }
 
-    /**
-     * Language configuration file manager
-     * @param filename Name or path to save to
-     */
-    public Language(String filename) {
-        this(filename, filename);
+    public Language(String fileName) {
+        this(fileName, fileName);
     }
 
-    public void load() {
-        language.load();
-        generate();
-    }
+    public String read(String key, String ...args) {
+        String value = this.has(key) ? this.getString(key) : key;
 
-    private void generate() {
-        BOT_STARTING = language.getString("logger.bot.starting");
-        BOT_STARTED = language.getString("logger.bot.started");
-        CONFIG_RELOADING = language.getString("logger.config.reloading");
-        CONFIG_RELOADED = language.getString("logger.config.reloaded");
+        if (key.contains("%")) {
+            // Replace global placeholders
+            for (Map.Entry<String, String> entry : globalPlaceholders.entrySet()) {
+                value = value.replace(entry.getKey(), entry.getValue());
+            }
+
+            // Iterate placeholders
+            for (int i = 0; i < args.length; i++) {
+                value = value.replace("%" + (i + 1), args[i]);
+            }
+        }
+
+        return value;
     }
 }

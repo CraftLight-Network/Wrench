@@ -1,7 +1,11 @@
 logger:
   bot:
-    starting: "Starting {}..."
-    started: "{} has started!"
+    starting: "Starting %bot.name v%bot.version..."
+    started: "%bot.name has started!"
   config:
-    reloading: "Reloading {}..."
+    reloading: "Reloading %bot.name..."
     reloaded: "Reloaded!"
+commands:
+  count: "There are %1 characters in your message."
+  reload: "The config files have been reloaded."
+  random: "I have generated the number %1"
