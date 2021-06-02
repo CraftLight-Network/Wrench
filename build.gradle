@@ -3,7 +3,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "5.2.0"
 }
 
-mainClassName = "org.craftlight.wrench.Main"
+mainClassName = "games.backlight.wrench.Main"
 description = "Discord bot built with performance and modularity in mind."
 version = "3.0"
 
@@ -31,6 +31,7 @@ repositories {
 
 dependencies {
     implementation(group: "ch.qos.logback", name: "logback-classic", version: "1.2.3")
+    implementation(group: "net.jodah", name: "expiringmap", version: "0.5.9")
     implementation(group: "me.carleslc.Simple-YAML", name: "Simple-Yaml", version: "1.7.2")
     implementation(group: "com.github.Kaktushose", name: "jda-commands", version: "dev-SNAPSHOT")
     implementation(group: "net.dv8tion", name: "JDA", version: "4.2.1_266") {

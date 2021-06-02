@@ -1,10 +1,10 @@
-package org.craftlight.wrench.commands.staff;
+package games.backlight.wrench.commands.staff;
 
 import com.github.kaktushose.jda.commands.annotations.Command;
 import com.github.kaktushose.jda.commands.annotations.CommandController;
 import com.github.kaktushose.jda.commands.entities.CommandEvent;
-import org.craftlight.wrench.Language;
-import org.craftlight.wrench.Wrench;
+import games.backlight.wrench.Language;
+import games.backlight.wrench.Wrench;
 
 @CommandController
 public class ReloadCommand {
@@ -12,7 +12,10 @@ public class ReloadCommand {
 
     @Command("reload")
     public void reloadCommand(CommandEvent event) {
+        // Reload
         Wrench.getInstance().reload();
+
+        // Reply
         event.reply(lang.read("commands.reload"));
     }
 }

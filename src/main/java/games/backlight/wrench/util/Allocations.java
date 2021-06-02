@@ -1,4 +1,4 @@
-package org.craftlight.wrench.util;
+package games.backlight.wrench.util;
 
 import java.io.File;
 import java.io.InputStream;

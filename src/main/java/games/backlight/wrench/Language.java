@@ -1,6 +1,6 @@
-package org.craftlight.wrench;
+package games.backlight.wrench;
 
-import org.craftlight.wrench.util.Config;
+import games.backlight.wrench.util.Config;
 
 import java.util.Map;
 
@@ -38,7 +38,7 @@ public class Language extends Config {
      * @param args Replacement strings (in order)
      * @return Parsed language value
      */
-    public String read(String path, String ...args) {
+    public String read(String path, Object ...args) {
         String value = this.has(path) ? this.getString(path) : path;
 
         if (value.contains(prefix)) {
@@ -49,7 +49,7 @@ public class Language extends Config {
 
             // Iterate placeholders
             for (int i = 0; i < args.length; i++) {
-                value = value.replace(prefix + (i + 1), args[i]);
+                value = value.replace(prefix + (i + 1), String.valueOf(args[i]));
             }
         }
 

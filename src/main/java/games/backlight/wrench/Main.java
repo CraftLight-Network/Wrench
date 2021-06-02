@@ -1,4 +1,4 @@
-package org.craftlight.wrench;
+package games.backlight.wrench;
 
 import javax.security.auth.login.LoginException;
 

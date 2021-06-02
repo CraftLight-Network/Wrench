@@ -12,8 +12,13 @@ bot:
     # Prefix for tags
     tags: ">"
 
-    # Language file used
-    language: "en"
+  # Language file used
+  language: "en"
+
+  # Cache settings
+  cache:
+    # How long to keep the message cache (hours)
+    messages: 168
 
 info:
   # Support invite link

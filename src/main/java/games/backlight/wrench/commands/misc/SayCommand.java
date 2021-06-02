@@ -1,4 +1,4 @@
-package org.craftlight.wrench.commands.misc;
+package games.backlight.wrench.commands.misc;
 
 import com.github.kaktushose.jda.commands.annotations.Command;
 import com.github.kaktushose.jda.commands.annotations.CommandController;

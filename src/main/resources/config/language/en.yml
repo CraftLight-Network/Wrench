@@ -6,6 +6,7 @@ logger:
     reloading: "Reloading %bot.name..."
     reloaded: "Reloaded!"
 commands:
-  count: "There are %1 characters in your message."
+  coolness: "I have decided you are %1% cool."
   reload: "The config files have been reloaded."
+  count: "There are %1 characters in your message."
   random: "I have generated the number %1"

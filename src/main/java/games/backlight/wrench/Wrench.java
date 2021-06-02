@@ -1,11 +1,11 @@
-package org.craftlight.wrench;
+package games.backlight.wrench;
 
 import com.github.kaktushose.jda.commands.entities.CommandSettings;
 import com.github.kaktushose.jda.commands.entities.JDACommands;
 import com.github.kaktushose.jda.commands.entities.JDACommandsBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
-import org.craftlight.wrench.util.Config;
+import games.backlight.wrench.util.Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +37,7 @@ public class Wrench {
 
 		// Register commands
 		jdaCommands = new JDACommandsBuilder(jda)
-			.setCommandPackage("org.craftlight.wrench.commands")
+			.setCommandPackage("games.backlight.wrench.commands")
 			.setDefaultSettings(
 				new CommandSettings(
 					config.getString("bot.prefix.commands"),
