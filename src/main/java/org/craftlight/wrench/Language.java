@@ -23,14 +23,24 @@ public class Language extends Config {
         );
     }
 
+    /**
+     * Language configuration file manager
+     * @param fileName Name of the file
+     */
     public Language(String fileName) {
         this(fileName, fileName);
     }
 
-    public String read(String key, String ...args) {
-        String value = this.has(key) ? this.getString(key) : key;
+    /**
+     * Read and parse a language value
+     * @param path Path to get language value of
+     * @param args Replacement strings (in order)
+     * @return Parsed language value
+     */
+    public String read(String path, String ...args) {
+        String value = this.has(path) ? this.getString(path) : path;
 
-        if (key.contains("%")) {
+        if (path.contains("%")) {
             // Replace global placeholders
             for (Map.Entry<String, String> entry : globalPlaceholders.entrySet()) {
                 value = value.replace(entry.getKey(), entry.getValue());
